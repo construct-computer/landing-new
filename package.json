@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "start": "NODE_ENV=production bun src/index.ts",
-    "build": "bun run build.ts"
+    "build": "bun run build.ts",
+    "build:preview": "SITE_URL=https://landing-new.construct-computer.workers.dev bun run build.ts",
+    "build:prod": "SITE_URL=https://construct.computer bun run build.ts"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",

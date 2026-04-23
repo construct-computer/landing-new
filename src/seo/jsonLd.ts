@@ -6,7 +6,22 @@ import type { FaqItem } from "@/content/faq"
  * and during client-side navigation (injected into `<head>`).
  */
 
-export const SITE_URL = "https://construct.computer"
+/**
+ * Absolute origin used in canonical URLs, sitemap entries, and every OG/
+ * Twitter/JSON-LD absolute reference. Override at build time with the
+ * `SITE_URL` env var so the emitted HTML matches the host it's actually
+ * served from — critical because social scrapers (Discord, Facebook,
+ * LinkedIn, WhatsApp, X) fetch the declared `og:image` URL directly, and
+ * if the host in the meta tag doesn't have the asset (e.g. an older
+ * deployment sitting at the apex domain) they report "Invalid resource".
+ *
+ * Examples:
+ *   SITE_URL=https://landing-new.construct-computer.workers.dev bun run build.ts
+ *   SITE_URL=https://construct.computer bun run build.ts
+ */
+export const SITE_URL = (
+  process.env.SITE_URL ?? "https://construct.computer"
+).replace(/\/+$/, "")
 export const ORG_NAME = "Construct Computer"
 export const ORG_LOGO = `${SITE_URL}/logo.png`
 
