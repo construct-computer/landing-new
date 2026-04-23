@@ -9,8 +9,9 @@
     "build": "bun run build.ts",
     "build:preview": "SITE_URL=https://landing-new.construct-computer.workers.dev bun run build.ts",
     "build:prod": "SITE_URL=https://construct.computer bun run build.ts",
-    "deploy": "wrangler deploy",
-    "preview": "wrangler dev"
+    "deploy": "bun run build:prod && wrangler deploy",
+    "deploy:preview": "bun run build:preview && wrangler versions upload",
+    "preview": "bun run build:preview && wrangler dev"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
