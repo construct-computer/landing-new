@@ -163,7 +163,7 @@ export function DesktopLanding() {
             src={imgLightBeams}
             alt=""
             aria-hidden
-            className="pointer-events-none absolute left-0 z-0 w-full select-none opacity-70"
+            className="pointer-events-none absolute left-0 z-0 w-full select-none"
             style={{ top: "18%" }}
           />
           <div className="relative z-10">
