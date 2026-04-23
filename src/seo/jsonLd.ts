@@ -18,10 +18,24 @@ import type { FaqItem } from "@/content/faq"
  * Examples:
  *   SITE_URL=https://landing-new.construct-computer.workers.dev bun run build.ts
  *   SITE_URL=https://construct.computer bun run build.ts
+ *
+ * This module is imported both at SSG time (in Bun, where `process.env`
+ * exists) and in the browser bundle (where bare `process` is a
+ * `ReferenceError`). A single unguarded `process.env.SITE_URL` here would
+ * crash React on the client at module load, killing hydration — and with
+ * it, anything downstream like the responsive layout swap. The typeof
+ * guard keeps SSR behavior intact while producing a safe fallback on
+ * the client; `build.ts` also passes SITE_URL through Bun's `define` so
+ * the browser bundle gets the same concrete string as the SSG output.
  */
-export const SITE_URL = (
-  process.env.SITE_URL ?? "https://construct.computer"
-).replace(/\/+$/, "")
+const envSiteUrl: string | undefined =
+  typeof process !== "undefined" && typeof process.env !== "undefined"
+    ? process.env.SITE_URL
+    : undefined
+export const SITE_URL = (envSiteUrl ?? "https://construct.computer").replace(
+  /\/+$/,
+  "",
+)
 export const ORG_NAME = "Construct Computer"
 export const ORG_LOGO = `${SITE_URL}/logo.png`
 

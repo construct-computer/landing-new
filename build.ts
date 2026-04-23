@@ -122,6 +122,13 @@ const entrypoints = [...new Bun.Glob("**.html").scanSync("src")]
   .filter(dir => !dir.includes("node_modules"));
 console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? "file" : "files"} to process\n`);
 
+// Inline the env vars that `src/seo/jsonLd.ts` reads at module scope. Without
+// this the client bundle would contain a bare `process.env.SITE_URL`
+// reference, and since `process` is undefined in the browser it would throw
+// `ReferenceError: process is not defined` during hydration — taking every
+// downstream effect down with it (including the responsive layout swap).
+const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
+
 const result = await Bun.build({
   entrypoints,
   outdir,
@@ -131,6 +138,7 @@ const result = await Bun.build({
   sourcemap: "linked",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
+    "process.env.SITE_URL": JSON.stringify(SITE_URL),
   },
   ...cliConfig,
 });
