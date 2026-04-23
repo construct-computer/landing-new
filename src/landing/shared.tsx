@@ -3,7 +3,6 @@ import type { CSSProperties, ReactNode } from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
-import logoPoster from "@/assets/logo.png"
 import imgDocs from "@/assets/docs.png"
 import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
@@ -76,6 +75,14 @@ export function PortalVideo({ className }: { className?: string }) {
     return () => mq.removeEventListener("change", onChange)
   }, [])
 
+  // No `poster` on purpose: the only stable still image we had to hand
+  // was the square Construct logo, and a 512×512 PNG stretched by
+  // `object-cover` into the ~900px portal frame reads as a comically
+  // oversized logo until the video decodes. A brief blank portal on hard
+  // refresh is far less jarring than that. `preload="auto"` pulls the
+  // ~170 KB webm / ~300 KB mp4 as soon as the element mounts so the gap
+  // closes fast; if we later extract a real first-frame still in the
+  // build pipeline, wire it back in here.
   return (
     <video
       ref={ref}
@@ -83,8 +90,7 @@ export function PortalVideo({ className }: { className?: string }) {
       autoPlay
       loop
       playsInline
-      preload="metadata"
-      poster={logoPoster}
+      preload="auto"
       aria-hidden
       className={className ?? "h-full w-full object-cover"}
     >
