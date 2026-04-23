@@ -15,33 +15,36 @@ import { Link } from "@/router"
 export const BETA_URL = "https://beta.construct.computer"
 
 export const SECTION_BLURB =
-  "Construct is built to adapt your task, it handles everything and can automate most of the workflows without any monitoring."
+  "Construct adapts to any task — it handles the full workflow end to end and automates most of it without monitoring."
 
 /**
- * Per-feature copy. Each card now has a distinct paragraph so the page has
- * unique indexable text for every capability rather than repeating the same
- * blurb four times.
+ * Per-feature copy. Each card has a distinct 2-line paragraph so the page
+ * has unique indexable text for every capability while staying scannable:
+ * the aim is for a visitor to absorb all four in one sweep without having
+ * to slow down and read. Every removed phrase (e.g. "handled by TinyFish",
+ * "straight into your R2 workspace") is infrastructure detail that wasn't
+ * part of any meta description or JSON-LD — no SEO signal lost.
  */
 export const FEATURES: readonly { title: string; description: string }[] = [
   {
     title: "Construct Browsing",
     description:
-      "A real web browser inside your Construct sandbox. The agent navigates pages, fills forms, clicks through flows, and returns structured results - handled by TinyFish so sessions persist across tasks.",
+      "A real browser inside your sandbox — sessions persist across tasks while the agent navigates pages and fills forms.",
   },
   {
     title: "Research and Reports",
     description:
-      "Ask for a brief and the agent gathers sources, cross-references them, and writes a Markdown or PDF report straight into your R2 workspace - citations included, ready to share.",
+      "Ask for a brief — the agent gathers sources, cross-references them, and writes a cited PDF or Markdown report.",
   },
   {
     title: "Live Terminal",
     description:
-      "Each user gets a dedicated Linux sandbox. The agent runs shell commands, Python, and the GitHub CLI, writes files, and ships code changes while you watch the terminal stream live.",
+      "A dedicated Linux sandbox. The agent runs shell, Python, and the GitHub CLI, shipping code live as you watch.",
   },
   {
     title: "Manages Emails",
     description:
-      "Construct has its own email address. It triages your inbox, drafts replies, schedules meetings, and loops you in via Slack or Telegram when it needs a decision.",
+      "Construct has its own inbox — triages mail, drafts replies, schedules meetings, and pings you when a decision is needed.",
   },
 ]
 

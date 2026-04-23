@@ -45,9 +45,8 @@ function HeroHeadline() {
         <span className="text-[#01b4c8]">Works For You</span>
       </h1>
       <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
-        An AI agent with its own cloud computer. It logs into a full virtual
-        desktop and works across Slack, Telegram, and email - scheduled,
-        persistent, on any device.
+        An AI agent with its own cloud computer — works across Slack,
+        Telegram, and email, on any device.
       </p>
       <EnterExperienceButton className="mt-7" />
     </div>
