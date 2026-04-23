@@ -7,6 +7,7 @@ import {
   EnterExperienceButton,
   FEATURES,
   FeatureCard,
+  LandingFooter,
   PortalVideo,
   WORKFLOW_CHIPS,
   WorkflowChip,
@@ -19,15 +20,17 @@ function DesktopNav() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-[1500px] items-center justify-between gap-4 px-6 lg:px-16">
-        <a href="/" className="font-display text-[18px] italic leading-7 text-[#484848]">
-          ConstructComputer
+        <a href="/" className="font-display text-[18px] italic leading-7">
+          <span className="text-[#4e4646]">Construct</span>
+          <span className="text-[#01b4c8]">Computer</span>
         </a>
 
         <nav
           aria-label="Main"
           className="flex items-center gap-[26px] text-[14px] leading-5 text-[#6d6d6d]"
         >
-          <a href="#docs" className="whitespace-nowrap hover:text-[#484848]">
+          {/* these 3 dont exist yet */}
+          {/* <a href="#docs" className="whitespace-nowrap hover:text-[#484848]">
             Documentation
           </a>
           <a href="#blog" className="whitespace-nowrap hover:text-[#484848]">
@@ -35,7 +38,7 @@ function DesktopNav() {
           </a>
           <a href="#status" className="whitespace-nowrap hover:text-[#484848]">
             Status
-          </a>
+          </a> */}
         </nav>
 
         <EarlyAccessPill />
@@ -157,6 +160,7 @@ export function DesktopLanding() {
       <HeroStage />
       <AdaptsSection />
       <FeatureGrid />
+      <LandingFooter />
     </div>
   )
 }

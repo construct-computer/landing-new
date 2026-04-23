@@ -2,11 +2,11 @@ import imgChat from "@/assets/chat.png"
 import imgReport from "@/assets/report.png"
 import {
   AdaptsSection,
-  BETA_URL,
   EarlyAccessPill,
   EnterExperienceButton,
   FEATURES,
   FeatureCard,
+  LandingFooter,
   PortalVideo,
 } from "./shared"
 
@@ -46,11 +46,9 @@ function MobileNav() {
         className="flex items-center justify-between px-4"
         style={{ height: NAV_HEIGHT_PX }}
       >
-        <a
-          href="/"
-          className="font-display text-[15px] italic leading-6 text-[#484848]"
-        >
-          ConstructComputer
+        <a href="/" className="font-display text-[15px] italic leading-6">
+          <span className="text-[#4e4646]">Construct</span>
+          <span className="text-[#01b4c8]">Computer</span>
         </a>
         <EarlyAccessPill className="px-3 py-1.5 text-[11px]" />
       </div>
@@ -163,24 +161,6 @@ function MobileFeatureGrid() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer                                                             */
-/* ------------------------------------------------------------------ */
-function MobileFooter() {
-  return (
-    <footer className="font-ui px-5 pb-10 text-center text-[12px] text-[#8a9aa2]">
-      <a
-        href={BETA_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline-offset-2 hover:underline"
-      >
-        beta.construct.computer
-      </a>
-    </footer>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 export function MobileLanding() {
   return (
     <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-white text-[#4e4646]">
@@ -189,7 +169,7 @@ export function MobileLanding() {
       <ShowcaseStrip />
       <AdaptsSection className="pb-8 pt-2" />
       <MobileFeatureGrid />
-      <MobileFooter />
+      <LandingFooter />
     </div>
   )
 }
