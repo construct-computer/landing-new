@@ -165,7 +165,7 @@ export function EarlyAccessPill({ className }: { className?: string }) {
         (className ?? "")
       }
     >
-      <span className="relative z-10">Early Access</span>
+      <span className="relative z-10">Early Beta Access</span>
     </a>
   )
 }

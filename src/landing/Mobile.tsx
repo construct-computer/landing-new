@@ -1,4 +1,6 @@
 import imgChat from "@/assets/chat.png"
+import imgClouds from "@/assets/clouds.png"
+import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import {
   AdaptsSection,
@@ -115,6 +117,25 @@ function ShowcaseStrip() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Clouds transition                                                  */
+/* Mirrors the desktop treatment: full-width cloud photo at 90%        */
+/* opacity sitting inside the shared sky gradient, with the light-ray  */
+/* overlay positioned above the clouds.                                */
+/* ------------------------------------------------------------------ */
+function MobileCloudsTransition() {
+  return (
+    <section className="relative w-full">
+      <img
+        src={imgClouds}
+        alt=""
+        aria-hidden
+        className="pointer-events-none relative block w-full select-none opacity-90"
+      />
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /* Features - single column                                           */
 /* ------------------------------------------------------------------ */
 function MobileFeatureGrid() {
@@ -149,8 +170,26 @@ export function MobileLanding() {
         <HeroWithStraddlingPortal />
         <ShowcaseStrip />
         <WhatConstructIsSection className="pt-0" />
-        <AdaptsSection className="pb-8 pt-2" />
-        <MobileFeatureGrid />
+        <div
+          className="relative w-full overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(to bottom, #ffffff 0%, #ffffff 4%, #ddfaff 10%, #ddfaff 10%, #fefefe 50%, #ffffff 100%)",
+          }}
+        >
+          <img
+            src={imgLightBeams}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute left-0 z-0 w-full select-none"
+            style={{ top: "5%" }}
+          />
+          <div className="relative z-10">
+            <MobileCloudsTransition />
+            <AdaptsSection className="py-10" />
+            <MobileFeatureGrid />
+          </div>
+        </div>
         <FaqSection />
       </main>
       <LandingFooter />

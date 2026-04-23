@@ -156,7 +156,7 @@ export function DesktopLanding() {
           className="relative w-full overflow-hidden"
           style={{
             background:
-              "linear-gradient(to bottom, #ffffff 0%, #ffffff 20%, #ddfaff 32%, #ddfaff 72%, #fefefe 88%, #ffffff 100%)",
+              "linear-gradient(to bottom, #ffffff 0%, #ffffff 4%, #ddfaff 25%, #ddfaff 60%, #fefefe 86%, #ffffff 100%)",
           }}
         >
           <img
