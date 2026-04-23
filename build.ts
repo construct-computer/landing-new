@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import plugin from "bun-plugin-tailwind";
 import { existsSync } from "fs";
-import { rm } from "fs/promises";
+import { copyFile, rm } from "fs/promises";
 import path from "path";
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -136,6 +136,14 @@ const result = await Bun.build({
 });
 
 const end = performance.now();
+
+// Copy the logo to a stable, unhashed path so absolute URLs like
+// https://construct.computer/logo.png (used for OG/Twitter cards) resolve.
+const logoSrc = path.resolve("src/assets/logo.png");
+const logoDest = path.join(outdir as string, "logo.png");
+if (existsSync(logoSrc)) {
+  await copyFile(logoSrc, logoDest);
+}
 
 const outputTable = result.outputs.map(output => ({
   File: path.relative(process.cwd(), output.path),
