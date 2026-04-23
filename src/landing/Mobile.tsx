@@ -143,7 +143,7 @@ function MobileFeatureGrid() {
 /* ------------------------------------------------------------------ */
 export function MobileLanding() {
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-white text-[#4e4646]">
+    <div className="relative min-h-[100dvh] w-full overflow-x-clip bg-white text-[#4e4646]">
       <LandingNav />
       <main id="main">
         <HeroWithStraddlingPortal />

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import type { CSSProperties, ReactNode } from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
@@ -188,8 +188,24 @@ export function SkipToMain() {
 }
 
 export function LandingNav() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-xl lg:bg-white/60">
+    <header
+      className={
+        "sticky top-0 z-50 w-full transition-[background-color,backdrop-filter] duration-200 " +
+        (scrolled
+          ? "bg-white/20 backdrop-blur-xl backdrop-saturate-150"
+          : "bg-transparent")
+      }
+    >
       <SkipToMain />
       <div className="mx-auto flex h-12 w-full max-w-[1500px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-14 lg:px-16">
         <Link
