@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
  *
  * - On SSR and the first hydrate pass we return `defaultValue` (true =
  *   desktop) so the pre-rendered HTML matches. The landing's SSG output is
- *   the desktop layout — it has all of the indexable copy.
+ *   the desktop layout - it has all of the indexable copy.
  * - After mount we attach a real `matchMedia` listener and re-render if the
  *   actual viewport disagrees (e.g. phone user loads a desktop-prerendered
  *   page).

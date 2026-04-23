@@ -10,7 +10,7 @@ export function CareersPage() {
   return (
     <LegalShell
       title="Careers"
-      subtitle="We're not hiring right now — but we'd love to hear from you"
+      subtitle="We're not hiring right now - but we'd love to hear from you"
     >
       <LegalSection title="Current status">
         <p>
@@ -41,8 +41,8 @@ export function CareersPage() {
         <LegalList>
           <li>
             <Emph>Send work, not a r&eacute;sum&eacute;.</Emph> A link to
-            something you&rsquo;ve built — a project, a PR, a teardown, a
-            post — tells us more than a CV ever will.
+            something you&rsquo;ve built - a project, a PR, a teardown, a
+            post - tells us more than a CV ever will.
           </li>
           <li>
             <Emph>Tell us what you&rsquo;d want to build here.</Emph> A couple
@@ -66,7 +66,7 @@ export function CareersPage() {
 
       <LegalSection title="What working here looks like">
         <p>
-          For context when we do hire — this is the kind of team we&rsquo;re
+          For context when we do hire - this is the kind of team we&rsquo;re
           building:
         </p>
         <LegalList>
@@ -103,7 +103,7 @@ export function CareersPage() {
             <InlineLink href="https://registry.construct.computer">
               app registry
             </InlineLink>{" "}
-            — every listing is a PR against{" "}
+            - every listing is a PR against{" "}
             <InlineLink href="https://github.com/construct-computer/app-registry">
               construct-computer/app-registry
             </InlineLink>
@@ -122,7 +122,7 @@ export function CareersPage() {
             <InlineLink href="https://discord.gg/puArEQHYN9">
               Discord
             </InlineLink>{" "}
-            — it&rsquo;s where a lot of the product direction gets shaped.
+            - it&rsquo;s where a lot of the product direction gets shaped.
           </li>
         </LegalList>
       </LegalSection>

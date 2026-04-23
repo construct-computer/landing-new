@@ -20,7 +20,7 @@ const DESKTOP_QUERY = "(min-width: 1024px)"
  * so a plain `useMediaQuery` call resolves to its default (desktop) and
  * bakes the desktop layout into the HTML. A mobile visitor then has to wait
  * for React to hydrate and a `useEffect` to flip the state before the right
- * layout shows up — and if the JS bundle is delayed, fails, or the device
+ * layout shows up - and if the JS bundle is delayed, fails, or the device
  * is on a slow network, iOS Safari just auto-scales the oversized desktop
  * content to fit the viewport (classic zoomed-out "desktop-on-phone" bug).
  *
@@ -55,7 +55,7 @@ function Landing() {
 }
 
 /**
- * Static route table. Kept tiny on purpose — this is a marketing site, not
+ * Static route table. Kept tiny on purpose - this is a marketing site, not
  * an app. Unknown paths fall back to the landing.
  */
 function Routes() {

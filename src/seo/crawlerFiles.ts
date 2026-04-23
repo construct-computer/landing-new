@@ -68,7 +68,7 @@ export function llmsTxt(): string {
   lines.push(`# Construct Computer`)
   lines.push("")
   lines.push(
-    `> Construct Computer is an AI agent with its own cloud computer — a persistent AI employee that logs into a full virtual desktop, runs a browser and terminal, manages email and calendar, and connects to 1,000+ SaaS apps via Composio. Reachable from the web, Slack, Telegram, email, and a macOS companion app.`,
+    `> Construct Computer is an AI agent with its own cloud computer - a persistent AI employee that logs into a full virtual desktop, runs a browser and terminal, manages email and calendar, and connects to 1,000+ SaaS apps via Composio. Reachable from the web, Slack, Telegram, email, and a macOS companion app.`,
   )
   lines.push("")
   lines.push(`## Pages`)
@@ -88,12 +88,12 @@ export function llmsTxt(): string {
 }
 
 /**
- * `llms-full.txt` — a concatenated plain-text bundle of the most important
+ * `llms-full.txt` - a concatenated plain-text bundle of the most important
  * product claims and answers. Designed to be the single thing an LLM crawler
  * can fetch to "know" the product.
  */
 export function llmsFullTxt(): string {
-  return `# Construct Computer — full product context
+  return `# Construct Computer - full product context
 
 Construct Computer is an AI agent with its own computer in the cloud. Unlike a chat assistant, Construct is a persistent autonomous agent with a dedicated Linux sandbox, a real web browser, an email inbox, long-term memory, a calendar, a task tracker, and integrations with over 1,000 SaaS apps via Composio.
 
@@ -107,7 +107,7 @@ Construct Computer is an AI agent with its own computer in the cloud. Unlike a c
 - Autonomous web browsing (TinyFish remote browser).
 - Document generation (Markdown, PDF reports) written to R2.
 - Live terminal: shell commands, Python, and Git via the gh CLI inside the sandbox.
-- Agent email inbox (AgentMail) — the agent can receive and send email.
+- Agent email inbox (AgentMail) - the agent can receive and send email.
 - Calendar, task tracker, long-term memory (Mem0), and a knowledge wiki, all addressable by the agent.
 - Multi-agent orchestration: primary agent can delegate subtasks to sub-agents.
 - Voice: ElevenLabs Scribe and Cloudflare Whisper for transcription.
@@ -120,7 +120,7 @@ Construct Computer is an AI agent with its own computer in the cloud. Unlike a c
 
 ## Plans
 - Free, Starter, and Pro subscriptions.
-- Metered by real model cost via Cloudflare AI Gateway, with a weekly budget and a 4-hour burst window cap — not per-message.
+- Metered by real model cost via Cloudflare AI Gateway, with a weekly budget and a 4-hour burst window cap - not per-message.
 - Pro auto-downgrades to a lighter model at 80% of the weekly budget and hard-stops at 100%.
 - Bonus credits available for sharing the product; BYOK usage never counts against the bundled budget.
 - Subscriptions managed through Dodo Payments.
@@ -128,7 +128,7 @@ Construct Computer is an AI agent with its own computer in the cloud. Unlike a c
 ## Privacy & security
 - Per-user isolation: Durable Object + dedicated Docker sandbox + scoped R2 prefix.
 - AES-256-GCM (Web Crypto API) for all stored OAuth tokens, integration credentials, and BYOK API keys.
-- Full audit log of every tool call, command, and sub-agent invocation — queryable by the user.
+- Full audit log of every tool call, command, and sub-agent invocation - queryable by the user.
 - Access-control approval queues for inbound messages to the agent.
 - Users can inspect, edit, or bulk-delete memories at any time via the in-desktop Memory app.
 
@@ -145,7 +145,7 @@ Q: What is Construct Computer?
 A: An AI agent that has its own computer in the cloud. It logs into a full virtual desktop, uses a browser, runs code, writes files, manages a calendar, and sends email on your behalf.
 
 Q: How is Construct different from ChatGPT or Claude?
-A: ChatGPT and Claude are chat assistants. Construct is a persistent autonomous agent with a workstation — a dedicated Linux sandbox, a real browser, an email inbox, long-term memory, and 1,000+ SaaS integrations. It executes tasks end-to-end and leaves an audit trail.
+A: ChatGPT and Claude are chat assistants. Construct is a persistent autonomous agent with a workstation - a dedicated Linux sandbox, a real browser, an email inbox, long-term memory, and 1,000+ SaaS integrations. It executes tasks end-to-end and leaves an audit trail.
 
 Q: Can I connect Slack, Telegram, Gmail, and other tools?
 A: Yes. The agent is reachable from the web, Slack, Telegram, email, and a macOS companion. It integrates with Gmail, Google Calendar, Notion, Linear, Jira, GitHub, HubSpot, Airtable, and 1,000+ other apps via Composio.

@@ -10,7 +10,7 @@ import {
 import { useRouteMeta } from "@/seo/head"
 
 /**
- * A tiny client-side router built on `history.pushState` — enough for the
+ * A tiny client-side router built on `history.pushState` - enough for the
  * handful of static routes this marketing site needs. We intentionally avoid
  * `react-router` to keep the bundle lean.
  *

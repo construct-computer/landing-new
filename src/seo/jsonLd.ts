@@ -10,7 +10,7 @@ import type { FaqItem } from "@/content/faq"
  * Absolute origin used in canonical URLs, sitemap entries, and every OG/
  * Twitter/JSON-LD absolute reference. Override at build time with the
  * `SITE_URL` env var so the emitted HTML matches the host it's actually
- * served from — critical because social scrapers (Discord, Facebook,
+ * served from - critical because social scrapers (Discord, Facebook,
  * LinkedIn, WhatsApp, X) fetch the declared `og:image` URL directly, and
  * if the host in the meta tag doesn't have the asset (e.g. an older
  * deployment sitting at the apex domain) they report "Invalid resource".
@@ -22,7 +22,7 @@ import type { FaqItem } from "@/content/faq"
  * This module is imported both at SSG time (in Bun, where `process.env`
  * exists) and in the browser bundle (where bare `process` is a
  * `ReferenceError`). A single unguarded `process.env.SITE_URL` here would
- * crash React on the client at module load, killing hydration — and with
+ * crash React on the client at module load, killing hydration - and with
  * it, anything downstream like the responsive layout swap. The typeof
  * guard keeps SSR behavior intact while producing a safe fallback on
  * the client; `build.ts` also passes SITE_URL through Bun's `define` so
@@ -40,7 +40,7 @@ export const ORG_NAME = "Construct Computer"
 export const ORG_LOGO = `${SITE_URL}/logo.png`
 
 /**
- * Default OG / Twitter share image — the landscape 1200×630 card.
+ * Default OG / Twitter share image - the landscape 1200×630 card.
  *
  * Source: `src/assets/og-card.png` (1200×630 PNG, ~310 KB).
  * Build:  converted to JPEG at quality 90 by `build.ts`, emitted as
@@ -48,7 +48,7 @@ export const ORG_LOGO = `${SITE_URL}/logo.png`
  *         universal format every OG scraper accepts and the only way to
  *         reliably fit under WhatsApp's ~300 KB share-image cap at this
  *         resolution. Non-macOS builds (no `sips`) fall back to copying
- *         the source PNG to `dist/og-card.png` — still works, but may be
+ *         the source PNG to `dist/og-card.png` - still works, but may be
  *         rejected by stricter WhatsApp clients.
  *
  * Platform fit:
@@ -63,7 +63,7 @@ export const OG_IMAGE_WIDTH = 1200
 export const OG_IMAGE_HEIGHT = 630
 export const OG_IMAGE_TYPE = "image/jpeg"
 export const OG_IMAGE_ALT =
-  "Construct Computer — autonomous computer that works for you"
+  "Construct Computer - autonomous computer that works for you"
 export const OG_LOCALE = "en_US"
 
 /** Serialize a JSON-LD object into a `<script>`-safe string. */
@@ -85,7 +85,7 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: ORG_LOGO,
     description:
-      "Construct Computer is an AI agent with its own cloud computer — a persistent AI employee that logs into a virtual desktop and works across Slack, Telegram, and email.",
+      "Construct Computer is an AI agent with its own cloud computer - a persistent AI employee that logs into a virtual desktop and works across Slack, Telegram, and email.",
     sameAs: [
       "https://x.com/use_construct",
       "https://github.com/construct-computer",

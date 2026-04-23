@@ -44,7 +44,7 @@ export function TermsPage() {
             terminal, file system, code editor, and activity view
           </li>
           <li>
-            An AI agent that can operate the desktop on your behalf —
+            An AI agent that can operate the desktop on your behalf -
             including web search, remote browsing, document generation
             (PPTX, DOCX, XLSX, PDF, CSV, HTML, SVG), code and shell work via
             the <Emph>gh</Emph> CLI, OCR, and image processing
@@ -59,7 +59,7 @@ export function TermsPage() {
             tracker with dependencies, and persistent long-term memory
           </li>
           <li>
-            Multi-agent orchestration — the ability for the primary agent to
+            Multi-agent orchestration - the ability for the primary agent to
             spawn explore, plan, implement, and QA sub-agents, plus background
             agents that continue work after the parent turn ends
           </li>
@@ -237,7 +237,7 @@ export function TermsPage() {
           </li>
           <li>
             Direct the AI agent to perform illegal, harmful, abusive, or
-            deceptive actions — including impersonation, unauthorized
+            deceptive actions - including impersonation, unauthorized
             surveillance, or phishing
           </li>
           <li>
@@ -309,9 +309,9 @@ export function TermsPage() {
           owned by Construct Computer and its contributors. The{" "}
           <Emph>core platform backend</Emph> (the hosted agent runtime that
           powers the Services) is proprietary and closed source. All other
-          components we publish — including the web frontend, the{" "}
+          components we publish - including the web frontend, the{" "}
           <Emph>@construct-computer/app-sdk</Emph>, the sample apps, and
-          supporting libraries — are released under the{" "}
+          supporting libraries - are released under the{" "}
           <Emph>Business Source License 1.1</Emph>, which permits
           non-commercial use. Commercial use of BSL-licensed components prior
           to the Change Date specified in each repository&rsquo;s LICENSE file
@@ -339,7 +339,7 @@ export function TermsPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Composio</Emph> — 1,000+ SaaS app connectors (Google
+            <Emph>Composio</Emph> - 1,000+ SaaS app connectors (Google
             Workspace, Gmail, Slack, Notion, Linear, Jira, HubSpot, GitHub,
             Airtable, Dropbox, and more)
           </li>
@@ -347,18 +347,18 @@ export function TermsPage() {
             <Emph>Direct OAuth</Emph> to Google, Slack, and Telegram
           </li>
           <li>
-            <Emph>Model providers</Emph> — Cloudflare Workers AI, Cloudflare
+            <Emph>Model providers</Emph> - Cloudflare Workers AI, Cloudflare
             AI Gateway, Google Gemini, and OpenRouter (via BYOK)
           </li>
           <li>
-            <Emph>Infrastructure &amp; tooling</Emph> — TinyFish (remote
+            <Emph>Infrastructure &amp; tooling</Emph> - TinyFish (remote
             browser), AgentMail (agent email), ElevenLabs Scribe Realtime and
             Cloudflare Whisper (voice), Mem0 (long-term memory), PostHog
             (product analytics), Resend (transactional email), and Dodo
             Payments (billing)
           </li>
           <li>
-            <Emph>App Registry apps</Emph> — custom Cloudflare Worker apps
+            <Emph>App Registry apps</Emph> - custom Cloudflare Worker apps
             published by third parties
           </li>
         </LegalList>
@@ -429,7 +429,7 @@ export function TermsPage() {
         <p>
           We reserve the right to suspend or terminate your access to the
           Services at any time, with or without cause, and with or without
-          notice — including for violations of these Terms, suspected abuse,
+          notice - including for violations of these Terms, suspected abuse,
           or failure to pay. You may also delete your account at any time.
           Upon termination:
         </p>

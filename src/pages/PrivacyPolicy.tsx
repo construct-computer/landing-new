@@ -51,54 +51,54 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Workspace files</Emph> — any files, documents, code, or
+            <Emph>Workspace files</Emph> - any files, documents, code, or
             other content you upload or that the AI agent creates on your
             behalf, stored in per-user Cloudflare R2 storage
           </li>
           <li>
-            <Emph>Chat &amp; session history</Emph> — conversations between
+            <Emph>Chat &amp; session history</Emph> - conversations between
             you and your agent across every surface (web desktop, Slack,
             Telegram, Mini App, email), stored in your per-user Cloudflare
             Durable Object
           </li>
           <li>
-            <Emph>Agent memory</Emph> — semantic long-term memory via Mem0:
+            <Emph>Agent memory</Emph> - semantic long-term memory via Mem0:
             after each turn, durable facts are automatically extracted and
             relevance-ranked memories are injected on new tasks. You can view,
             search, forget, or bulk-delete memories at any time from the
             Memory app
           </li>
           <li>
-            <Emph>Knowledge wiki</Emph> — a persistent <code>wiki/</code>{" "}
+            <Emph>Knowledge wiki</Emph> - a persistent <code>wiki/</code>{" "}
             directory inside your workspace that the agent maintains as
             long-form reference notes
           </li>
           <li>
-            <Emph>Task tracker &amp; scheduled tasks</Emph> — structured tasks
+            <Emph>Task tracker &amp; scheduled tasks</Emph> - structured tasks
             with dependencies and one-shot future actions, stored in your
             agent&rsquo;s SQLite state
           </li>
           <li>
-            <Emph>Calendar</Emph> — per-agent events and reminders, stored in
+            <Emph>Calendar</Emph> - per-agent events and reminders, stored in
             Cloudflare D1
           </li>
           <li>
-            <Emph>Agent email inbox</Emph> — each agent gets its own address at{" "}
+            <Emph>Agent email inbox</Emph> - each agent gets its own address at{" "}
             <Emph>&lt;agentname&gt;@agents.construct.computer</Emph>; incoming
             messages, threads, and sent replies are retained to provide thread
             state
           </li>
           <li>
-            <Emph>Audit log</Emph> — every tool call, system event, and error
+            <Emph>Audit log</Emph> - every tool call, system event, and error
             is written to a queryable activity log with timestamp, category,
             platform source, duration, and result
           </li>
           <li>
-            <Emph>Access-control records</Emph> — per-platform inbound policy,
+            <Emph>Access-control records</Emph> - per-platform inbound policy,
             trusted-user list, and the approval queue for non-trusted senders
           </li>
           <li>
-            <Emph>Voice audio</Emph> — when you use voice input, audio is
+            <Emph>Voice audio</Emph> - when you use voice input, audio is
             streamed to a speech-to-text provider for transcription and is
             not retained after the transcript is returned
           </li>
@@ -111,19 +111,19 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Composio connected accounts</Emph> — OAuth tokens for any of
+            <Emph>Composio connected accounts</Emph> - OAuth tokens for any of
             the 1,000+ SaaS apps you connect via Composio (Google Workspace,
             Gmail, Slack, Notion, Linear, Jira, HubSpot, GitHub, Airtable,
             Dropbox, and more). Connection management, scopes, and refresh are
             handled through Composio.
           </li>
           <li>
-            <Emph>Direct integrations</Emph> — Slack workspace tokens,
+            <Emph>Direct integrations</Emph> - Slack workspace tokens,
             Telegram bot tokens, and any OAuth tokens issued directly to
             Construct
           </li>
           <li>
-            <Emph>App Registry credentials</Emph> — per-app auth (OAuth2, API
+            <Emph>App Registry credentials</Emph> - per-app auth (OAuth2, API
             key, Bearer, or HTTP Basic) for any app you install from the
             public{" "}
             <InlineLink href="https://registry.construct.computer">
@@ -131,7 +131,7 @@ export function PrivacyPolicyPage() {
             </InlineLink>
           </li>
           <li>
-            <Emph>Bring-Your-Own-Key (BYOK) API keys</Emph> — optional model
+            <Emph>Bring-Your-Own-Key (BYOK) API keys</Emph> - optional model
             provider keys (for example, OpenRouter) that you choose to use
             instead of our bundled provisioning
           </li>
@@ -148,7 +148,7 @@ export function PrivacyPolicyPage() {
           If you subscribe to a paid plan, we store the subscription state
           (tier, status, period) and a customer identifier from our payments
           processor. Payment method details (card numbers, bank info) are
-          never stored by Construct — they are handled entirely by our
+          never stored by Construct - they are handled entirely by our
           processor, Dodo Payments. We also record per-call usage (service,
           model, token counts, latency, and real dollar cost via Cloudflare AI
           Gateway) so you can view usage history and we can enforce weekly and
@@ -174,37 +174,37 @@ export function PrivacyPolicyPage() {
       <LegalSection title="3. How We Use Your Information">
         <LegalList>
           <li>
-            <Emph>Providing the Services</Emph> — to operate your agent and
+            <Emph>Providing the Services</Emph> - to operate your agent and
             sandbox, maintain your workspace, route inbound messages across
             surfaces, and facilitate the integrations you connect
           </li>
           <li>
-            <Emph>Authentication</Emph> — to verify your identity via Google
+            <Emph>Authentication</Emph> - to verify your identity via Google
             OAuth or magic-link email and manage your session
           </li>
           <li>
-            <Emph>Personalization</Emph> — to enable your agent to remember
+            <Emph>Personalization</Emph> - to enable your agent to remember
             preferences, context, and prior interactions across sessions and
             platforms
           </li>
           <li>
-            <Emph>Communication</Emph> — to send you transactional emails
+            <Emph>Communication</Emph> - to send you transactional emails
             (magic-link sign-in, usage notifications at 50/75/90/100% of
             budget, subscription events) and, with your consent, product
             updates
           </li>
           <li>
-            <Emph>Billing</Emph> — to process subscriptions, meter usage
+            <Emph>Billing</Emph> - to process subscriptions, meter usage
             against plan caps, and reconcile BYOK vs bundled cost
           </li>
           <li>
-            <Emph>Security &amp; abuse prevention</Emph> — to enforce rate
+            <Emph>Security &amp; abuse prevention</Emph> - to enforce rate
             limits, verify webhook signatures (Slack HMAC-SHA256, Telegram,
             Dodo Payments), detect unauthorized access, and protect
             infrastructure
           </li>
           <li>
-            <Emph>Improvement</Emph> — to diagnose technical issues, monitor
+            <Emph>Improvement</Emph> - to diagnose technical issues, monitor
             model behavior via aggregated analytics, and improve the Services
           </li>
         </LegalList>
@@ -225,53 +225,53 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Google</Emph> — if you sign in with Google or connect Google
+            <Emph>Google</Emph> - if you sign in with Google or connect Google
             Workspace tools, your account data, calendar events, and files
             are exchanged with Google&rsquo;s APIs as needed
           </li>
           <li>
-            <Emph>Composio</Emph> — manages OAuth and executes tool calls
+            <Emph>Composio</Emph> - manages OAuth and executes tool calls
             against 1,000+ SaaS apps you connect. Prompts, parameters, and
             returned results for tools you invoke are processed by Composio
             on your behalf
           </li>
           <li>
-            <Emph>Slack &amp; Telegram</Emph> — if you connect these services,
+            <Emph>Slack &amp; Telegram</Emph> - if you connect these services,
             messages, files, and metadata are processed to enable
             communication with your agent
           </li>
           <li>
-            <Emph>Model providers</Emph> — prompts and conversations are sent
+            <Emph>Model providers</Emph> - prompts and conversations are sent
             to the LLM provider serving your plan. By default, bundled tiers
             run on Cloudflare Workers AI and AI Gateway. Pro traffic can
             downgrade to Google Gemini when budget is tight. If you provide a
             BYOK OpenRouter key, your traffic is routed directly through
-            OpenRouter — see{" "}
+            OpenRouter - see{" "}
             <InlineLink href="https://openrouter.ai/privacy">
               OpenRouter&rsquo;s privacy policy
             </InlineLink>
           </li>
           <li>
-            <Emph>TinyFish</Emph> — powers the remote browser for the agent.
+            <Emph>TinyFish</Emph> - powers the remote browser for the agent.
             Target URLs and form data relevant to a browsing task are sent to
             TinyFish; rendered frames are streamed back for you to view
           </li>
           <li>
-            <Emph>AgentMail</Emph> — provides the{" "}
+            <Emph>AgentMail</Emph> - provides the{" "}
             <Emph>@agents.construct.computer</Emph> inbox. Inbound and
             outbound email content is handled by AgentMail
           </li>
           <li>
             <Emph>ElevenLabs (Scribe Realtime)</Emph> &amp;{" "}
-            <Emph>Cloudflare Whisper</Emph> — voice input audio is transcribed
+            <Emph>Cloudflare Whisper</Emph> - voice input audio is transcribed
             via these providers. Audio is not retained after transcription
           </li>
           <li>
-            <Emph>Mem0</Emph> — hosts your agent&rsquo;s long-term semantic
+            <Emph>Mem0</Emph> - hosts your agent&rsquo;s long-term semantic
             memory. Extracted facts are stored and queried via Mem0
           </li>
           <li>
-            <Emph>Custom apps from the App Registry</Emph> — when you invoke
+            <Emph>Custom apps from the App Registry</Emph> - when you invoke
             an app tool, parameters are routed through our registry worker to
             the app&rsquo;s Cloudflare Worker endpoint, with your injected
             credentials for that app
@@ -319,39 +319,39 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Per-user isolation</Emph> — each user runs on a dedicated
+            <Emph>Per-user isolation</Emph> - each user runs on a dedicated
             Cloudflare Durable Object with its own SQLite state and a
             dedicated Cloudflare Sandbox (Docker) container. Workspace data is
             separated at the storage layer, not at the application layer
           </li>
           <li>
-            <Emph>Encryption at rest</Emph> — OAuth tokens, BYOK API keys, and
+            <Emph>Encryption at rest</Emph> - OAuth tokens, BYOK API keys, and
             App Registry credentials are encrypted with AES-256-GCM (Web
             Crypto) before being written to D1, and decrypted only at
             call-time
           </li>
           <li>
-            <Emph>Resource &amp; budget limits</Emph> — each container has CPU,
+            <Emph>Resource &amp; budget limits</Emph> - each container has CPU,
             memory, and timeout limits; each user has a rolling 4-hour burst
             cap and a weekly spending cap, both denominated in real provider
             cost via Cloudflare AI Gateway
           </li>
           <li>
-            <Emph>Rate limiting</Emph> — authentication endpoints, app calls,
+            <Emph>Rate limiting</Emph> - authentication endpoints, app calls,
             and API routes are rate-limited to prevent brute-force and
             resource-abuse attacks
           </li>
           <li>
-            <Emph>Webhook verification</Emph> — Slack HMAC-SHA256 signatures
+            <Emph>Webhook verification</Emph> - Slack HMAC-SHA256 signatures
             with a 5-minute replay window, Telegram bot-token verification,
             and signed Dodo Payments events
           </li>
           <li>
-            <Emph>JWT authentication</Emph> — sessions are managed via signed
+            <Emph>JWT authentication</Emph> - sessions are managed via signed
             JSON Web Tokens with configurable expiration
           </li>
           <li>
-            <Emph>Role &amp; access control</Emph> — inbound senders on Slack,
+            <Emph>Role &amp; access control</Emph> - inbound senders on Slack,
             Telegram, and email are tagged OWNER, TRUSTED, GUEST, or BLOCKED
             before the agent ever sees the message, and non-trusted senders
             go to an approval queue
@@ -369,7 +369,7 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Bundled (default)</Emph> — your plan includes a weekly
+            <Emph>Bundled (default)</Emph> - your plan includes a weekly
             budget in USD at real model cost via Cloudflare AI Gateway, with a
             rolling 4-hour burst cap. Usage is metered per-generation and is
             visible in your account&rsquo;s usage history. Pro automatically
@@ -377,7 +377,7 @@ export function PrivacyPolicyPage() {
             hard-stops at 100%
           </li>
           <li>
-            <Emph>BYOK</Emph> — you may provide your own API keys (e.g.
+            <Emph>BYOK</Emph> - you may provide your own API keys (e.g.
             OpenRouter). BYOK traffic is billed directly by the provider, does
             not count against your bundled budget, and is used solely to make
             requests on your behalf. We do not monitor, log, or retain the
@@ -391,25 +391,25 @@ export function PrivacyPolicyPage() {
         <p>We retain your data as follows:</p>
         <LegalList>
           <li>
-            <Emph>Account data</Emph> — retained for as long as your account
+            <Emph>Account data</Emph> - retained for as long as your account
             is active. You may request deletion at any time
           </li>
           <li>
-            <Emph>Virtual desktop data</Emph> — workspace files, agent memory,
+            <Emph>Virtual desktop data</Emph> - workspace files, agent memory,
             chat history, audit logs, calendar, and agent email persist for
             as long as your account is active and are deleted when your
             account is closed
           </li>
           <li>
-            <Emph>Voice audio</Emph> — not retained; only the transcript is
+            <Emph>Voice audio</Emph> - not retained; only the transcript is
             saved to the conversation
           </li>
           <li>
-            <Emph>Webhook event IDs</Emph> — retained briefly for idempotency
+            <Emph>Webhook event IDs</Emph> - retained briefly for idempotency
             and replay protection, then pruned
           </li>
           <li>
-            <Emph>Waitlist data</Emph> — email addresses and responses are
+            <Emph>Waitlist data</Emph> - email addresses and responses are
             retained until you are granted access or request removal
           </li>
         </LegalList>
@@ -449,7 +449,7 @@ export function PrivacyPolicyPage() {
           </li>
         </LegalList>
         <p>
-          To exercise any of these rights, please contact us — see our{" "}
+          To exercise any of these rights, please contact us - see our{" "}
           <InlineLink href="/support">Support page</InlineLink>.
         </p>
       </LegalSection>

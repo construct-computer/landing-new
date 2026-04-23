@@ -16,7 +16,7 @@ import { Link } from "@/router"
 export const BETA_URL = "https://beta.construct.computer"
 
 export const SECTION_BLURB =
-  "Construct is built to adapt to your task — it connects the tools you already use and runs end-to-end workflows autonomously, with a full audit trail you can inspect at any time."
+  "Construct is built to adapt your task, it handles everything and can automate most of the workflows without any monitoring."
 
 /**
  * Per-feature copy. Each card now has a distinct paragraph so the page has
@@ -27,12 +27,12 @@ export const FEATURES: readonly { title: string; description: string }[] = [
   {
     title: "Construct Browsing",
     description:
-      "A real web browser inside your Construct sandbox. The agent navigates pages, fills forms, clicks through flows, and returns structured results — handled by TinyFish so sessions persist across tasks.",
+      "A real web browser inside your Construct sandbox. The agent navigates pages, fills forms, clicks through flows, and returns structured results - handled by TinyFish so sessions persist across tasks.",
   },
   {
     title: "Research and Reports",
     description:
-      "Ask for a brief and the agent gathers sources, cross-references them, and writes a Markdown or PDF report straight into your R2 workspace — citations included, ready to share.",
+      "Ask for a brief and the agent gathers sources, cross-references them, and writes a Markdown or PDF report straight into your R2 workspace - citations included, ready to share.",
   },
   {
     title: "Live Terminal",
@@ -185,7 +185,7 @@ export function LandingNav() {
       <div className="mx-auto flex h-12 w-full max-w-[1500px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-14 lg:px-16">
         <Link
           to="/"
-          aria-label="Construct Computer — home"
+          aria-label="Construct Computer - home"
           className="font-display text-[15px] italic leading-6 lg:text-[18px] lg:leading-7"
         >
           <span className="text-[#4e4646]">Construct</span>
@@ -199,46 +199,48 @@ export function LandingNav() {
 }
 
 /* ------------------------------------------------------------------ */
-/* "What Construct is" — keyword-weighted intro shown after hero       */
+/* "What Construct is" - keyword-weighted intro shown after hero       */
 /* ------------------------------------------------------------------ */
 export function WhatConstructIsSection({ className }: { className?: string }) {
-  return (
-    <section
-      id="what"
-      aria-labelledby="what-heading"
-      className={
-        "mx-auto w-full max-w-3xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
-      }
-    >
-      <h2
-        id="what-heading"
-        className="text-balance text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
-      >
-        <span className="font-ui text-[#4e4646]">The AI employee with their own</span>{" "}
-        <span className="font-display italic text-[#01b4c8]">computer</span>
-      </h2>
-      <div className="font-ui mx-auto mt-6 max-w-[620px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
-        <p>
-          Construct is an <strong className="text-[#4e4646]">AI agent</strong> with
-          its own cloud computer. Every user gets a dedicated Linux sandbox, a
-          real web browser, an email inbox, long-term memory, a calendar, and a
-          live terminal — all wrapped in a virtual desktop you can watch in real
-          time.
-        </p>
-        <p>
-          Reach it from the web, Slack, Telegram, or email. It connects to
-          Gmail, Notion, Linear, Jira, GitHub, HubSpot, and 1,000+ other apps
-          through Composio, and it leaves a full audit log of every action so
-          you stay in control.
-        </p>
-        <p>
-          Built on Cloudflare Durable Objects, D1, R2, and the Sandbox SDK for
-          per-user isolation — with models served through the Cloudflare AI
-          Gateway and BYOK available on every tier.
-        </p>
-      </div>
-    </section>
-  )
+  return <></>
+  // not needed
+  // return (
+  //   <section
+  //     id="what"
+  //     aria-labelledby="what-heading"
+  //     className={
+  //       "mx-auto w-full max-w-3xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
+  //     }
+  //   >
+  //     <h2
+  //       id="what-heading"
+  //       className="text-balance text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
+  //     >
+  //       <span className="font-ui text-[#4e4646]">The AI employee with their own</span>{" "}
+  //       <span className="font-display italic text-[#01b4c8]">computer</span>
+  //     </h2>
+  //     <div className="font-ui mx-auto mt-6 max-w-[620px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
+  //       <p>
+  //         Construct is an <strong className="text-[#4e4646]">AI agent</strong> with
+  //         its own cloud computer. Every user gets a dedicated Linux sandbox, a
+  //         real web browser, an email inbox, long-term memory, a calendar, and a
+  //         live terminal - all wrapped in a virtual desktop you can watch in real
+  //         time.
+  //       </p>
+  //       <p>
+  //         Reach it from the web, Slack, Telegram, or email. It connects to
+  //         Gmail, Notion, Linear, Jira, GitHub, HubSpot, and 1,000+ other apps
+  //         through Composio, and it leaves a full audit log of every action so
+  //         you stay in control.
+  //       </p>
+  //       <p>
+  //         Built on Cloudflare Durable Objects, D1, R2, and the Sandbox SDK for
+  //         per-user isolation - with models served through the Cloudflare AI
+  //         Gateway and BYOK available on every tier.
+  //       </p>
+  //     </div>
+  //   </section>
+  // )
 }
 
 /* ------------------------------------------------------------------ */
@@ -296,7 +298,7 @@ export function FaqSection({ className }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer — intentionally minimal + stylised                          */
+/* Footer - intentionally minimal + stylised                          */
 /* ------------------------------------------------------------------ */
 type FooterLink = { label: string; href: string; external?: boolean }
 
@@ -346,7 +348,7 @@ export function LandingFooter() {
       />
 
       <div className="mx-auto flex w-full max-w-[1500px] flex-col items-center gap-8 px-6 py-14 text-center lg:gap-10 lg:px-16 lg:py-20">
-        {/* Oversized italic wordmark — the footer's one expressive moment. */}
+        {/* Oversized italic wordmark - the footer's one expressive moment. */}
         <span className="font-display text-[30px] italic leading-none text-[#484848] sm:text-[36px] lg:text-[44px]">
           <span className="text-[#4e4646]">Construct</span>
           <span className="text-[#01b4c8]">Computer</span>

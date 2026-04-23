@@ -27,9 +27,8 @@ function HeroHeadline() {
         <span className="text-[#01b4c8]">Works For You</span>
       </h1>
       <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-[#627c86]">
-        Construct is an AI agent with its own cloud computer. It logs into a
-        full virtual desktop, runs code, sends email, and works across Slack,
-        Telegram, and your inbox — scheduled, persistent, on any device.
+        Construct is an AI agent with its own cloud computer - it runs code,
+        sends email, and works across Slack, Telegram, and your inbox.
       </p>
       <EnterExperienceButton className="mt-8" />
     </div>

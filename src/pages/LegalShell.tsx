@@ -10,7 +10,7 @@ import { Link } from "@/router"
 /**
  * Shared page shell for the static content pages (Privacy, Terms, Support…).
  * Pass either `updated` (for policy pages) or `subtitle` (for descriptive
- * pages like Support) — whichever makes sense for the content.
+ * pages like Support) - whichever makes sense for the content.
  */
 export function LegalShell({
   title,

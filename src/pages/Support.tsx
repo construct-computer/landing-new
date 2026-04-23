@@ -16,17 +16,17 @@ export function SupportPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Audit Logs window</Emph> — inside the desktop, every tool
+            <Emph>Audit Logs window</Emph> - inside the desktop, every tool
             call, sub-agent, command, and error is recorded with a timestamp,
             platform source, and result. If something went wrong, the entry is
             almost always there.
           </li>
           <li>
-            <Emph>Activity cards in chat</Emph> — each card is expandable and
+            <Emph>Activity cards in chat</Emph> - each card is expandable and
             shows the exact inputs and outputs of the tool call the agent ran.
           </li>
           <li>
-            <Emph>Usage panel in Settings</Emph> — shows your current weekly
+            <Emph>Usage panel in Settings</Emph> - shows your current weekly
             and 4-hour burst usage, and which model the agent is on. Many
             &ldquo;the agent stopped mid-task&rdquo; reports are budget-caps.
           </li>
@@ -59,20 +59,20 @@ export function SupportPage() {
             <InlineLink href="https://discord.gg/puArEQHYN9">
               Discord
             </InlineLink>{" "}
-            — primary community hub for discussions, support, and feature
+            - primary community hub for discussions, support, and feature
             requests
           </li>
           <li>
             <InlineLink href="https://x.com/use_construct">
               X / Twitter
             </InlineLink>{" "}
-            — product updates and announcements
+            - product updates and announcements
           </li>
           <li>
             <InlineLink href="https://github.com/construct-computer">
               GitHub
             </InlineLink>{" "}
-            — file issues, read the source, or publish an app to the registry
+            - file issues, read the source, or publish an app to the registry
           </li>
         </LegalList>
       </LegalSection>
@@ -90,7 +90,7 @@ export function SupportPage() {
           <li>Screenshots or screen recordings, if applicable</li>
           <li>
             Any relevant entries from the <Emph>Audit Logs</Emph> window in the
-            desktop interface — these contain the exact tool call trace
+            desktop interface - these contain the exact tool call trace
           </li>
           <li>
             Your approximate timestamp in UTC and your account email, so we
@@ -133,21 +133,21 @@ export function SupportPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Upgrade / downgrade / cancel</Emph> — available directly
+            <Emph>Upgrade / downgrade / cancel</Emph> - available directly
             in-app; changes take effect at the next billing cycle.
           </li>
           <li>
-            <Emph>Pro auto-downgrade</Emph> — at 80% of the weekly budget, the
+            <Emph>Pro auto-downgrade</Emph> - at 80% of the weekly budget, the
             agent automatically switches to a lighter model to stretch the
             remaining budget. It hard-stops at 100% until the week rolls over.
           </li>
           <li>
-            <Emph>Bonus credits</Emph> — Pro users can earn additional weekly
+            <Emph>Bonus credits</Emph> - Pro users can earn additional weekly
             budget by tweeting about the product; the bonus is verified and
             applied automatically.
           </li>
           <li>
-            <Emph>Bring your own key</Emph> — available on every tier. BYOK
+            <Emph>Bring your own key</Emph> - available on every tier. BYOK
             traffic does not count against your bundled budget and is billed
             directly by the provider.
           </li>
@@ -174,7 +174,7 @@ export function SupportPage() {
         </p>
         <p>
           If the agent is not responding to an inbound message you expected it
-          to act on, check Access Control first — the message is almost
+          to act on, check Access Control first - the message is almost
           certainly pending your approval.
         </p>
       </LegalSection>
@@ -195,7 +195,7 @@ export function SupportPage() {
           <li>Include your account email address</li>
           <li>
             Specify whether you are requesting data access, correction, export,
-            or deletion — and whether the request applies to your agent
+            or deletion - and whether the request applies to your agent
             memory, workspace files, chat history, audit log, or all data
           </li>
         </LegalList>

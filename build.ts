@@ -125,7 +125,7 @@ console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? 
 // Inline the env vars that `src/seo/jsonLd.ts` reads at module scope. Without
 // this the client bundle would contain a bare `process.env.SITE_URL`
 // reference, and since `process` is undefined in the browser it would throw
-// `ReferenceError: process is not defined` during hydration — taking every
+// `ReferenceError: process is not defined` during hydration - taking every
 // downstream effect down with it (including the responsive layout swap).
 const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
 
@@ -184,7 +184,7 @@ if (existsSync(logoSrc)) {
 }
 
 // Emit the OG/Twitter share card at a stable, unhashed path. The source is
-// a 1200×630 PNG (~310 KB) — just over WhatsApp's ~300 KB share-image cap.
+// a 1200×630 PNG (~310 KB) - just over WhatsApp's ~300 KB share-image cap.
 // Where `sips` is available we transcode it to JPEG at quality 90 (~125 KB,
 // still 1200×630) which:
 //   - every OG scraper understands (Facebook, LinkedIn, X, Discord,
@@ -192,7 +192,7 @@ if (existsSync(logoSrc)) {
 //   - fits comfortably under WhatsApp's limit,
 //   - hits the canonical 1.91:1 landscape ratio that Facebook, LinkedIn
 //     and X all recommend for `summary_large_image`.
-// On non-macOS CI we fall back to copying the PNG verbatim — still valid
+// On non-macOS CI we fall back to copying the PNG verbatim - still valid
 // for every scraper, just slightly over WhatsApp's threshold.
 const ogCardSrc = path.resolve("src/assets/og-card.png");
 const ogCardJpgDest = path.join(outdir, "og-card.jpg");
@@ -234,7 +234,7 @@ if (existsSync(ogCardSrc)) {
     await copyFile(ogCardSrc, ogCardPngDest);
     const bytes = Bun.file(ogCardJpgDest).size;
     console.log(
-      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, PNG fallback — sips unavailable)`,
+      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, PNG fallback - sips unavailable)`,
     );
   }
 }
@@ -281,7 +281,7 @@ const ROOT_BLOCK = /<!--\s*ssg:root\s*-->[\s\S]*?<!--\s*\/ssg:root\s*-->/;
 /* Asset URL remap                                                      */
 /*                                                                      */
 /* When we `await import("./src/App")` in this build script, Bun runs   */
-/* those imports with its *runtime* loader, not the bundler — so        */
+/* those imports with its *runtime* loader, not the bundler - so        */
 /* `import img from "@/assets/report.png"` returns the absolute file    */
 /* path (e.g. /Users/.../src/assets/report.png on dev, or               */
 /* /opt/buildhome/repo/src/assets/report.png on Cloudflare Pages).      */

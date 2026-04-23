@@ -34,7 +34,7 @@ export type RouteMeta = {
   readonly ogImageWidth: number
   /** Pixel height of `ogImage`. */
   readonly ogImageHeight: number
-  /** MIME type of `ogImage` — `image/png`, `image/jpeg`, `image/webp`. */
+  /** MIME type of `ogImage` - `image/png`, `image/jpeg`, `image/webp`. */
   readonly ogImageType: string
   /** Accessibility/alt text for `ogImage` (Slack renders this). */
   readonly ogImageAlt: string
@@ -79,9 +79,9 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/",
-    title: "Construct Computer — the AI employee with their own computer",
+    title: "Construct Computer - the AI employee with their own computer",
     description:
-      "Construct is an AI agent with its own cloud computer. It logs into a full virtual desktop, runs code, sends email, and works across Slack, Telegram, and your inbox — scheduled, persistent, on any device.",
+      "Construct is an AI agent with its own cloud computer. It logs into a full virtual desktop, runs code, sends email, and works across Slack, Telegram, and your inbox - scheduled, persistent, on any device.",
     keywords:
       "AI agent, AI employee, autonomous AI, virtual desktop, cloud desktop, AI assistant, Construct Computer, AI for Slack, AI for Telegram, AI for email, Cloudflare agent",
     canonical: canonical("/"),
@@ -90,9 +90,9 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/about",
-    title: "About — Construct Computer",
+    title: "About - Construct Computer",
     description:
-      "Construct is building the AI employee — a persistent agent with its own Linux sandbox, browser, inbox, memory, and calendar. Learn about the team, the architecture, and what we believe.",
+      "Construct is building the AI employee - a persistent agent with its own Linux sandbox, browser, inbox, memory, and calendar. Learn about the team, the architecture, and what we believe.",
     keywords: `${KEYWORDS_COMMON}, about Construct, AI employee company, Cloudflare Durable Objects, Composio`,
     canonical: canonical("/about"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "About", path: "/about" })],
@@ -100,7 +100,7 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/careers",
-    title: "Careers — Construct Computer",
+    title: "Careers - Construct Computer",
     description:
       "Construct isn't actively hiring right now, but we'd love to hear from people who want to build AI agents, virtual desktops, and autonomous systems with us.",
     keywords: `${KEYWORDS_COMMON}, AI startup jobs, AI agent jobs, careers at Construct`,
@@ -110,7 +110,7 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/support",
-    title: "Support — Construct Computer",
+    title: "Support - Construct Computer",
     description:
       "Get help with your Construct Computer account, billing, integrations, and data requests. Report issues, review audit logs, or contact the team.",
     keywords: `${KEYWORDS_COMMON}, Construct support, AI agent help, AI agent debugging, audit log`,
@@ -120,7 +120,7 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/privacy",
-    title: "Privacy Policy — Construct Computer",
+    title: "Privacy Policy - Construct Computer",
     description:
       "How Construct Computer collects, stores, encrypts, and shares data across the agent backend, virtual desktop, integrations, and billing provider.",
     keywords: `${KEYWORDS_COMMON}, privacy policy, AI agent privacy, AES-256-GCM, Cloudflare privacy`,
@@ -130,7 +130,7 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/terms",
-    title: "Terms & Conditions — Construct Computer",
+    title: "Terms & Conditions - Construct Computer",
     description:
       "Terms of service for Construct Computer: subscription plans, acceptable use, autonomous agent actions, BYOK, and licensing of our source-available components.",
     keywords: `${KEYWORDS_COMMON}, terms of service, BSL 1.1, acceptable use policy, BYOK`,

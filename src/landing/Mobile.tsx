@@ -18,7 +18,7 @@ import {
 /* ------------------------------------------------------------------ */
 /**
  * Portal width. `min()` capping in three dimensions so the portal:
- *   1. can extend past the viewport width on narrow phones (`120vw`) — the
+ *   1. can extend past the viewport width on narrow phones (`120vw`) - the
  *      sides of the video sit outside the visible area so the visible arc
  *      at the bottom reads as a wider semicircle.
  *   2. never gets taller than ~80% of the dynamic viewport (landscape)
@@ -46,7 +46,7 @@ function HeroHeadline() {
       </h1>
       <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
         An AI agent with its own cloud computer. It logs into a full virtual
-        desktop and works across Slack, Telegram, and email — scheduled,
+        desktop and works across Slack, Telegram, and email - scheduled,
         persistent, on any device.
       </p>
       <EnterExperienceButton className="mt-7" />
@@ -60,7 +60,7 @@ function HeroHeadline() {
 /**
  * The hero fills exactly one viewport (minus the nav). The portal is the
  * full square video, anchored so its CENTER sits on the hero's bottom edge
- * — so the top half peeks above the fold, the bottom half is revealed by
+ * - so the top half peeks above the fold, the bottom half is revealed by
  * scrolling. The video is rendered at its full size; nothing is clipped.
  */
 function HeroWithStraddlingPortal() {
@@ -93,7 +93,7 @@ function HeroWithStraddlingPortal() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Showcase — the UI capabilities stacked vertically                  */
+/* Showcase - the UI capabilities stacked vertically                  */
 /* ------------------------------------------------------------------ */
 function ShowcaseStrip() {
   return (
@@ -116,7 +116,7 @@ function ShowcaseStrip() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Features — single column                                           */
+/* Features - single column                                           */
 /* ------------------------------------------------------------------ */
 function MobileFeatureGrid() {
   return (
