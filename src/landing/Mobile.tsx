@@ -2,20 +2,18 @@ import imgChat from "@/assets/chat.png"
 import imgReport from "@/assets/report.png"
 import {
   AdaptsSection,
-  EarlyAccessPill,
   EnterExperienceButton,
   FEATURES,
   FeatureCard,
   LandingFooter,
+  LandingNav,
+  NAV_HEIGHT_PX,
   PortalVideo,
 } from "./shared"
 
 /* ------------------------------------------------------------------ */
 /* Shared sizing tokens                                               */
 /* ------------------------------------------------------------------ */
-/** Nav height — used to subtract from viewport when sizing the hero. */
-const NAV_HEIGHT_PX = 48
-
 /**
  * Portal width. `min()` capping in three dimensions so the portal:
  *   1. can extend past the viewport width on narrow phones (`120vw`) — the
@@ -35,26 +33,6 @@ const PORTAL_HALF = "min(75vw, 50dvh, 450px)"
  * edge, so we can tighten this without visibly clipping the animation.
  */
 const PORTAL_REVEAL = "min(42vw, 28dvh, 240px)"
-
-/* ------------------------------------------------------------------ */
-/* Nav                                                                */
-/* ------------------------------------------------------------------ */
-function MobileNav() {
-  return (
-    <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-xl">
-      <div
-        className="flex items-center justify-between px-4"
-        style={{ height: NAV_HEIGHT_PX }}
-      >
-        <a href="/" className="font-display text-[15px] italic leading-6">
-          <span className="text-[#4e4646]">Construct</span>
-          <span className="text-[#01b4c8]">Computer</span>
-        </a>
-        <EarlyAccessPill className="px-3 py-1.5 text-[11px]" />
-      </div>
-    </header>
-  )
-}
 
 /* ------------------------------------------------------------------ */
 /* Hero text                                                          */
@@ -151,7 +129,7 @@ function MobileFeatureGrid() {
       <h2 id="features-heading-mobile" className="sr-only">
         Product capabilities
       </h2>
-      <div className="divide-y divide-[#e5e7eb] border-y border-[#e5e7eb]">
+      <div className="divide-y divide-[#e5e7eb] border-[#e5e7eb]">
         {FEATURES.map((f) => (
           <FeatureCard key={f.title} title={f.title} compact />
         ))}
@@ -164,7 +142,7 @@ function MobileFeatureGrid() {
 export function MobileLanding() {
   return (
     <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-white text-[#4e4646]">
-      <MobileNav />
+      <LandingNav />
       <HeroWithStraddlingPortal />
       <ShowcaseStrip />
       <AdaptsSection className="pb-8 pt-2" />

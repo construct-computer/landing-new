@@ -3,49 +3,15 @@ import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
 import {
   AdaptsSection,
-  EarlyAccessPill,
   EnterExperienceButton,
   FEATURES,
   FeatureCard,
   LandingFooter,
+  LandingNav,
   PortalVideo,
   WORKFLOW_CHIPS,
   WorkflowChip,
 } from "./shared"
-
-/* ------------------------------------------------------------------ */
-/* Nav                                                                */
-/* ------------------------------------------------------------------ */
-function DesktopNav() {
-  return (
-    <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 w-full max-w-[1500px] items-center justify-between gap-4 px-6 lg:px-16">
-        <a href="/" className="font-display text-[18px] italic leading-7">
-          <span className="text-[#4e4646]">Construct</span>
-          <span className="text-[#01b4c8]">Computer</span>
-        </a>
-
-        <nav
-          aria-label="Main"
-          className="flex items-center gap-[26px] text-[14px] leading-5 text-[#6d6d6d]"
-        >
-          {/* these 3 dont exist yet */}
-          {/* <a href="#docs" className="whitespace-nowrap hover:text-[#484848]">
-            Documentation
-          </a>
-          <a href="#blog" className="whitespace-nowrap hover:text-[#484848]">
-            Blog
-          </a>
-          <a href="#status" className="whitespace-nowrap hover:text-[#484848]">
-            Status
-          </a> */}
-        </nav>
-
-        <EarlyAccessPill />
-      </div>
-    </header>
-  )
-}
 
 /* ------------------------------------------------------------------ */
 /* Hero                                                               */
@@ -133,7 +99,7 @@ function FeatureGrid() {
       <h2 id="features-heading-desktop" className="sr-only">
         Product capabilities
       </h2>
-      <div className="relative border-y border-[#e5e7eb]">
+      <div className="relative">
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[#e5e7eb]"
@@ -156,7 +122,7 @@ function FeatureGrid() {
 export function DesktopLanding() {
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-white text-[#4e4646]">
-      <DesktopNav />
+      <LandingNav />
       <HeroStage />
       <AdaptsSection />
       <FeatureGrid />

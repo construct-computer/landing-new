@@ -6,6 +6,7 @@ import bgVideoMp4 from "@/assets/hero-bg.mp4"
 import imgDocs from "@/assets/docs.png"
 import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
+import { Link } from "@/router"
 
 /* ------------------------------------------------------------------ */
 /* Shared data                                                        */
@@ -137,6 +138,30 @@ export function EarlyAccessPill({ className }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Top navigation (shared between landing + legal pages)              */
+/* ------------------------------------------------------------------ */
+/** Kept in sync with the mobile hero's `NAV_HEIGHT_PX` (48px). */
+export const NAV_HEIGHT_PX = 48
+
+export function LandingNav() {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-xl lg:bg-white/60">
+      <div className="mx-auto flex h-12 w-full max-w-[1500px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-14 lg:px-16">
+        <Link
+          to="/"
+          className="font-display text-[15px] italic leading-6 lg:text-[18px] lg:leading-7"
+        >
+          <span className="text-[#4e4646]">Construct</span>
+          <span className="text-[#01b4c8]">Computer</span>
+        </Link>
+
+        <EarlyAccessPill className="px-3 py-1.5 text-[11px] lg:px-4 lg:py-2 lg:text-[12px]" />
+      </div>
+    </header>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /* Mid-section heading ("It Adapts, Learns and Automates...")         */
 /* ------------------------------------------------------------------ */
 export function AdaptsSection({ className }: { className?: string }) {
@@ -160,11 +185,11 @@ type FooterLink = { label: string; href: string; external?: boolean }
 
 const FOOTER_LINKS: readonly FooterLink[] = [
   { label: "Beta", href: BETA_URL, external: true },
-  { label: "About", href: "#about" },
-  { label: "Careers", href: "#careers" },
-  { label: "Contact", href: "mailto:hello@construct.computer" },
-  { label: "Privacy Policy", href: "#privacy" },
-  { label: "Terms", href: "#terms" },
+  { label: "About", href: "/about" },
+  { label: "Careers", href: "/careers" },
+  { label: "Support", href: "/support" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
 ]
 
 function SocialIconLink({
@@ -223,14 +248,14 @@ export function LandingFooter() {
                   className="hidden h-[3px] w-[3px] rounded-full bg-[#cfd7db] sm:inline-block"
                 />
               )}
-              <a
-                href={l.href}
+              <Link
+                to={l.href}
                 target={l.external ? "_blank" : undefined}
                 rel={l.external ? "noopener noreferrer" : undefined}
                 className="transition-colors duration-150 hover:text-[#01b4c8]"
               >
                 {l.label}
-              </a>
+              </Link>
             </Fragment>
           ))}
         </nav>
@@ -250,6 +275,17 @@ export function LandingFooter() {
               <path
                 fill="currentColor"
                 d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.12-1.47-1.12-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.52 9.52 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48A10 10 0 0 0 12 2Z"
+              />
+            </svg>
+          </SocialIconLink>
+          <SocialIconLink
+            href="https://discord.gg/puArEQHYN9"
+            label="Discord"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+              <path
+                fill="currentColor"
+                d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.168.3-.355.693-.485 1.003a18.27 18.27 0 0 0-5.487 0 12.642 12.642 0 0 0-.492-1.003.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 6.18 4.369a.07.07 0 0 0-.032.027C2.78 9.36 1.875 14.2 2.32 18.977a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.995a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.893.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.372.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.699.772 1.364 1.225 1.994a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .031-.055c.5-5.177-.838-9.982-3.548-14.581a.06.06 0 0 0-.031-.028ZM8.02 15.708c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.974 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.947 2.418-2.157 2.418Z"
               />
             </svg>
           </SocialIconLink>
