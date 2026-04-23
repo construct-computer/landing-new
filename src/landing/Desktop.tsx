@@ -4,11 +4,13 @@ import imgSearchbar from "@/assets/searchbar.png"
 import {
   AdaptsSection,
   EnterExperienceButton,
+  FaqSection,
   FEATURES,
   FeatureCard,
   LandingFooter,
   LandingNav,
   PortalVideo,
+  WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
 } from "./shared"
@@ -24,10 +26,10 @@ function HeroHeadline() {
         <span>Computer that </span>
         <span className="text-[#01b4c8]">Works For You</span>
       </h1>
-      <p className="font-ui mt-6 max-w-[495px] text-[16px] leading-[21px] text-[#627c86]">
-        Deploy AI agents to the cloud. They research, code and create.
-        <br />
-        Scheduled, persistent, from any device.
+      <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-[#627c86]">
+        Construct is an AI agent with its own cloud computer. It logs into a
+        full virtual desktop, runs code, sends email, and works across Slack,
+        Telegram, and your inbox — scheduled, persistent, on any device.
       </p>
       <EnterExperienceButton className="mt-8" />
     </div>
@@ -53,8 +55,7 @@ function HeroStage() {
 
         <img
           src={imgReport}
-          alt=""
-          aria-hidden
+          alt="Generated PDF research report produced by the Construct AI agent"
           className="pointer-events-none absolute left-1/2 top-[4%] z-20 w-[424px] -translate-x-[35%] drop-shadow-[0_20px_40px_rgba(71,156,223,0.15)]"
         />
 
@@ -71,15 +72,13 @@ function HeroStage() {
 
         <img
           src={imgChat}
-          alt=""
-          aria-hidden
+          alt="Construct agent chat window handling an inbound email autonomously"
           className="pointer-events-none absolute bottom-[18%] left-[18%] z-20 w-[320px] drop-shadow-[0_16px_40px_rgba(71,156,223,0.18)]"
         />
 
         <img
           src={imgSearchbar}
-          alt=""
-          aria-hidden
+          alt="macOS-style Spotlight search inside the Construct virtual desktop"
           className="pointer-events-none absolute bottom-[10%] right-0 z-20 w-[455px] drop-shadow-[0_14px_30px_rgba(71,156,223,0.15)]"
         />
       </div>
@@ -106,11 +105,11 @@ function FeatureGrid() {
         />
         <div className="grid grid-cols-2 divide-y-0">
           {FEATURES.slice(0, 2).map((f) => (
-            <FeatureCard key={f.title} title={f.title} />
+            <FeatureCard key={f.title} title={f.title} description={f.description} />
           ))}
           <div aria-hidden className="col-span-2 h-px w-full bg-[#e5e7eb]" />
           {FEATURES.slice(2).map((f) => (
-            <FeatureCard key={f.title} title={f.title} />
+            <FeatureCard key={f.title} title={f.title} description={f.description} />
           ))}
         </div>
       </div>
@@ -123,9 +122,13 @@ export function DesktopLanding() {
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-white text-[#4e4646]">
       <LandingNav />
-      <HeroStage />
-      <AdaptsSection />
-      <FeatureGrid />
+      <main id="main">
+        <HeroStage />
+        <WhatConstructIsSection />
+        <AdaptsSection />
+        <FeatureGrid />
+        <FaqSection />
+      </main>
       <LandingFooter />
     </div>
   )

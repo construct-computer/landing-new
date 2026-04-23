@@ -2,19 +2,33 @@
 import { serve } from "bun";
 import index from "./index.html";
 
+/**
+ * Dev server. In prod the site is served as pre-rendered static files
+ * produced by `build.ts`, so this is really just a convenience wrapper
+ * for `bun dev`. We map every known client-side route to the same
+ * `index.html` so direct-hit URLs (e.g. `/about`) resolve instead of
+ * 404-ing.
+ */
 const server = serve({
   routes: {
-    // Serve index.html for all unmatched routes.
+    "/": index,
+    "/about": index,
+    "/careers": index,
+    "/support": index,
+    "/privacy": index,
+    "/terms": index,
+
+    // Fallback: serve the SPA shell for any other path.
     "/*": index,
 
     "/api/hello": {
-      async GET(req) {
+      async GET() {
         return Response.json({
           message: "Hello, world!",
           method: "GET",
         });
       },
-      async PUT(req) {
+      async PUT() {
         return Response.json({
           message: "Hello, world!",
           method: "PUT",
@@ -31,10 +45,7 @@ const server = serve({
   },
 
   development: process.env.NODE_ENV !== "production" && {
-    // Enable browser hot reloading in development
     hmr: true,
-
-    // Echo console logs from the browser to the server
     console: true,
   },
 });

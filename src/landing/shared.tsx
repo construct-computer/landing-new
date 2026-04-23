@@ -3,9 +3,11 @@ import type { CSSProperties, ReactNode } from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
+import logoPoster from "@/assets/logo.png"
 import imgDocs from "@/assets/docs.png"
 import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
+import { LANDING_FAQ } from "@/content/faq"
 import { Link } from "@/router"
 
 /* ------------------------------------------------------------------ */
@@ -14,13 +16,34 @@ import { Link } from "@/router"
 export const BETA_URL = "https://beta.construct.computer"
 
 export const SECTION_BLURB =
-  "Construct is built to adapt your task, it handles everything and can automate most of the workflows without any monitoring."
+  "Construct is built to adapt to your task — it connects the tools you already use and runs end-to-end workflows autonomously, with a full audit trail you can inspect at any time."
 
-export const FEATURES: readonly { title: string }[] = [
-  { title: "Construct Browsing" },
-  { title: "Research and Reports" },
-  { title: "Live Terminal" },
-  { title: "Manages Emails" },
+/**
+ * Per-feature copy. Each card now has a distinct paragraph so the page has
+ * unique indexable text for every capability rather than repeating the same
+ * blurb four times.
+ */
+export const FEATURES: readonly { title: string; description: string }[] = [
+  {
+    title: "Construct Browsing",
+    description:
+      "A real web browser inside your Construct sandbox. The agent navigates pages, fills forms, clicks through flows, and returns structured results — handled by TinyFish so sessions persist across tasks.",
+  },
+  {
+    title: "Research and Reports",
+    description:
+      "Ask for a brief and the agent gathers sources, cross-references them, and writes a Markdown or PDF report straight into your R2 workspace — citations included, ready to share.",
+  },
+  {
+    title: "Live Terminal",
+    description:
+      "Each user gets a dedicated Linux sandbox. The agent runs shell commands, Python, and the GitHub CLI, writes files, and ships code changes while you watch the terminal stream live.",
+  },
+  {
+    title: "Manages Emails",
+    description:
+      "Construct has its own email address. It triages your inbox, drafts replies, schedules meetings, and loops you in via Slack or Telegram when it needs a decision.",
+  },
 ]
 
 export const WORKFLOW_CHIPS: readonly { icon: string; label: string; offset: string }[] = [
@@ -60,7 +83,8 @@ export function PortalVideo({ className }: { className?: string }) {
       autoPlay
       loop
       playsInline
-      preload="auto"
+      preload="metadata"
+      poster={logoPoster}
       aria-hidden
       className={className ?? "h-full w-full object-cover"}
     >
@@ -143,12 +167,25 @@ export function EarlyAccessPill({ className }: { className?: string }) {
 /** Kept in sync with the mobile hero's `NAV_HEIGHT_PX` (48px). */
 export const NAV_HEIGHT_PX = 48
 
+export function SkipToMain() {
+  return (
+    <a
+      href="#main"
+      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-md focus:bg-black focus:px-3 focus:py-2 focus:text-xs focus:font-medium focus:text-white"
+    >
+      Skip to main content
+    </a>
+  )
+}
+
 export function LandingNav() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-xl lg:bg-white/60">
+      <SkipToMain />
       <div className="mx-auto flex h-12 w-full max-w-[1500px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-14 lg:px-16">
         <Link
           to="/"
+          aria-label="Construct Computer — home"
           className="font-display text-[15px] italic leading-6 lg:text-[18px] lg:leading-7"
         >
           <span className="text-[#4e4646]">Construct</span>
@@ -158,6 +195,49 @@ export function LandingNav() {
         <EarlyAccessPill className="px-3 py-1.5 text-[11px] lg:px-4 lg:py-2 lg:text-[12px]" />
       </div>
     </header>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* "What Construct is" — keyword-weighted intro shown after hero       */
+/* ------------------------------------------------------------------ */
+export function WhatConstructIsSection({ className }: { className?: string }) {
+  return (
+    <section
+      id="what"
+      aria-labelledby="what-heading"
+      className={
+        "mx-auto w-full max-w-3xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
+      }
+    >
+      <h2
+        id="what-heading"
+        className="text-balance text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
+      >
+        <span className="font-ui text-[#4e4646]">The AI employee with their own</span>{" "}
+        <span className="font-display italic text-[#01b4c8]">computer</span>
+      </h2>
+      <div className="font-ui mx-auto mt-6 max-w-[620px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
+        <p>
+          Construct is an <strong className="text-[#4e4646]">AI agent</strong> with
+          its own cloud computer. Every user gets a dedicated Linux sandbox, a
+          real web browser, an email inbox, long-term memory, a calendar, and a
+          live terminal — all wrapped in a virtual desktop you can watch in real
+          time.
+        </p>
+        <p>
+          Reach it from the web, Slack, Telegram, or email. It connects to
+          Gmail, Notion, Linear, Jira, GitHub, HubSpot, and 1,000+ other apps
+          through Composio, and it leaves a full audit log of every action so
+          you stay in control.
+        </p>
+        <p>
+          Built on Cloudflare Durable Objects, D1, R2, and the Sandbox SDK for
+          per-user isolation — with models served through the Cloudflare AI
+          Gateway and BYOK available on every tier.
+        </p>
+      </div>
+    </section>
   )
 }
 
@@ -174,6 +254,43 @@ export function AdaptsSection({ className }: { className?: string }) {
       <p className="font-ui mx-auto mt-6 max-w-[495px] text-[16px] leading-[21px] text-[#627c86]">
         {SECTION_BLURB}
       </p>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* FAQ section (also emitted as FAQPage JSON-LD in the head)           */
+/* ------------------------------------------------------------------ */
+export function FaqSection({ className }: { className?: string }) {
+  return (
+    <section
+      id="faq"
+      aria-labelledby="faq-heading"
+      className={
+        "mx-auto w-full max-w-3xl px-6 pb-16 pt-4 lg:pb-24 " + (className ?? "")
+      }
+    >
+      <h2
+        id="faq-heading"
+        className="text-balance text-center text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
+      >
+        <span className="font-ui text-[#4e4646]">Frequently asked</span>{" "}
+        <span className="font-display italic text-[#01b4c8]">questions</span>
+      </h2>
+      <dl className="font-ui mt-10 divide-y divide-[#e5e7eb] border-t border-[#e5e7eb]">
+        {LANDING_FAQ.map((f) => (
+          <div key={f.question} className="py-6">
+            <dt>
+              <h3 className="text-[18px] leading-[24px] text-[#235061]">
+                {f.question}
+              </h3>
+            </dt>
+            <dd className="mt-2 text-[15px] leading-[22px] text-[#627c86]">
+              {f.answer}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </section>
   )
 }
@@ -285,7 +402,7 @@ export function LandingFooter() {
             <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
               <path
                 fill="currentColor"
-                d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.168.3-.355.693-.485 1.003a18.27 18.27 0 0 0-5.487 0 12.642 12.642 0 0 0-.492-1.003.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 6.18 4.369a.07.07 0 0 0-.032.027C2.78 9.36 1.875 14.2 2.32 18.977a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.995a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.893.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.372.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.699.772 1.364 1.225 1.994a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .031-.055c.5-5.177-.838-9.982-3.548-14.581a.06.06 0 0 0-.031-.028ZM8.02 15.708c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.974 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.947 2.418-2.157 2.418Z"
+                d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
               />
             </svg>
           </SocialIconLink>
@@ -313,7 +430,15 @@ export function LandingFooter() {
 /* ------------------------------------------------------------------ */
 /* Feature card                                                       */
 /* ------------------------------------------------------------------ */
-export function FeatureCard({ title, compact = false }: { title: string; compact?: boolean }) {
+export function FeatureCard({
+  title,
+  description,
+  compact = false,
+}: {
+  title: string
+  description: string
+  compact?: boolean
+}) {
   return (
     <article
       className={
@@ -332,7 +457,7 @@ export function FeatureCard({ title, compact = false }: { title: string; compact
       <div className="font-ui space-y-2">
         <h3 className="text-[20px] leading-[21px] text-[#235061]">{title}</h3>
         <p className="max-w-[544px] text-[16px] leading-[21px] text-[#627c86]">
-          {SECTION_BLURB}
+          {description}
         </p>
       </div>
     </article>

@@ -7,11 +7,15 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react"
+import { useRouteMeta } from "@/seo/head"
 
 /**
  * A tiny client-side router built on `history.pushState` — enough for the
  * handful of static routes this marketing site needs. We intentionally avoid
  * `react-router` to keep the bundle lean.
+ *
+ * SSR/SSG: `RouterProvider` accepts an `initialPath` so the server can
+ * render the same route that was requested without touching `window`.
  */
 
 const RouteContext = createContext<string>("/")
@@ -19,13 +23,22 @@ const RouteContext = createContext<string>("/")
 /** Dispatched by `navigate()` so same-tab navigations update React state. */
 const ROUTE_EVENT = "route:change"
 
-export function RouterProvider({ children }: { children: ReactNode }) {
-  const [pathname, setPathname] = useState<string>(() =>
-    typeof window === "undefined" ? "/" : window.location.pathname,
-  )
+export function RouterProvider({
+  children,
+  initialPath,
+}: {
+  children: ReactNode
+  initialPath?: string
+}) {
+  const [pathname, setPathname] = useState<string>(() => {
+    if (initialPath) return initialPath
+    if (typeof window === "undefined") return "/"
+    return window.location.pathname
+  })
 
   useEffect(() => {
     const sync = () => setPathname(window.location.pathname)
+    sync()
     window.addEventListener("popstate", sync)
     window.addEventListener(ROUTE_EVENT, sync)
     return () => {
@@ -33,6 +46,9 @@ export function RouterProvider({ children }: { children: ReactNode }) {
       window.removeEventListener(ROUTE_EVENT, sync)
     }
   }, [])
+
+  // Keep <title>/meta/JSON-LD in sync on client-side navigations.
+  useRouteMeta(pathname)
 
   return (
     <RouteContext.Provider value={pathname}>{children}</RouteContext.Provider>

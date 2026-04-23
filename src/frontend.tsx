@@ -1,12 +1,12 @@
 /**
- * This file is the entry point for the React app, it sets up the root
- * element and renders the App component to the DOM.
- *
- * It is included in `src/index.html`.
+ * This file is the entry point for the React app. It hydrates (in prod) the
+ * pre-rendered HTML produced by the SSG loop in `build.ts`. In dev (with
+ * HMR) we fall back to `createRoot` because the dev server always serves the
+ * un-rendered `index.html` shell.
  */
 
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
 import { App } from "./App";
 import "./index.css"
 
@@ -18,10 +18,17 @@ const app = (
 );
 
 if (import.meta.hot) {
-  // With hot module reloading, `import.meta.hot.data` is persisted.
-  const root = (import.meta.hot.data.root ??= createRoot(elem));
+  // Dev: the HTML shell has no server-rendered tree, so mount fresh and
+  // persist the root across HMR updates.
+  const root: Root = (import.meta.hot.data.root ??= createRoot(elem));
   root.render(app);
 } else {
-  // The hot module reloading API is not available in production.
-  createRoot(elem).render(app);
+  // Prod: SSG has pre-rendered the tree inside `#root`. If for any reason
+  // it's empty (unexpected route, degraded build), fall back to a fresh
+  // render so the app still mounts.
+  if (elem.firstChild) {
+    hydrateRoot(elem, app);
+  } else {
+    createRoot(elem).render(app);
+  }
 }

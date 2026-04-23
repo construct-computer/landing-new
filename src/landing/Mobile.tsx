@@ -3,12 +3,14 @@ import imgReport from "@/assets/report.png"
 import {
   AdaptsSection,
   EnterExperienceButton,
+  FaqSection,
   FEATURES,
   FeatureCard,
   LandingFooter,
   LandingNav,
   NAV_HEIGHT_PX,
   PortalVideo,
+  WhatConstructIsSection,
 } from "./shared"
 
 /* ------------------------------------------------------------------ */
@@ -23,9 +25,6 @@ import {
  *   3. never balloons past 720px on small tablets
  */
 const PORTAL_WIDTH = "min(150vw, 100dvh, 900px)"
-
-/** Half the portal width — used for padding/spacer so nothing gets clipped. */
-const PORTAL_HALF = "min(75vw, 50dvh, 450px)"
 
 /**
  * Spacer revealed on scroll below the hero. Smaller than `PORTAL_HALF` on
@@ -45,9 +44,10 @@ function HeroHeadline() {
         <span>Computer that </span>
         <span className="text-[#01b4c8]">Works For You</span>
       </h1>
-      <p className="font-ui mx-auto mt-5 max-w-[340px] text-[15px] leading-[21px] text-[#627c86]">
-        Deploy AI agents to the cloud. They research, code and create.
-        Scheduled, persistent, from any device.
+      <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
+        An AI agent with its own cloud computer. It logs into a full virtual
+        desktop and works across Slack, Telegram, and email — scheduled,
+        persistent, on any device.
       </p>
       <EnterExperienceButton className="mt-7" />
     </div>
@@ -103,14 +103,12 @@ function ShowcaseStrip() {
     >
       <img
         src={imgReport}
-        alt=""
-        aria-hidden
+        alt="Generated PDF research report produced by the Construct AI agent"
         className="w-full max-w-[380px] drop-shadow-[0_16px_30px_rgba(71,156,223,0.15)]"
       />
       <img
         src={imgChat}
-        alt=""
-        aria-hidden
+        alt="Construct agent chat window handling an inbound email autonomously"
         className="w-full max-w-[360px] drop-shadow-[0_16px_30px_rgba(71,156,223,0.15)]"
       />
     </section>
@@ -131,7 +129,12 @@ function MobileFeatureGrid() {
       </h2>
       <div className="divide-y divide-[#e5e7eb] border-[#e5e7eb]">
         {FEATURES.map((f) => (
-          <FeatureCard key={f.title} title={f.title} compact />
+          <FeatureCard
+            key={f.title}
+            title={f.title}
+            description={f.description}
+            compact
+          />
         ))}
       </div>
     </section>
@@ -143,10 +146,14 @@ export function MobileLanding() {
   return (
     <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-white text-[#4e4646]">
       <LandingNav />
-      <HeroWithStraddlingPortal />
-      <ShowcaseStrip />
-      <AdaptsSection className="pb-8 pt-2" />
-      <MobileFeatureGrid />
+      <main id="main">
+        <HeroWithStraddlingPortal />
+        <ShowcaseStrip />
+        <WhatConstructIsSection className="pt-0" />
+        <AdaptsSection className="pb-8 pt-2" />
+        <MobileFeatureGrid />
+        <FaqSection />
+      </main>
       <LandingFooter />
     </div>
   )

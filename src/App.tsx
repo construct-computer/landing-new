@@ -37,9 +37,9 @@ function Routes() {
   }
 }
 
-export function App() {
+export function App({ initialPath }: { initialPath?: string } = {}) {
   return (
-    <RouterProvider>
+    <RouterProvider initialPath={initialPath}>
       <Routes />
     </RouterProvider>
   )

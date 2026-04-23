@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import plugin from "bun-plugin-tailwind";
 import { existsSync } from "fs";
-import { copyFile, rm } from "fs/promises";
+import { copyFile, mkdir, rm, writeFile, readFile } from "fs/promises";
 import path from "path";
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -108,7 +108,7 @@ const formatFileSize = (bytes: number): string => {
 console.log("\n🚀 Starting build process...\n");
 
 const cliConfig = parseArgs();
-const outdir = cliConfig.outdir || path.join(process.cwd(), "dist");
+const outdir = (cliConfig.outdir as string) || path.join(process.cwd(), "dist");
 
 if (existsSync(outdir)) {
   console.log(`🗑️ Cleaning previous build at ${outdir}`);
@@ -140,7 +140,7 @@ const end = performance.now();
 // Copy the logo to a stable, unhashed path so absolute URLs like
 // https://construct.computer/logo.png (used for OG/Twitter cards) resolve.
 const logoSrc = path.resolve("src/assets/logo.png");
-const logoDest = path.join(outdir as string, "logo.png");
+const logoDest = path.join(outdir, "logo.png");
 if (existsSync(logoSrc)) {
   await copyFile(logoSrc, logoDest);
 }
@@ -154,4 +154,89 @@ const outputTable = result.outputs.map(output => ({
 console.table(outputTable);
 const buildTime = (end - start).toFixed(2);
 
-console.log(`\n✅ Build completed in ${buildTime}ms\n`);
+console.log(`\n✅ Bundle built in ${buildTime}ms\n`);
+
+/* -------------------------------------------------------------------- */
+/* Static-site generation: render each route into dist/<path>/index.html */
+/* -------------------------------------------------------------------- */
+
+console.log("🧱 Pre-rendering routes...\n");
+const ssgStart = performance.now();
+
+const { renderToString } = await import("react-dom/server");
+const { createElement } = await import("react");
+const { App } = await import("./src/App");
+const { ROUTES } = await import("./src/seo/routes");
+const { renderHeadForRoute } = await import("./src/seo/head");
+const {
+  robotsTxt,
+  sitemapXml,
+  llmsTxt,
+  llmsFullTxt,
+  securityTxt,
+  manifestJson,
+} = await import("./src/seo/crawlerFiles");
+
+const templatePath = path.join(outdir, "index.html");
+const template = await readFile(templatePath, "utf8");
+
+const HEAD_BLOCK = /<!--\s*ssg:head\s*-->[\s\S]*?<!--\s*\/ssg:head\s*-->/;
+const ROOT_BLOCK = /<!--\s*ssg:root\s*-->[\s\S]*?<!--\s*\/ssg:root\s*-->/;
+
+const renderedRoutes: { path: string; file: string; bytes: number }[] = [];
+
+for (const route of ROUTES) {
+  const body = renderToString(
+    createElement(App as any, { initialPath: route.path }),
+  );
+
+  const head = renderHeadForRoute(route);
+
+  const html = template
+    .replace(HEAD_BLOCK, head)
+    .replace(ROOT_BLOCK, body);
+
+  // `/` → dist/index.html (overwrites template). Others → dist/<path>/index.html.
+  const targetDir =
+    route.path === "/"
+      ? outdir
+      : path.join(outdir, route.path.replace(/^\//, ""));
+  await mkdir(targetDir, { recursive: true });
+  const targetFile = path.join(targetDir, "index.html");
+  await writeFile(targetFile, html, "utf8");
+  renderedRoutes.push({
+    path: route.path,
+    file: path.relative(process.cwd(), targetFile),
+    bytes: Buffer.byteLength(html),
+  });
+}
+
+console.table(
+  renderedRoutes.map((r) => ({
+    Route: r.path,
+    File: r.file,
+    Size: formatFileSize(r.bytes),
+  })),
+);
+
+/* -------------------------------------------------------------------- */
+/* Crawler-discovery files                                              */
+/* -------------------------------------------------------------------- */
+
+await writeFile(path.join(outdir, "robots.txt"), robotsTxt(), "utf8");
+await writeFile(path.join(outdir, "sitemap.xml"), sitemapXml(), "utf8");
+await writeFile(path.join(outdir, "llms.txt"), llmsTxt(), "utf8");
+await writeFile(path.join(outdir, "llms-full.txt"), llmsFullTxt(), "utf8");
+await writeFile(path.join(outdir, "manifest.webmanifest"), manifestJson(), "utf8");
+
+const wellKnownDir = path.join(outdir, ".well-known");
+await mkdir(wellKnownDir, { recursive: true });
+await writeFile(path.join(wellKnownDir, "security.txt"), securityTxt(), "utf8");
+
+const ssgEnd = performance.now();
+console.log(
+  `\n✅ SSG + crawler files written in ${(ssgEnd - ssgStart).toFixed(2)}ms`,
+);
+console.log(
+  `   - ${renderedRoutes.length} pre-rendered routes\n   - robots.txt, sitemap.xml, llms.txt, llms-full.txt, manifest.webmanifest, .well-known/security.txt\n`,
+);

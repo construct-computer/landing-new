@@ -24,14 +24,14 @@ export function LegalShell({
   children: ReactNode
 }) {
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (typeof window !== "undefined") window.scrollTo(0, 0)
   }, [])
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-white text-[#4e4646]">
       <LandingNav />
 
-      <main className="mx-auto w-full max-w-3xl px-5 pb-20 pt-10 sm:px-6 lg:pt-16">
+      <main id="main" className="mx-auto w-full max-w-3xl px-5 pb-20 pt-10 sm:px-6 lg:pt-16">
         <Link
           to="/"
           className="font-ui inline-flex items-center gap-2 text-[13px] leading-5 text-[#8a9aa2] transition-colors hover:text-[#01b4c8]"
