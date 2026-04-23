@@ -269,12 +269,60 @@ const template = await readFile(templatePath, "utf8");
 const HEAD_BLOCK = /<!--\s*ssg:head\s*-->[\s\S]*?<!--\s*\/ssg:head\s*-->/;
 const ROOT_BLOCK = /<!--\s*ssg:root\s*-->[\s\S]*?<!--\s*\/ssg:root\s*-->/;
 
+/* -------------------------------------------------------------------- */
+/* Asset URL remap                                                      */
+/*                                                                      */
+/* When we `await import("./src/App")` in this build script, Bun runs   */
+/* those imports with its *runtime* loader, not the bundler — so        */
+/* `import img from "@/assets/report.png"` returns the absolute file    */
+/* path (e.g. /Users/.../src/assets/report.png on dev, or               */
+/* /opt/buildhome/repo/src/assets/report.png on Cloudflare Pages).      */
+/* Those strings then land in the rendered HTML as <img src="..."> and  */
+/* 404 in production.                                                   */
+/*                                                                      */
+/* Fix: build a manifest of `<original-name>.<ext>` → `/<hashed>.<ext>` */
+/* from the bundler's outputs and rewrite any matching suffix in the    */
+/* rendered HTML before writing it to disk.                             */
+/* -------------------------------------------------------------------- */
+
+const assetManifest = new Map<string, string>();
+const HASHED_NAME_RE = /^(.+)-[A-Za-z0-9]{8,}(\.[^.]+)$/;
+for (const out of result.outputs) {
+  if (out.kind !== "asset") continue;
+  const fileName = path.basename(out.path);
+  const m = fileName.match(HASHED_NAME_RE);
+  if (!m) continue;
+  const original = `${m[1]}${m[2]}`; // e.g. "report.png"
+  assetManifest.set(original, `/${fileName}`);
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// For every known asset, find substrings of the form
+//   <anything>/src/assets/<name>.<ext>
+// inside attribute values (quoted) and replace with the hashed URL. We
+// anchor on `src/assets/` so unrelated strings can't match by accident.
+function rewriteAssets(html: string): string {
+  let out = html;
+  for (const [name, hashed] of assetManifest) {
+    const re = new RegExp(
+      `[^"'<>\\s]*?/src/assets/${escapeRegExp(name)}`,
+      "g",
+    );
+    out = out.replace(re, hashed);
+  }
+  return out;
+}
+
 const renderedRoutes: { path: string; file: string; bytes: number }[] = [];
 
 for (const route of ROUTES) {
-  const body = renderToString(
+  const rawBody = renderToString(
     createElement(App as any, { initialPath: route.path }),
   );
+  const body = rewriteAssets(rawBody);
 
   const head = renderHeadForRoute(route);
 
