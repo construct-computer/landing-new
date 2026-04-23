@@ -10,6 +10,33 @@ export const SITE_URL = "https://construct.computer"
 export const ORG_NAME = "Construct Computer"
 export const ORG_LOGO = `${SITE_URL}/logo.png`
 
+/**
+ * Default OG / Twitter share image — the landscape 1200×630 card.
+ *
+ * Source: `src/assets/og-card.png` (1200×630 PNG, ~310 KB).
+ * Build:  converted to JPEG at quality 90 by `build.ts`, emitted as
+ *         `dist/og-card.jpg` (~125 KB). JPEG is chosen because it's the
+ *         universal format every OG scraper accepts and the only way to
+ *         reliably fit under WhatsApp's ~300 KB share-image cap at this
+ *         resolution. Non-macOS builds (no `sips`) fall back to copying
+ *         the source PNG to `dist/og-card.png` — still works, but may be
+ *         rejected by stricter WhatsApp clients.
+ *
+ * Platform fit:
+ *   - Facebook / LinkedIn: 1200×630 is the canonical recommended size.
+ *   - X (Twitter): use `twitter:card=summary_large_image` to render the
+ *     full landscape card (set at the route level).
+ *   - Discord / iMessage / Telegram / Slack: native 1.91:1 landscape.
+ *   - WhatsApp: ≤ 300 KB requirement met by the JPEG variant.
+ */
+export const OG_IMAGE_URL = `${SITE_URL}/og-card.jpg`
+export const OG_IMAGE_WIDTH = 1200
+export const OG_IMAGE_HEIGHT = 630
+export const OG_IMAGE_TYPE = "image/jpeg"
+export const OG_IMAGE_ALT =
+  "Construct Computer — autonomous computer that works for you"
+export const OG_LOCALE = "en_US"
+
 /** Serialize a JSON-LD object into a `<script>`-safe string. */
 export function serializeJsonLd(data: unknown): string {
   // Escape </script> sequences to prevent HTML injection from closing the tag

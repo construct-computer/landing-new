@@ -138,11 +138,97 @@ const result = await Bun.build({
 const end = performance.now();
 
 // Copy the logo to a stable, unhashed path so absolute URLs like
-// https://construct.computer/logo.png (used for OG/Twitter cards) resolve.
+// https://construct.computer/logo.png (used for the favicon, apple-touch
+// icon, and web app manifest) resolve. Shrunk to 512×512 where sips is
+// available (macOS); plain copy otherwise.
 const logoSrc = path.resolve("src/assets/logo.png");
 const logoDest = path.join(outdir, "logo.png");
 if (existsSync(logoSrc)) {
-  await copyFile(logoSrc, logoDest);
+  let optimized = false;
+  try {
+    const proc = Bun.spawn({
+      cmd: [
+        "sips",
+        "-Z",
+        "512",
+        "--setProperty",
+        "format",
+        "png",
+        logoSrc,
+        "--out",
+        logoDest,
+      ],
+      stdout: "ignore",
+      stderr: "pipe",
+    });
+    const exit = await proc.exited;
+    optimized = exit === 0 && existsSync(logoDest);
+  } catch {
+    // sips not available; fall through to plain copy.
+  }
+  if (!optimized) {
+    await copyFile(logoSrc, logoDest);
+  }
+  const bytes = Bun.file(logoDest).size;
+  console.log(
+    `🖼  Logo → ${path.relative(process.cwd(), logoDest)} (${formatFileSize(bytes)}${optimized ? ", sips-resized 512px" : ""})`,
+  );
+}
+
+// Emit the OG/Twitter share card at a stable, unhashed path. The source is
+// a 1200×630 PNG (~310 KB) — just over WhatsApp's ~300 KB share-image cap.
+// Where `sips` is available we transcode it to JPEG at quality 90 (~125 KB,
+// still 1200×630) which:
+//   - every OG scraper understands (Facebook, LinkedIn, X, Discord,
+//     WhatsApp, iMessage, Slack, Telegram, Pinterest),
+//   - fits comfortably under WhatsApp's limit,
+//   - hits the canonical 1.91:1 landscape ratio that Facebook, LinkedIn
+//     and X all recommend for `summary_large_image`.
+// On non-macOS CI we fall back to copying the PNG verbatim — still valid
+// for every scraper, just slightly over WhatsApp's threshold.
+const ogCardSrc = path.resolve("src/assets/og-card.png");
+const ogCardJpgDest = path.join(outdir, "og-card.jpg");
+const ogCardPngDest = path.join(outdir, "og-card.png");
+if (existsSync(ogCardSrc)) {
+  let jpegOk = false;
+  try {
+    const proc = Bun.spawn({
+      cmd: [
+        "sips",
+        "-s",
+        "format",
+        "jpeg",
+        "-s",
+        "formatOptions",
+        "90",
+        ogCardSrc,
+        "--out",
+        ogCardJpgDest,
+      ],
+      stdout: "ignore",
+      stderr: "pipe",
+    });
+    const exit = await proc.exited;
+    jpegOk = exit === 0 && existsSync(ogCardJpgDest);
+  } catch {
+    // sips not available; PNG fallback below.
+  }
+  if (jpegOk) {
+    const bytes = Bun.file(ogCardJpgDest).size;
+    console.log(
+      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, sips JPEG q90)`,
+    );
+  } else {
+    // No sips: emit the PNG at the expected URL. jsonLd.ts points at the
+    // .jpg by default, so also copy the PNG under the .jpg name so the
+    // URL still resolves (browsers sniff the content type from bytes).
+    await copyFile(ogCardSrc, ogCardJpgDest);
+    await copyFile(ogCardSrc, ogCardPngDest);
+    const bytes = Bun.file(ogCardJpgDest).size;
+    console.log(
+      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, PNG fallback — sips unavailable)`,
+    );
+  }
 }
 
 const outputTable = result.outputs.map(output => ({

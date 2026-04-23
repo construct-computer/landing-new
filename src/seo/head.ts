@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { getRouteMeta, type RouteMeta } from "./routes"
-import { serializeJsonLd } from "./jsonLd"
+import { OG_LOCALE, serializeJsonLd } from "./jsonLd"
 
 /**
  * Shared helpers for head management across SSG (build-time) and client
@@ -40,18 +40,32 @@ export function renderHeadForRoute(route: RouteMeta): string {
   parts.push(`<link rel="preload" as="image" href="/logo.png" />`)
   parts.push(`<link rel="canonical" href="${escapeAttr(route.canonical)}" />`)
 
+  // --- Open Graph (Facebook, LinkedIn, Discord, WhatsApp, iMessage,
+  //     Telegram, Slack fallback, Pinterest, etc.) -------------------
   parts.push(propMeta("og:type", "website"))
   parts.push(propMeta("og:site_name", "Construct Computer"))
+  parts.push(propMeta("og:locale", OG_LOCALE))
   parts.push(propMeta("og:title", route.title))
   parts.push(propMeta("og:description", route.description))
   parts.push(propMeta("og:url", route.canonical))
   parts.push(propMeta("og:image", route.ogImage))
+  // `og:image:secure_url` is the HTTPS duplicate older scrapers require.
+  parts.push(propMeta("og:image:secure_url", route.ogImage))
+  parts.push(propMeta("og:image:type", route.ogImageType))
+  parts.push(propMeta("og:image:width", String(route.ogImageWidth)))
+  parts.push(propMeta("og:image:height", String(route.ogImageHeight)))
+  parts.push(propMeta("og:image:alt", route.ogImageAlt))
 
-  parts.push(nameMeta("twitter:card", "summary_large_image"))
+  // --- Twitter / X ------------------------------------------------------
+  // `twitter:card` must match the image aspect ratio: `summary` for square,
+  // `summary_large_image` for ≥ 2:1 landscape.
+  parts.push(nameMeta("twitter:card", route.twitterCard))
   parts.push(nameMeta("twitter:site", "@use_construct"))
+  parts.push(nameMeta("twitter:creator", "@use_construct"))
   parts.push(nameMeta("twitter:title", route.title))
   parts.push(nameMeta("twitter:description", route.description))
   parts.push(nameMeta("twitter:image", route.ogImage))
+  parts.push(nameMeta("twitter:image:alt", route.ogImageAlt))
 
   for (const obj of route.jsonLd) {
     parts.push(
@@ -80,10 +94,18 @@ function applyRouteMeta(route: RouteMeta) {
   setMeta("property", "og:description", route.description)
   setMeta("property", "og:url", route.canonical)
   setMeta("property", "og:image", route.ogImage)
+  setMeta("property", "og:image:secure_url", route.ogImage)
+  setMeta("property", "og:image:type", route.ogImageType)
+  setMeta("property", "og:image:width", String(route.ogImageWidth))
+  setMeta("property", "og:image:height", String(route.ogImageHeight))
+  setMeta("property", "og:image:alt", route.ogImageAlt)
+  setMeta("property", "og:locale", OG_LOCALE)
 
+  setMeta("name", "twitter:card", route.twitterCard)
   setMeta("name", "twitter:title", route.title)
   setMeta("name", "twitter:description", route.description)
   setMeta("name", "twitter:image", route.ogImage)
+  setMeta("name", "twitter:image:alt", route.ogImageAlt)
 
   replaceJsonLd(route)
 }
