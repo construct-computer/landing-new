@@ -132,6 +132,10 @@ const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
 const result = await Bun.build({
   entrypoints,
   outdir,
+  // Root-relative URLs so pre-rendered pages under `/about/`, `/support/`,
+  // etc. still load JS/CSS from the site root (./ would resolve under the
+  // subdirectory and 404 on static hosts).
+  publicPath: "/",
   plugins: [plugin],
   minify: true,
   target: "browser",
