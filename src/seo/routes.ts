@@ -143,8 +143,17 @@ const ROUTE_MAP: Record<string, RouteMeta> = Object.fromEntries(
   ROUTES.map((r) => [r.path, r]),
 )
 
+/**
+ * Strip trailing slashes so `/support/` (common after static hosts redirect
+ * directory indexes) matches the same route as `/support`.
+ */
+export function normalizePathname(pathname: string): string {
+  const trimmed = pathname.replace(/\/+$/, "")
+  return trimmed === "" ? "/" : trimmed
+}
+
 /** Fallback used on unknown pathnames (client-side) or for 404-ish hits. */
 export function getRouteMeta(pathname: string): RouteMeta {
-  const normalized = pathname.replace(/\/+$/, "") || "/"
+  const normalized = normalizePathname(pathname)
   return ROUTE_MAP[normalized] ?? ROUTE_MAP["/"]!
 }

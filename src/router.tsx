@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react"
 import { useRouteMeta } from "@/seo/head"
+import { normalizePathname } from "@/seo/routes"
 
 /**
  * A tiny client-side router built on `history.pushState` - enough for the
@@ -31,13 +32,13 @@ export function RouterProvider({
   initialPath?: string
 }) {
   const [pathname, setPathname] = useState<string>(() => {
-    if (initialPath) return initialPath
+    if (initialPath) return normalizePathname(initialPath)
     if (typeof window === "undefined") return "/"
-    return window.location.pathname
+    return normalizePathname(window.location.pathname)
   })
 
   useEffect(() => {
-    const sync = () => setPathname(window.location.pathname)
+    const sync = () => setPathname(normalizePathname(window.location.pathname))
     sync()
     window.addEventListener("popstate", sync)
     window.addEventListener(ROUTE_EVENT, sync)
@@ -61,11 +62,13 @@ export function useRoute() {
 
 export function navigate(to: string) {
   if (typeof window === "undefined") return
-  if (window.location.pathname === to) {
+  const next = to.startsWith("/") ? normalizePathname(to) : to
+  const current = normalizePathname(window.location.pathname)
+  if (current === next) {
     window.scrollTo({ top: 0, behavior: "smooth" })
     return
   }
-  window.history.pushState({}, "", to)
+  window.history.pushState({}, "", next)
   window.dispatchEvent(new Event(ROUTE_EVENT))
 }
 
