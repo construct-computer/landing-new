@@ -342,8 +342,8 @@ function MobileWorkflowVideoLayer({
       }}
       className="absolute inset-0 h-full w-full object-cover"
     >
-      <source src={demo.video} type="video/webm" />
       <source src={demo.videoMp4} type="video/mp4" />
+      <source src={demo.video} type="video/webm" />
     </video>
   )
 }

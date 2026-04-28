@@ -11,7 +11,8 @@
     "build:prod": "SITE_URL=https://construct.computer bun run build.ts",
     "deploy": "bun run build:prod && wrangler deploy",
     "deploy:preview": "bun run build:preview && wrangler versions upload",
-    "preview": "bun run build:preview && wrangler dev"
+    "preview": "bun run build:preview && wrangler dev",
+    "videos:optimize": "bun scripts/optimize-videos.ts"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
