@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
@@ -19,6 +25,7 @@ import {
   WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
+  useSoftPinTransform,
 } from "./shared"
 
 const WORKFLOW_DEMOS = [
@@ -87,24 +94,178 @@ function getHeldWorkflowPosition(progress: number) {
   return segment + localTransition
 }
 
-/** Portion of raw ScrollTrigger progress (0–1) used to ease first/last clips in/out. */
-const WORKFLOW_SCROLL_EDGE_FADE = 0.14
+/** Raw ScrollTrigger scrub progress (0–1) that lands on the start of workflow demo `index`. */
+function workflowDemoIndexToScrollProgress(demoIndex: number, demoCount: number) {
+  if (demoCount <= 1 || demoIndex <= 0) return 0
+  const transitionCount = demoCount - 1
+  if (demoIndex >= demoCount) return 1
+  
+  // The transition to index `n` finishes when the local progress of segment `n-1` reaches 0.76.
+  // scaled = (segment) + local = (demoIndex - 1) + 0.76
+  const scaled = (demoIndex - 1) + 0.76
+  return clamp(scaled / transitionCount)
+}
 
-function workflowScrollEdgeFade(
+const WORKFLOW_VIDEO_ADVANCE_DELAY_MS = 2000
+
+/** Damped spring follows ScrollTrigger progress — elastic settle vs abrupt lerp snap. */
+const WORKFLOW_SCROLL_SPRING_STIFFNESS = 76
+/** ~Critical damping (2√k) so motion feels springy without oscillating past 0–1. */
+const WORKFLOW_SCROLL_SPRING_DAMPING = 17.6
+const WORKFLOW_SCROLL_SPRING_MAX_DT = 1 / 24
+
+function useSmoothedWorkflowScrollProgress(reducedMotion: boolean) {
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const targetRef = useRef(0)
+  const displayRef = useRef(0)
+  const velocityRef = useRef(0)
+  const lastTimeRef = useRef<number | null>(null)
+  const rafRef = useRef(0)
+  const reducedMotionRef = useRef(reducedMotion)
+  reducedMotionRef.current = reducedMotion
+
+  useEffect(() => {
+    if (!reducedMotion) return
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+    }
+    lastTimeRef.current = null
+    velocityRef.current = 0
+    const t = targetRef.current
+    displayRef.current = t
+    setScrollProgress(t)
+  }, [reducedMotion])
+
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    },
+    [],
+  )
+
+  const commitScrollProgress = useCallback((p: number) => {
+    targetRef.current = p
+    if (reducedMotionRef.current) {
+      displayRef.current = p
+      velocityRef.current = 0
+      lastTimeRef.current = null
+      setScrollProgress(p)
+      return
+    }
+
+    const springStep = (time: number) => {
+      if (reducedMotionRef.current) {
+        const t = targetRef.current
+        displayRef.current = t
+        velocityRef.current = 0
+        lastTimeRef.current = null
+        setScrollProgress(t)
+        rafRef.current = 0
+        return
+      }
+
+      const prevTime = lastTimeRef.current
+      lastTimeRef.current = time
+      const dt =
+        prevTime == null
+          ? 1 / 60
+          : Math.min((time - prevTime) / 1000, WORKFLOW_SCROLL_SPRING_MAX_DT)
+
+      const target = targetRef.current
+      let x = displayRef.current
+      let v = velocityRef.current
+
+      const displacement = target - x
+      const acceleration =
+        WORKFLOW_SCROLL_SPRING_STIFFNESS * displacement -
+        WORKFLOW_SCROLL_SPRING_DAMPING * v
+
+      v += acceleration * dt
+      x += v * dt
+
+      displayRef.current = x
+      velocityRef.current = v
+      setScrollProgress(clamp(x, 0, 1))
+
+      const settled =
+        Math.abs(target - x) < 0.00012 && Math.abs(v) < 0.004
+
+      if (settled) {
+        displayRef.current = target
+        velocityRef.current = 0
+        lastTimeRef.current = null
+        setScrollProgress(target)
+        rafRef.current = 0
+        return
+      }
+
+      rafRef.current = requestAnimationFrame(springStep)
+    }
+
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(springStep)
+    }
+  }, [])
+
+  return [scrollProgress, commitScrollProgress] as const
+}
+
+/** Portion of section height visible in the viewport (0 = none, 1 = fully on screen). */
+function getSectionVisibilityFraction(el: HTMLElement | null): number {
+  if (!el) return 0
+  const rect = el.getBoundingClientRect()
+  const h = rect.height
+  if (h <= 0) return 0
+  const vh = window.innerHeight
+  const visibleTop = Math.max(0, rect.top)
+  const visibleBottom = Math.min(vh, rect.bottom)
+  const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+  return clamp(visibleHeight / h)
+}
+
+/**
+ * Edge fade/blur driven by viewport: first clip eases in once half the section
+ * has entered; last clip fades out as soon as any part starts leaving (visibility below full).
+ */
+function workflowViewportEdgeFade(
   demoIndex: number,
   demoCount: number,
-  scrollProgress: number,
+  visibilityFraction: number,
   reducedMotion: boolean,
 ): number {
   if (reducedMotion) return 1
-  const p = clamp(scrollProgress)
+  const v = clamp(visibilityFraction)
   const fadeIn =
-    demoIndex === 0 ? smoothStep(p / WORKFLOW_SCROLL_EDGE_FADE) : 1
-  const fadeOut =
-    demoIndex === demoCount - 1
-      ? smoothStep((1 - p) / WORKFLOW_SCROLL_EDGE_FADE)
+    demoIndex === 0
+      ? v < 0.5
+        ? 0
+        : smoothStep((v - 0.5) / 0.5)
       : 1
+  const fadeOut =
+    demoIndex === demoCount - 1 ? smoothStep(v) : 1
   return fadeIn * fadeOut
+}
+
+function workflowViewportEdgeBlurPx(
+  demoIndex: number,
+  demoCount: number,
+  visibilityFraction: number,
+  reducedMotion: boolean,
+  maxBlur: number,
+): number {
+  if (reducedMotion) return 0
+  const v = clamp(visibilityFraction)
+  let edge = 0
+  if (demoIndex === 0) {
+    const fadeIn = v < 0.5 ? 0 : smoothStep((v - 0.5) / 0.5)
+    edge += maxBlur * (1 - fadeIn)
+  }
+  if (demoIndex === demoCount - 1) {
+    const fadeOut = smoothStep(v)
+    edge += maxBlur * (1 - fadeOut)
+  }
+  return edge
 }
 
 function usePrefersReducedMotion() {
@@ -218,14 +379,16 @@ function CloudsTransition() {
 
 function WorkflowVideoPanel({
   workflowPosition,
-  scrollProgress,
+  sectionVisibilityFraction,
   isVisible,
   reducedMotion,
+  onRequestAdvanceAfterVideoEnd,
 }: {
   workflowPosition: number
-  scrollProgress: number
+  sectionVisibilityFraction: number
   isVisible: boolean
   reducedMotion: boolean
+  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
 }) {
   const dominantIndex = Math.min(
     Math.floor(workflowPosition + 0.1),
@@ -249,8 +412,10 @@ function WorkflowVideoPanel({
             distance={distance}
             isDominant={isDominant}
             isVisible={isVisible}
-            scrollProgress={scrollProgress}
+            sectionVisibilityFraction={sectionVisibilityFraction}
             reducedMotion={reducedMotion}
+            workflowDemoCount={WORKFLOW_DEMOS.length}
+            onRequestAdvanceAfterVideoEnd={onRequestAdvanceAfterVideoEnd}
           />
         )
       })}
@@ -268,19 +433,39 @@ function WorkflowVideoLayer({
   distance,
   isDominant,
   isVisible,
-  scrollProgress,
+  sectionVisibilityFraction,
   reducedMotion,
+  workflowDemoCount,
+  onRequestAdvanceAfterVideoEnd,
 }: {
   demo: WorkflowDemo
   demoIndex: number
   distance: number
   isDominant: boolean
   isVisible: boolean
-  scrollProgress: number
+  sectionVisibilityFraction: number
   reducedMotion: boolean
+  workflowDemoCount: number
+  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const wasDominantRef = useRef(false)
+  const advanceTimerRef = useRef<number | null>(null)
+
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current != null) {
+      clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => clearAdvanceTimer()
+  }, [clearAdvanceTimer])
+
+  useEffect(() => {
+    if (!isDominant || !isVisible) clearAdvanceTimer()
+  }, [isDominant, isVisible, clearAdvanceTimer])
 
   useEffect(() => {
     const video = videoRef.current
@@ -299,10 +484,10 @@ function WorkflowVideoLayer({
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
-  const edgeFade = workflowScrollEdgeFade(
+  const edgeFade = workflowViewportEdgeFade(
     demoIndex,
     WORKFLOW_DEMOS.length,
-    scrollProgress,
+    sectionVisibilityFraction,
     reducedMotion,
   )
   const opacity = reducedMotion
@@ -320,22 +505,48 @@ function WorkflowVideoLayer({
     : distance < 0
       ? lerp(1, 0.985, exiting)
       : lerp(1.018, 1, entering)
+  const crossfadeBlur =
+    distance < 0 ? 8 * exiting : 8 * (1 - entering)
+  const edgeBlurPx = workflowViewportEdgeBlurPx(
+    demoIndex,
+    WORKFLOW_DEMOS.length,
+    sectionVisibilityFraction,
+    reducedMotion,
+    8,
+  )
   const blur = reducedMotion
     ? 0
-    : distance < 0
-      ? 8 * exiting
-      : 8 * (1 - entering)
+    : Math.min(8, crossfadeBlur + edgeBlurPx)
+
+  const handleVideoEnded = useCallback(() => {
+    if (!isDominant || !isVisible || reducedMotion) return
+    if (demoIndex >= workflowDemoCount - 1) return
+    if (!onRequestAdvanceAfterVideoEnd) return
+    clearAdvanceTimer()
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null
+      onRequestAdvanceAfterVideoEnd(demoIndex)
+    }, WORKFLOW_VIDEO_ADVANCE_DELAY_MS)
+  }, [
+    isDominant,
+    isVisible,
+    reducedMotion,
+    demoIndex,
+    workflowDemoCount,
+    onRequestAdvanceAfterVideoEnd,
+    clearAdvanceTimer,
+  ])
 
   return (
     <video
       ref={videoRef}
       muted
       autoPlay
-      loop
       playsInline
       preload="auto"
       aria-label={isDominant ? demo.ariaLabel : undefined}
       aria-hidden={!isDominant}
+      onEnded={handleVideoEnded}
       onLoadedMetadata={(event) => {
         const video = event.currentTarget
         if (isVisible && isDominant) {
@@ -540,9 +751,63 @@ function WorkflowProgressRail({
 
 function WorkflowDemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
+  const workflowPinScrollTriggerRef = useRef<{
+    readonly start: number
+    readonly end: number
+  } | null>(null)
   const reducedMotion = usePrefersReducedMotion()
+  const [scrollProgress, commitScrollProgress] =
+    useSmoothedWorkflowScrollProgress(reducedMotion)
+  const [sectionVisibilityFraction, setSectionVisibilityFraction] = useState(0)
+  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current
+    if (section) {
+      setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+    }
+  }, [])
+
+  useEffect(() => {
+    let raf = 0
+    const schedule = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        const section = sectionRef.current
+        if (section) {
+          setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+        }
+      })
+    }
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule)
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      window.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+    }
+  }, [])
+
+  const scrollToWorkflowDemoIndex = useCallback((targetIndex: number) => {
+    const st = workflowPinScrollTriggerRef.current
+    if (!st || WORKFLOW_DEMOS.length <= 1) return
+    const idx = Math.min(
+      Math.max(targetIndex, 0),
+      WORKFLOW_DEMOS.length - 1,
+    )
+    const p = workflowDemoIndexToScrollProgress(idx, WORKFLOW_DEMOS.length)
+    const y = st.start + (st.end - st.start) * p
+    window.scrollTo({ top: y, behavior: "smooth" })
+  }, [])
+
+  const requestAdvanceAfterVideoEnd = useCallback(
+    (endedDemoIndex: number) => {
+      if (reducedMotion) return
+      scrollToWorkflowDemoIndex(endedDemoIndex + 1)
+    },
+    [reducedMotion, scrollToWorkflowDemoIndex],
+  )
 
   useEffect(() => {
     let cleanup: (() => void) | undefined
@@ -574,10 +839,18 @@ function WorkflowDemoSection() {
         onLeave: () => setIsWorkflowVisible(false),
         onLeaveBack: () => setIsWorkflowVisible(false),
         onToggle: (self) => setIsWorkflowVisible(self.isActive),
-        onUpdate: (self) => setScrollProgress(self.progress),
+        onUpdate: (self) => {
+          commitScrollProgress(self.progress)
+          setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+        },
       })
 
-      cleanup = () => trigger.kill()
+      workflowPinScrollTriggerRef.current = trigger
+
+      cleanup = () => {
+        workflowPinScrollTriggerRef.current = null
+        trigger.kill()
+      }
     }
 
     void setupScrollTrigger()
@@ -586,9 +859,10 @@ function WorkflowDemoSection() {
       cancelled = true
       cleanup?.()
     }
-  }, [])
+  }, [commitScrollProgress])
 
   const workflowPosition = getHeldWorkflowPosition(scrollProgress)
+  const softPinContentRef = useSoftPinTransform(sectionRef, reducedMotion)
   return (
     <section
       ref={sectionRef}
@@ -598,7 +872,7 @@ function WorkflowDemoSection() {
       <h2 id="workflow-demo-heading" className="sr-only">
         Research workflow demo
       </h2>
-      <div className="mx-auto w-full max-w-[1500px] px-6 lg:px-16">
+      <div ref={softPinContentRef} className="mx-auto w-full max-w-[1500px] px-6 lg:px-16 will-change-transform">
         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,3fr)] items-stretch gap-10">
           <aside className="font-ui relative pl-10 pt-7">
             <WorkflowProgressRail
@@ -615,9 +889,10 @@ function WorkflowDemoSection() {
 
           <WorkflowVideoPanel
             workflowPosition={workflowPosition}
-            scrollProgress={scrollProgress}
+            sectionVisibilityFraction={sectionVisibilityFraction}
             isVisible={isWorkflowVisible}
             reducedMotion={reducedMotion}
+            onRequestAdvanceAfterVideoEnd={requestAdvanceAfterVideoEnd}
           />
         </div>
       </div>

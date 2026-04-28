@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
@@ -17,6 +17,7 @@ import {
   NAV_HEIGHT_PX,
   PortalVideo,
   WhatConstructIsSection,
+  useSoftPinTransform,
 } from "./shared"
 
 const MOBILE_WORKFLOW_DEMOS = [
@@ -79,23 +80,150 @@ function getHeldWorkflowPosition(progress: number) {
   return segment + localTransition
 }
 
-/** Portion of raw ScrollTrigger progress (0–1) used to ease first/last clips in/out. */
-const WORKFLOW_SCROLL_EDGE_FADE = 0.14
+/** Raw ScrollTrigger scrub progress (0–1) that lands on the start of workflow demo `index`. */
+function workflowDemoIndexToScrollProgress(demoIndex: number, demoCount: number) {
+  if (demoCount <= 1 || demoIndex <= 0) return 0
+  const transitionCount = demoCount - 1
+  if (demoIndex >= demoCount) return 1
+  
+  // The transition to index `n` finishes when the local progress of segment `n-1` reaches 0.76.
+  // scaled = (segment) + local = (demoIndex - 1) + 0.76
+  const scaled = (demoIndex - 1) + 0.76
+  return clamp(scaled / transitionCount)
+}
 
-function workflowScrollEdgeFade(
+const WORKFLOW_VIDEO_ADVANCE_DELAY_MS = 2000
+
+const WORKFLOW_SCROLL_SPRING_STIFFNESS = 76
+const WORKFLOW_SCROLL_SPRING_DAMPING = 17.6
+const WORKFLOW_SCROLL_SPRING_MAX_DT = 1 / 24
+
+function useSmoothedWorkflowScrollProgress(reducedMotion: boolean) {
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const targetRef = useRef(0)
+  const displayRef = useRef(0)
+  const velocityRef = useRef(0)
+  const lastTimeRef = useRef<number | null>(null)
+  const rafRef = useRef(0)
+  const reducedMotionRef = useRef(reducedMotion)
+  reducedMotionRef.current = reducedMotion
+
+  useEffect(() => {
+    if (!reducedMotion) return
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+    }
+    lastTimeRef.current = null
+    velocityRef.current = 0
+    const t = targetRef.current
+    displayRef.current = t
+    setScrollProgress(t)
+  }, [reducedMotion])
+
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    },
+    [],
+  )
+
+  const commitScrollProgress = useCallback((p: number) => {
+    targetRef.current = p
+    if (reducedMotionRef.current) {
+      displayRef.current = p
+      velocityRef.current = 0
+      lastTimeRef.current = null
+      setScrollProgress(p)
+      return
+    }
+
+    const springStep = (time: number) => {
+      if (reducedMotionRef.current) {
+        const t = targetRef.current
+        displayRef.current = t
+        velocityRef.current = 0
+        lastTimeRef.current = null
+        setScrollProgress(t)
+        rafRef.current = 0
+        return
+      }
+
+      const prevTime = lastTimeRef.current
+      lastTimeRef.current = time
+      const dt =
+        prevTime == null
+          ? 1 / 60
+          : Math.min((time - prevTime) / 1000, WORKFLOW_SCROLL_SPRING_MAX_DT)
+
+      const target = targetRef.current
+      let x = displayRef.current
+      let v = velocityRef.current
+
+      const displacement = target - x
+      const acceleration =
+        WORKFLOW_SCROLL_SPRING_STIFFNESS * displacement -
+        WORKFLOW_SCROLL_SPRING_DAMPING * v
+
+      v += acceleration * dt
+      x += v * dt
+
+      displayRef.current = x
+      velocityRef.current = v
+      setScrollProgress(clamp(x, 0, 1))
+
+      const settled =
+        Math.abs(target - x) < 0.00012 && Math.abs(v) < 0.004
+
+      if (settled) {
+        displayRef.current = target
+        velocityRef.current = 0
+        lastTimeRef.current = null
+        setScrollProgress(target)
+        rafRef.current = 0
+        return
+      }
+
+      rafRef.current = requestAnimationFrame(springStep)
+    }
+
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(springStep)
+    }
+  }, [])
+
+  return [scrollProgress, commitScrollProgress] as const
+}
+
+function getSectionVisibilityFraction(el: HTMLElement | null): number {
+  if (!el) return 0
+  const rect = el.getBoundingClientRect()
+  const h = rect.height
+  if (h <= 0) return 0
+  const vh = window.innerHeight
+  const visibleTop = Math.max(0, rect.top)
+  const visibleBottom = Math.min(vh, rect.bottom)
+  const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+  return clamp(visibleHeight / h)
+}
+
+/** Viewport edge opacity only on mobile — blur uses crossfade path only (see MobileWorkflowVideoLayer). */
+function workflowViewportEdgeFade(
   demoIndex: number,
   demoCount: number,
-  scrollProgress: number,
+  visibilityFraction: number,
   reducedMotion: boolean,
 ): number {
   if (reducedMotion) return 1
-  const p = clamp(scrollProgress)
+  const v = clamp(visibilityFraction)
   const fadeIn =
-    demoIndex === 0 ? smoothStep(p / WORKFLOW_SCROLL_EDGE_FADE) : 1
-  const fadeOut =
-    demoIndex === demoCount - 1
-      ? smoothStep((1 - p) / WORKFLOW_SCROLL_EDGE_FADE)
+    demoIndex === 0
+      ? v < 0.5
+        ? 0
+        : smoothStep((v - 0.5) / 0.5)
       : 1
+  const fadeOut =
+    demoIndex === demoCount - 1 ? smoothStep(v) : 1
   return fadeIn * fadeOut
 }
 
@@ -239,14 +367,16 @@ function MobileCloudsTransition() {
 /* ------------------------------------------------------------------ */
 function MobileWorkflowVideoPanel({
   workflowPosition,
-  scrollProgress,
+  sectionVisibilityFraction,
   isVisible,
   reducedMotion,
+  onRequestAdvanceAfterVideoEnd,
 }: {
   workflowPosition: number
-  scrollProgress: number
+  sectionVisibilityFraction: number
   isVisible: boolean
   reducedMotion: boolean
+  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
 }) {
   const dominantIndex = Math.min(
     Math.floor(workflowPosition + 0.1),
@@ -270,8 +400,10 @@ function MobileWorkflowVideoPanel({
             distance={distance}
             isDominant={isDominant}
             isVisible={isVisible}
-            scrollProgress={scrollProgress}
+            sectionVisibilityFraction={sectionVisibilityFraction}
             reducedMotion={reducedMotion}
+            workflowDemoCount={MOBILE_WORKFLOW_DEMOS.length}
+            onRequestAdvanceAfterVideoEnd={onRequestAdvanceAfterVideoEnd}
           />
         )
       })}
@@ -289,19 +421,39 @@ function MobileWorkflowVideoLayer({
   distance,
   isDominant,
   isVisible,
-  scrollProgress,
+  sectionVisibilityFraction,
   reducedMotion,
+  workflowDemoCount,
+  onRequestAdvanceAfterVideoEnd,
 }: {
   demo: MobileWorkflowDemo
   demoIndex: number
   distance: number
   isDominant: boolean
   isVisible: boolean
-  scrollProgress: number
+  sectionVisibilityFraction: number
   reducedMotion: boolean
+  workflowDemoCount: number
+  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const wasDominantRef = useRef(false)
+  const advanceTimerRef = useRef<number | null>(null)
+
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current != null) {
+      clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => clearAdvanceTimer()
+  }, [clearAdvanceTimer])
+
+  useEffect(() => {
+    if (!isDominant || !isVisible) clearAdvanceTimer()
+  }, [isDominant, isVisible, clearAdvanceTimer])
 
   useEffect(() => {
     const video = videoRef.current
@@ -320,10 +472,10 @@ function MobileWorkflowVideoLayer({
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
-  const edgeFade = workflowScrollEdgeFade(
+  const edgeFade = workflowViewportEdgeFade(
     demoIndex,
     MOBILE_WORKFLOW_DEMOS.length,
-    scrollProgress,
+    sectionVisibilityFraction,
     reducedMotion,
   )
   const opacity = reducedMotion
@@ -341,22 +493,40 @@ function MobileWorkflowVideoLayer({
     : distance < 0
       ? lerp(1, 0.99, exiting)
       : lerp(1.012, 1, entering)
-  const blur = reducedMotion
-    ? 0
-    : distance < 0
-      ? 5 * exiting
-      : 5 * (1 - entering)
+  const crossfadeBlur =
+    distance < 0 ? 5 * exiting : 5 * (1 - entering)
+  /** Clip-to-clip blur only; first/last viewport in/out stay sharp (no edgeBlurPx on mobile). */
+  const blur = reducedMotion ? 0 : Math.min(5, crossfadeBlur)
+
+  const handleVideoEnded = useCallback(() => {
+    if (!isDominant || !isVisible || reducedMotion) return
+    if (demoIndex >= workflowDemoCount - 1) return
+    if (!onRequestAdvanceAfterVideoEnd) return
+    clearAdvanceTimer()
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null
+      onRequestAdvanceAfterVideoEnd(demoIndex)
+    }, WORKFLOW_VIDEO_ADVANCE_DELAY_MS)
+  }, [
+    isDominant,
+    isVisible,
+    reducedMotion,
+    demoIndex,
+    workflowDemoCount,
+    onRequestAdvanceAfterVideoEnd,
+    clearAdvanceTimer,
+  ])
 
   return (
     <video
       ref={videoRef}
       muted
       autoPlay
-      loop
       playsInline
       preload="auto"
       aria-label={isDominant ? demo.ariaLabel : undefined}
       aria-hidden={!isDominant}
+      onEnded={handleVideoEnded}
       onLoadedMetadata={(event) => {
         const video = event.currentTarget
         if (isVisible && isDominant) {
@@ -569,15 +739,32 @@ function MobileWorkflowProgress({
 function MobileWorkflowShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const videoPanelRef = useRef<HTMLDivElement | null>(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [isVideoPlaybackVisible, setIsVideoPlaybackVisible] = useState(false)
+  const workflowPinScrollTriggerRef = useRef<{
+    readonly start: number
+    readonly end: number
+  } | null>(null)
   const reducedMotion = usePrefersReducedMotion()
+  const [scrollProgress, commitScrollProgress] =
+    useSmoothedWorkflowScrollProgress(reducedMotion)
+  const [sectionVisibilityFraction, setSectionVisibilityFraction] = useState(0)
+  const [isVideoPlaybackVisible, setIsVideoPlaybackVisible] = useState(false)
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current
+    if (section) {
+      setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+    }
+  }, [])
 
   useEffect(() => {
     let frame = 0
 
-    const updatePlaybackVisibility = () => {
+    const updateScrollDerived = () => {
       frame = 0
+      const section = sectionRef.current
+      if (section) {
+        setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+      }
       const panel = videoPanelRef.current
       if (!panel) return
 
@@ -586,15 +773,17 @@ function MobileWorkflowShowcase() {
       const isStillOnScreen = rect.bottom >= 0
       const shouldPlay = isAboveHalfScreen && isStillOnScreen
 
-      setIsVideoPlaybackVisible((current) => (current === shouldPlay ? current : shouldPlay))
+      setIsVideoPlaybackVisible((current) =>
+        current === shouldPlay ? current : shouldPlay,
+      )
     }
 
     const scheduleUpdate = () => {
       if (frame) return
-      frame = window.requestAnimationFrame(updatePlaybackVisibility)
+      frame = window.requestAnimationFrame(updateScrollDerived)
     }
 
-    updatePlaybackVisibility()
+    updateScrollDerived()
     window.addEventListener("scroll", scheduleUpdate, { passive: true })
     window.addEventListener("resize", scheduleUpdate)
 
@@ -604,6 +793,26 @@ function MobileWorkflowShowcase() {
       window.removeEventListener("resize", scheduleUpdate)
     }
   }, [])
+
+  const scrollToWorkflowDemoIndex = useCallback((targetIndex: number) => {
+    const st = workflowPinScrollTriggerRef.current
+    if (!st || MOBILE_WORKFLOW_DEMOS.length <= 1) return
+    const idx = Math.min(
+      Math.max(targetIndex, 0),
+      MOBILE_WORKFLOW_DEMOS.length - 1,
+    )
+    const p = workflowDemoIndexToScrollProgress(idx, MOBILE_WORKFLOW_DEMOS.length)
+    const y = st.start + (st.end - st.start) * p
+    window.scrollTo({ top: y, behavior: "smooth" })
+  }, [])
+
+  const requestAdvanceAfterVideoEnd = useCallback(
+    (endedDemoIndex: number) => {
+      if (reducedMotion) return
+      scrollToWorkflowDemoIndex(endedDemoIndex + 1)
+    },
+    [reducedMotion, scrollToWorkflowDemoIndex],
+  )
 
   useEffect(() => {
     let cleanup: (() => void) | undefined
@@ -630,10 +839,18 @@ function MobileWorkflowShowcase() {
         scrub: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onUpdate: (self) => setScrollProgress(self.progress),
+        onUpdate: (self) => {
+          commitScrollProgress(self.progress)
+          setSectionVisibilityFraction(getSectionVisibilityFraction(section))
+        },
       })
 
-      cleanup = () => trigger.kill()
+      workflowPinScrollTriggerRef.current = trigger
+
+      cleanup = () => {
+        workflowPinScrollTriggerRef.current = null
+        trigger.kill()
+      }
     }
 
     void setupScrollTrigger()
@@ -642,9 +859,10 @@ function MobileWorkflowShowcase() {
       cancelled = true
       cleanup?.()
     }
-  }, [])
+  }, [commitScrollProgress])
 
   const workflowPosition = getHeldWorkflowPosition(scrollProgress)
+  const softPinContentRef = useSoftPinTransform(sectionRef, reducedMotion)
 
   return (
     <section
@@ -655,13 +873,14 @@ function MobileWorkflowShowcase() {
       <h2 id="mobile-workflow-heading" className="sr-only">
         Workflow demos
       </h2>
-      <div className="mx-auto w-full max-w-[460px]">
+      <div ref={softPinContentRef} className="mx-auto w-full max-w-[460px] will-change-transform">
         <div ref={videoPanelRef}>
           <MobileWorkflowVideoPanel
             workflowPosition={workflowPosition}
-            scrollProgress={scrollProgress}
+            sectionVisibilityFraction={sectionVisibilityFraction}
             isVisible={isVideoPlaybackVisible}
             reducedMotion={reducedMotion}
+            onRequestAdvanceAfterVideoEnd={requestAdvanceAfterVideoEnd}
           />
         </div>
         <MobileWorkflowProgress

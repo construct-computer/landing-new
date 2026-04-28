@@ -10,6 +10,83 @@ import { LANDING_FAQ } from "@/content/faq"
 import { Link } from "@/router"
 
 /* ------------------------------------------------------------------ */
+/* Shared hooks                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Acts as a "shock absorber" for elements pinned by ScrollTrigger.
+ * When an element is pinned, its physical screen position stops instantly.
+ * This hook creates a damped spring that tracks the container's top position
+ * and applies the lag as a transform to the inner content, smoothing out
+ * the abrupt lock-in and release.
+ */
+export function useSoftPinTransform(
+  containerRef: React.RefObject<HTMLElement | null>,
+  reducedMotion: boolean
+) {
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (reducedMotion || !containerRef.current || !contentRef.current) return
+
+    let rafId: number
+    let lastTime: number | null = null
+    let smoothTop = containerRef.current.getBoundingClientRect().top
+    let velocity = 0
+
+    const STIFFNESS = 150
+    const DAMPING = 24
+    const MAX_DT = 1 / 24
+
+    function tick(time: number) {
+      if (!containerRef.current || !contentRef.current) return
+
+      const currentTop = containerRef.current.getBoundingClientRect().top
+
+      if (lastTime === null) {
+        lastTime = time
+        smoothTop = currentTop
+        rafId = requestAnimationFrame(tick)
+        return
+      }
+
+      // Snap immediately on instantaneous massive jumps (e.g., clicking anchor links)
+      if (Math.abs(currentTop - smoothTop) > window.innerHeight) {
+        smoothTop = currentTop
+        velocity = 0
+      }
+
+      const dt = Math.min((time - lastTime) / 1000, MAX_DT)
+      lastTime = time
+
+      const displacement = currentTop - smoothTop
+      const acceleration = STIFFNESS * displacement - DAMPING * velocity
+
+      velocity += acceleration * dt
+      smoothTop += velocity * dt
+
+      const lag = smoothTop - currentTop
+
+      // Apply the lagging transform
+      if (Math.abs(lag) < 0.1 && Math.abs(velocity) < 0.1) {
+        contentRef.current.style.transform = `translateY(0px)`
+        smoothTop = currentTop
+        velocity = 0
+      } else {
+        contentRef.current.style.transform = `translateY(${lag}px)`
+      }
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [reducedMotion, containerRef])
+
+  return contentRef
+}
+
+/* ------------------------------------------------------------------ */
 /* Shared data                                                        */
 /* ------------------------------------------------------------------ */
 export const BETA_URL = "https://beta.construct.computer"
