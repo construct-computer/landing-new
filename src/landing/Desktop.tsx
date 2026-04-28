@@ -88,6 +88,23 @@ function lerp(start: number, end: number, amount: number) {
   return start + (end - start) * amount
 }
 
+function getHeldWorkflowPosition(progress: number) {
+  const transitionCount = WORKFLOW_DEMOS.length - 1
+  if (transitionCount <= 0) return 0
+  if (progress >= 1) return transitionCount
+
+  const scaled = clamp(progress) * transitionCount
+  const segment = Math.min(Math.floor(scaled), transitionCount - 1)
+  const local = scaled - segment
+  const transitionStart = 0.24
+  const transitionEnd = 0.76
+  const localTransition = smoothStep(
+    (local - transitionStart) / (transitionEnd - transitionStart)
+  )
+
+  return segment + localTransition
+}
+
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
@@ -527,7 +544,7 @@ function WorkflowDemoSection() {
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => `+=${window.innerHeight * WORKFLOW_DEMOS.length}`,
+        end: () => `+=${window.innerHeight * (WORKFLOW_DEMOS.length + 0.5)}`,
         pin: true,
         scrub: true,
         anticipatePin: 1,
@@ -551,7 +568,7 @@ function WorkflowDemoSection() {
     }
   }, [])
 
-  const workflowPosition = clamp(scrollProgress) * (WORKFLOW_DEMOS.length - 1)
+  const workflowPosition = getHeldWorkflowPosition(scrollProgress)
   return (
     <section
       ref={sectionRef}
