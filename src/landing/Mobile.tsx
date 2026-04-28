@@ -1,19 +1,114 @@
+import { useEffect, useRef, useState } from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
+import researchVideo from "@/assets/research.webm"
 import {
   AdaptsSection,
+  BETA_URL,
   EnterExperienceButton,
   FaqSection,
-  FEATURES,
-  FeatureCard,
   LandingFooter,
   LandingNav,
   NAV_HEIGHT_PX,
   PortalVideo,
   WhatConstructIsSection,
 } from "./shared"
+
+const MOBILE_WORKFLOW_DEMOS = [
+  {
+    id: "research",
+    title: "Research About",
+    accent: "Any Topic",
+    description:
+      "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
+    cta: "Research a Topic",
+    mutedAction: "See Report Samples Generated",
+    video: researchVideo,
+    ariaLabel: "Construct researching a topic in the product interface",
+  },
+  {
+    id: "browse",
+    title: "Browse Across",
+    accent: "Any Website",
+    description:
+      "Construct uses a real browser to navigate pages, fill forms, extract details, and continue work across sessions.",
+    cta: "Browse the Web",
+    mutedAction: "Review Browsing Steps",
+    video: researchVideo,
+    ariaLabel: "Construct browsing the web in the product interface",
+  },
+  {
+    id: "calendar",
+    title: "Schedule Around",
+    accent: "Your Calendar",
+    description:
+      "Construct coordinates availability, prepares meeting context, and keeps follow-ups moving without manual back-and-forth.",
+    cta: "Plan a Meeting",
+    mutedAction: "See Meetings Prepared",
+    video: researchVideo,
+    ariaLabel: "Construct managing calendar work in the product interface",
+  },
+  {
+    id: "email",
+    title: "Handle Every",
+    accent: "Email Thread",
+    description:
+      "Construct reads long threads, drafts replies in your voice, and flags the decisions that still need your attention.",
+    cta: "Draft a Reply",
+    mutedAction: "Preview Draft Replies",
+    video: researchVideo,
+    ariaLabel: "Construct handling email work in the product interface",
+  },
+] as const
+
+type MobileWorkflowDemo = (typeof MOBILE_WORKFLOW_DEMOS)[number]
+
+function clamp(value: number, min = 0, max = 1) {
+  return Math.min(Math.max(value, min), max)
+}
+
+function smoothStep(value: number) {
+  const x = clamp(value)
+  return x * x * (3 - 2 * x)
+}
+
+function lerp(start: number, end: number, amount: number) {
+  return start + (end - start) * amount
+}
+
+function getHeldWorkflowPosition(progress: number) {
+  const transitionCount = MOBILE_WORKFLOW_DEMOS.length - 1
+  if (transitionCount <= 0) return 0
+  if (progress >= 1) return transitionCount
+
+  const scaled = clamp(progress) * transitionCount
+  const segment = Math.min(Math.floor(scaled), transitionCount - 1)
+  const local = scaled - segment
+  const transitionStart = 0.24
+  const transitionEnd = 0.76
+  const localTransition = smoothStep(
+    (local - transitionStart) / (transitionEnd - transitionStart)
+  )
+
+  return segment + localTransition
+}
+
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setPrefersReducedMotion(media.matches)
+
+    const onChange = () => setPrefersReducedMotion(media.matches)
+    media.addEventListener("change", onChange)
+    return () => media.removeEventListener("change", onChange)
+  }, [])
+
+  return prefersReducedMotion
+}
 
 /* ------------------------------------------------------------------ */
 /* Shared sizing tokens                                               */
@@ -136,26 +231,394 @@ function MobileCloudsTransition() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Features - single column                                           */
+/* Mobile workflow showcase                                           */
 /* ------------------------------------------------------------------ */
-function MobileFeatureGrid() {
+function MobileWorkflowVideoPanel({
+  workflowPosition,
+  isVisible,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  isVisible: boolean
+  reducedMotion: boolean
+}) {
+  const dominantIndex = Math.min(
+    Math.floor(workflowPosition + 0.1),
+    MOBILE_WORKFLOW_DEMOS.length - 1
+  )
+
+  return (
+    <div className="relative mx-auto aspect-964/694 w-full max-w-[440px] overflow-hidden rounded-[32px] bg-white/20">
+      {MOBILE_WORKFLOW_DEMOS.map((demo, index) => {
+        const distance = index - workflowPosition
+        const isDominant = index === dominantIndex
+
+        if (reducedMotion && !isDominant) return null
+        if (!reducedMotion && (distance <= -1.05 || distance >= 1.05)) return null
+
+        return (
+          <MobileWorkflowVideoLayer
+            key={demo.id}
+            demo={demo}
+            distance={distance}
+            isDominant={isDominant}
+            isVisible={isVisible}
+            reducedMotion={reducedMotion}
+          />
+        )
+      })}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-linear-to-br from-white/20 via-transparent to-[#ddfaff]/30"
+      />
+    </div>
+  )
+}
+
+function MobileWorkflowVideoLayer({
+  demo,
+  distance,
+  isDominant,
+  isVisible,
+  reducedMotion,
+}: {
+  demo: MobileWorkflowDemo
+  distance: number
+  isDominant: boolean
+  isVisible: boolean
+  reducedMotion: boolean
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const wasDominantRef = useRef(false)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (isDominant && !wasDominantRef.current) video.currentTime = 0
+    wasDominantRef.current = isDominant
+
+    if (isVisible && isDominant) {
+      void video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+  }, [demo.id, isDominant, isVisible])
+
+  const exiting = smoothStep(clamp(-distance))
+  const entering = smoothStep(clamp(1 - distance))
+  const opacity = reducedMotion
+    ? isDominant
+      ? 1
+      : 0
+    : distance < 0
+      ? 1 - exiting
+      : lerp(0, 1, entering)
+  const translateY = reducedMotion
+    ? 0
+    : distance < 0
+      ? lerp(0, 16, exiting)
+      : lerp(-16, 0, entering)
+  const scale = reducedMotion
+    ? 1
+    : distance < 0
+      ? lerp(1, 0.99, exiting)
+      : lerp(1.012, 1, entering)
+  const blur = reducedMotion
+    ? 0
+    : distance < 0
+      ? 5 * exiting
+      : 5 * (1 - entering)
+
+  return (
+    <video
+      ref={videoRef}
+      muted
+      loop
+      playsInline
+      preload="auto"
+      aria-label={isDominant ? demo.ariaLabel : undefined}
+      aria-hidden={!isDominant}
+      onLoadedMetadata={(event) => {
+        const video = event.currentTarget
+        if (isDominant) video.currentTime = 0
+        if (isVisible && isDominant) {
+          void video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      }}
+      style={{
+        opacity,
+        transform: `translateY(${translateY}px) scale(${scale})`,
+        filter: `blur(${blur}px)`,
+        zIndex: Math.round(20 - Math.abs(distance) * 10),
+        willChange: "opacity, transform, filter",
+      }}
+      className="absolute inset-0 h-full w-full object-cover"
+    >
+      <source src={demo.video} type="video/webm" />
+    </video>
+  )
+}
+
+function MobileWorkflowText({
+  workflowPosition,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  reducedMotion: boolean
+}) {
+  return (
+    <div className="relative mx-auto mt-8 min-h-[390px] w-full max-w-[420px] overflow-visible text-left">
+      {MOBILE_WORKFLOW_DEMOS.map((demo, index) => (
+        <MobileWorkflowTextLayer
+          key={demo.id}
+          demo={demo}
+          distance={index - workflowPosition}
+          reducedMotion={reducedMotion}
+        />
+      ))}
+    </div>
+  )
+}
+
+function MobileWorkflowTextLayer({
+  demo,
+  distance,
+  reducedMotion,
+}: {
+  demo: MobileWorkflowDemo
+  distance: number
+  reducedMotion: boolean
+}) {
+  const titleAnchorY = 0
+  const exitTitleY = -28
+  const upNextAnchorY = 170
+  const belowAnchorY = 230
+  const supportTopY = 285
+
+  const exiting = smoothStep(clamp(-distance))
+  const entering = smoothStep(clamp(1 - distance))
+  const preEnter = smoothStep((1.22 - distance) / 0.22)
+  const nearby = distance > -1.05 && distance < 1.22
+
+  if (!nearby) return null
+
+  const headlineY = reducedMotion
+    ? titleAnchorY
+    : distance < 0
+      ? lerp(titleAnchorY, exitTitleY, exiting)
+      : distance <= 1
+        ? lerp(upNextAnchorY, titleAnchorY, entering)
+        : lerp(belowAnchorY, upNextAnchorY, preEnter)
+  const headlineOpacity = reducedMotion
+    ? Math.round(distance) === 0
+      ? 1
+      : 0
+    : distance < 0
+      ? 1 - exiting
+      : distance <= 1
+        ? lerp(0.58, 1, entering)
+        : lerp(0, 0.58, preEnter)
+  const headlineScale = reducedMotion
+    ? 1
+    : distance < 0
+      ? 1
+      : distance <= 1
+        ? lerp(0.86, 1, entering)
+        : lerp(0.82, 0.86, preEnter)
+  const descriptionOpacity = reducedMotion
+    ? headlineOpacity
+    : distance < 0
+      ? 1 - exiting
+      : smoothStep((entering - 0.68) / 0.32)
+  const upNextOpacity = reducedMotion
+    ? 0
+    : distance > 0
+      ? distance <= 1
+        ? 1 - entering
+        : preEnter
+      : 0
+  const blur = reducedMotion
+    ? 0
+    : distance < 0
+      ? 4 * exiting
+      : 0
+  const supportAmount = reducedMotion
+    ? Math.round(distance) === 0
+      ? 1
+      : 0
+    : smoothStep(1 - Math.abs(distance) / 0.42)
+
+  return (
+    <>
+      <div
+        style={{
+          opacity: headlineOpacity,
+          transform: `translateY(${headlineY}px) scale(${headlineScale})`,
+          transformOrigin: "left top",
+          filter: `blur(${blur}px)`,
+          zIndex: Math.round(20 - Math.abs(distance) * 10),
+          willChange: "opacity, transform, filter",
+        }}
+        className="absolute inset-x-0 top-0 max-w-[360px]"
+      >
+        <p
+          style={{ opacity: upNextOpacity }}
+          className="font-ui mb-2 w-[82px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[14px] leading-[20px] text-transparent"
+        >
+          Up Next
+        </p>
+        <h3 className="max-w-[350px] text-[26px] leading-[34px] text-[#4e4646]">
+          {demo.title}{" "}
+          <span className="font-display italic text-[#01b4c8]">{demo.accent}</span>
+        </h3>
+        <p
+          style={{ opacity: descriptionOpacity }}
+          className="mt-4 max-w-[330px] text-[15px] leading-[22px] text-[#627c86]"
+        >
+          {demo.description}
+        </p>
+      </div>
+
+      <div
+        style={{
+          opacity: supportAmount,
+          transform: `translateY(${supportTopY + 18 * (1 - supportAmount)}px)`,
+          pointerEvents: supportAmount > 0.85 ? "auto" : "none",
+          willChange: "opacity, transform",
+        }}
+        className="absolute inset-x-0 top-0"
+      >
+        <a
+          href={BETA_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-12 min-w-[190px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-6 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+        >
+          <span className="text-[17px] leading-none text-white">{demo.cta}</span>
+        </a>
+        <p className="mt-5 w-[180px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[14px] capitalize leading-[20px] text-transparent">
+          {demo.mutedAction}
+        </p>
+      </div>
+    </>
+  )
+}
+
+function MobileWorkflowProgress({
+  workflowPosition,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  reducedMotion: boolean
+}) {
+  const totalStops = MOBILE_WORKFLOW_DEMOS.length - 1
+  const progress = totalStops === 0 ? 0 : clamp(workflowPosition / totalStops)
+
+  return (
+    <div
+      aria-hidden
+      className="relative mx-auto mt-5 h-7 w-full max-w-[260px]"
+    >
+      <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-[#9dddea]/70" />
+      {MOBILE_WORKFLOW_DEMOS.map((demo, index) => {
+        const stopProgress = totalStops === 0 ? 0 : index / totalStops
+        return (
+          <span
+            key={demo.id}
+            style={{ left: `${stopProgress * 100}%` }}
+            className="absolute top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#86c6d8]/70"
+          />
+        )
+      })}
+      <span
+        style={{
+          left: `${progress * 100}%`,
+          willChange: reducedMotion ? undefined : "left",
+        }}
+        className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4cd8ff] shadow-[0_0_14px_rgba(76,216,255,0.6)]"
+      />
+    </div>
+  )
+}
+
+function MobileWorkflowShowcase() {
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
+
+  useEffect(() => {
+    let cleanup: (() => void) | undefined
+    let cancelled = false
+
+    async function setupScrollTrigger() {
+      const section = sectionRef.current
+      if (!section) return
+
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
+
+      if (cancelled) return
+
+      gsap.registerPlugin(ScrollTrigger)
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${window.innerHeight * (MOBILE_WORKFLOW_DEMOS.length + 0.25)}`,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: () => setIsWorkflowVisible(true),
+        onEnterBack: () => setIsWorkflowVisible(true),
+        onLeave: () => setIsWorkflowVisible(false),
+        onLeaveBack: () => setIsWorkflowVisible(false),
+        onToggle: (self) => setIsWorkflowVisible(self.isActive),
+        onUpdate: (self) => setScrollProgress(self.progress),
+      })
+
+      cleanup = () => trigger.kill()
+    }
+
+    void setupScrollTrigger()
+
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
+  }, [])
+
+  const workflowPosition = getHeldWorkflowPosition(scrollProgress)
+
   return (
     <section
-      aria-labelledby="features-heading-mobile"
-      className="mx-auto w-full max-w-[480px] px-5 pb-16"
+      ref={sectionRef}
+      aria-labelledby="mobile-workflow-heading"
+      className="relative flex min-h-svh w-full items-center px-5 py-10"
     >
-      <h2 id="features-heading-mobile" className="sr-only">
-        Product capabilities
+      <h2 id="mobile-workflow-heading" className="sr-only">
+        Workflow demos
       </h2>
-      <div className="divide-y divide-[#e5e7eb] border-[#e5e7eb]">
-        {FEATURES.map((f) => (
-          <FeatureCard
-            key={f.title}
-            title={f.title}
-            description={f.description}
-            compact
-          />
-        ))}
+      <div className="mx-auto w-full max-w-[460px]">
+        <MobileWorkflowVideoPanel
+          workflowPosition={workflowPosition}
+          isVisible={isWorkflowVisible}
+          reducedMotion={reducedMotion}
+        />
+        <MobileWorkflowProgress
+          workflowPosition={workflowPosition}
+          reducedMotion={reducedMotion}
+        />
+        <MobileWorkflowText
+          workflowPosition={workflowPosition}
+          reducedMotion={reducedMotion}
+        />
       </div>
     </section>
   )
@@ -164,7 +627,7 @@ function MobileFeatureGrid() {
 /* ------------------------------------------------------------------ */
 export function MobileLanding() {
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-x-clip bg-white text-[#4e4646]">
+    <div className="relative min-h-dvh w-full overflow-x-clip bg-white text-[#4e4646]">
       <LandingNav />
       <main id="main">
         <HeroWithStraddlingPortal />
@@ -187,7 +650,7 @@ export function MobileLanding() {
           <div className="relative z-10">
             <MobileCloudsTransition />
             <AdaptsSection className="py-10" />
-            <MobileFeatureGrid />
+            <MobileWorkflowShowcase />
           </div>
         </div>
         <FaqSection />
