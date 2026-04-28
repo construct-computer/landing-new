@@ -3,6 +3,7 @@ import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
+import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import {
   AdaptsSection,
@@ -26,6 +27,7 @@ const MOBILE_WORKFLOW_DEMOS = [
     cta: "Research a Topic",
     mutedAction: "See Report Samples Generated",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
@@ -37,6 +39,7 @@ const MOBILE_WORKFLOW_DEMOS = [
     cta: "Browse the Web",
     mutedAction: "Review Browsing Steps",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct browsing the web in the product interface",
   },
   {
@@ -48,6 +51,7 @@ const MOBILE_WORKFLOW_DEMOS = [
     cta: "Plan a Meeting",
     mutedAction: "See Meetings Prepared",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct managing calendar work in the product interface",
   },
   {
@@ -59,6 +63,7 @@ const MOBILE_WORKFLOW_DEMOS = [
     cta: "Draft a Reply",
     mutedAction: "Preview Draft Replies",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct handling email work in the product interface",
   },
 ] as const
@@ -334,6 +339,7 @@ function MobileWorkflowVideoLayer({
     <video
       ref={videoRef}
       muted
+      autoPlay
       loop
       playsInline
       preload="auto"
@@ -358,6 +364,7 @@ function MobileWorkflowVideoLayer({
       className="absolute inset-0 h-full w-full object-cover"
     >
       <source src={demo.video} type="video/webm" />
+      <source src={demo.videoMp4} type="video/mp4" />
     </video>
   )
 }
@@ -546,9 +553,42 @@ function MobileWorkflowProgress({
 
 function MobileWorkflowShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const videoPanelRef = useRef<HTMLDivElement | null>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
+  const [isVideoPlaybackVisible, setIsVideoPlaybackVisible] = useState(false)
   const reducedMotion = usePrefersReducedMotion()
+
+  useEffect(() => {
+    let frame = 0
+
+    const updatePlaybackVisibility = () => {
+      frame = 0
+      const panel = videoPanelRef.current
+      if (!panel) return
+
+      const rect = panel.getBoundingClientRect()
+      const isAboveHalfScreen = rect.top <= window.innerHeight / 2
+      const isStillOnScreen = rect.bottom >= 0
+      const shouldPlay = isAboveHalfScreen && isStillOnScreen
+
+      setIsVideoPlaybackVisible((current) => (current === shouldPlay ? current : shouldPlay))
+    }
+
+    const scheduleUpdate = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(updatePlaybackVisibility)
+    }
+
+    updatePlaybackVisibility()
+    window.addEventListener("scroll", scheduleUpdate, { passive: true })
+    window.addEventListener("resize", scheduleUpdate)
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", scheduleUpdate)
+      window.removeEventListener("resize", scheduleUpdate)
+    }
+  }, [])
 
   useEffect(() => {
     let cleanup: (() => void) | undefined
@@ -575,11 +615,6 @@ function MobileWorkflowShowcase() {
         scrub: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onEnter: () => setIsWorkflowVisible(true),
-        onEnterBack: () => setIsWorkflowVisible(true),
-        onLeave: () => setIsWorkflowVisible(false),
-        onLeaveBack: () => setIsWorkflowVisible(false),
-        onToggle: (self) => setIsWorkflowVisible(self.isActive),
         onUpdate: (self) => setScrollProgress(self.progress),
       })
 
@@ -606,11 +641,13 @@ function MobileWorkflowShowcase() {
         Workflow demos
       </h2>
       <div className="mx-auto w-full max-w-[460px]">
-        <MobileWorkflowVideoPanel
-          workflowPosition={workflowPosition}
-          isVisible={isWorkflowVisible}
-          reducedMotion={reducedMotion}
-        />
+        <div ref={videoPanelRef}>
+          <MobileWorkflowVideoPanel
+            workflowPosition={workflowPosition}
+            isVisible={isVideoPlaybackVisible}
+            reducedMotion={reducedMotion}
+          />
+        </div>
         <MobileWorkflowProgress
           workflowPosition={workflowPosition}
           reducedMotion={reducedMotion}

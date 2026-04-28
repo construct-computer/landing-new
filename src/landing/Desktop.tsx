@@ -4,6 +4,7 @@ import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
+import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import {
   AdaptsSection,
@@ -29,6 +30,7 @@ const WORKFLOW_DEMOS = [
     nextLabel: "Browse The Web",
     mutedAction: "See Report Samples Generated",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
@@ -41,6 +43,7 @@ const WORKFLOW_DEMOS = [
     nextLabel: "Manage Your Calendar",
     mutedAction: "Review Browsing Steps",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct browsing the web in the product interface",
   },
   {
@@ -53,6 +56,7 @@ const WORKFLOW_DEMOS = [
     nextLabel: "Triage Your Email",
     mutedAction: "See Meetings Prepared",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct managing calendar work in the product interface",
   },
   {
@@ -65,6 +69,7 @@ const WORKFLOW_DEMOS = [
     nextLabel: "Research About Any Topic",
     mutedAction: "Preview Draft Replies",
     video: researchVideo,
+    videoMp4: researchVideoMp4,
     ariaLabel: "Construct handling email work in the product interface",
   },
 ] as const
@@ -315,6 +320,7 @@ function WorkflowVideoLayer({
     <video
       ref={videoRef}
       muted
+      autoPlay
       loop
       playsInline
       preload="auto"
@@ -339,6 +345,7 @@ function WorkflowVideoLayer({
       className="absolute inset-0 h-full w-full object-cover"
     >
       <source src={demo.video} type="video/webm" />
+      <source src={demo.videoMp4} type="video/mp4" />
     </video>
   )
 }
