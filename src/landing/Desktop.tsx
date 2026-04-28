@@ -6,6 +6,8 @@ import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
 import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
+import slackVideoMp4 from "@/assets/slack.mp4"
+import slackVideo from "@/assets/slack.webm"
 import {
   AdaptsSection,
   BETA_URL,
@@ -27,50 +29,25 @@ const WORKFLOW_DEMOS = [
     description:
       "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
     cta: "Research a Topic",
-    nextLabel: "Browse The Web",
+    nextLabel: "Work Together Across Channels",
     mutedAction: "See Report Samples Generated",
     video: researchVideo,
     videoMp4: researchVideoMp4,
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
-    id: "browse",
-    title: "Browse Across",
-    accent: "Any Website",
+    id: "channels",
+    title: "Work Together",
+    accent: "Across Channels",
     description:
-      "Construct uses a real browser to navigate pages, fill forms, extract details, and continue work across sessions.",
-    cta: "Browse the Web",
-    nextLabel: "Manage Your Calendar",
-    mutedAction: "Review Browsing Steps",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct browsing the web in the product interface",
-  },
-  {
-    id: "calendar",
-    title: "Schedule Around",
-    accent: "Your Calendar",
-    description:
-      "Construct coordinates availability, prepares meeting context, and keeps follow-ups moving without manual back-and-forth.",
-    cta: "Plan a Meeting",
-    nextLabel: "Triage Your Email",
-    mutedAction: "See Meetings Prepared",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct managing calendar work in the product interface",
-  },
-  {
-    id: "email",
-    title: "Handle Every",
-    accent: "Email Thread",
-    description:
-      "Construct reads long threads, drafts replies in your voice, and flags the decisions that still need your attention.",
-    cta: "Draft a Reply",
+      "Bring Construct into Slack, Telegram, Discord, email, and more so your team can share context, assign work, and move together.",
+    cta: "Collaborate",
     nextLabel: "Research About Any Topic",
-    mutedAction: "Preview Draft Replies",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct handling email work in the product interface",
+    mutedAction: "See Shared Threads",
+    video: slackVideo,
+    videoMp4: slackVideoMp4,
+    ariaLabel:
+      "Construct available across Slack, Telegram, Discord, email, and team collaboration",
   },
 ] as const
 
@@ -482,9 +459,11 @@ function WorkflowTextLayer({
           href={BETA_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] pt-px text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+          className="inline-flex min-h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
-          <span className="text-[21px] leading-[60px] text-white">{demo.cta}</span>
+          <span className="text-balance text-center text-[21px] leading-snug text-white">
+            {demo.cta}
+          </span>
         </a>
 
         <p className="mt-8 w-[181px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">

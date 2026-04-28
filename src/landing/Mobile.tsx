@@ -5,6 +5,8 @@ import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
+import slackVideoMp4 from "@/assets/slack.mp4"
+import slackVideo from "@/assets/slack.webm"
 import {
   AdaptsSection,
   BETA_URL,
@@ -31,40 +33,17 @@ const MOBILE_WORKFLOW_DEMOS = [
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
-    id: "browse",
-    title: "Browse Across",
-    accent: "Any Website",
+    id: "channels",
+    title: "Work Together",
+    accent: "Across Channels",
     description:
-      "Construct uses a real browser to navigate pages, fill forms, extract details, and continue work across sessions.",
-    cta: "Browse the Web",
-    mutedAction: "Review Browsing Steps",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct browsing the web in the product interface",
-  },
-  {
-    id: "calendar",
-    title: "Schedule Around",
-    accent: "Your Calendar",
-    description:
-      "Construct coordinates availability, prepares meeting context, and keeps follow-ups moving without manual back-and-forth.",
-    cta: "Plan a Meeting",
-    mutedAction: "See Meetings Prepared",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct managing calendar work in the product interface",
-  },
-  {
-    id: "email",
-    title: "Handle Every",
-    accent: "Email Thread",
-    description:
-      "Construct reads long threads, drafts replies in your voice, and flags the decisions that still need your attention.",
-    cta: "Draft a Reply",
-    mutedAction: "Preview Draft Replies",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct handling email work in the product interface",
+      "Bring Construct into Slack, Telegram, Discord, email, and more so your team can share context, assign work, and move together.",
+    cta: "Collaborate",
+    mutedAction: "See Shared Threads",
+    video: slackVideo,
+    videoMp4: slackVideoMp4,
+    ariaLabel:
+      "Construct available across Slack, Telegram, Discord, email, and team collaboration",
   },
 ] as const
 
@@ -502,9 +481,11 @@ function MobileWorkflowTextLayer({
           href={BETA_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 min-w-[190px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-6 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+          className="inline-flex min-h-12 min-w-[190px] max-w-[min(100%,260px)] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-5 py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
-          <span className="text-[17px] leading-none text-white">{demo.cta}</span>
+          <span className="text-balance text-[17px] leading-snug text-white">
+            {demo.cta}
+          </span>
         </a>
         <p className="mt-5 w-[180px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[14px] capitalize leading-[20px] text-transparent">
           {demo.mutedAction}
