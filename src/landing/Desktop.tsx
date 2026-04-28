@@ -1,14 +1,15 @@
+import { useEffect, useRef, useState } from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
+import researchVideo from "@/assets/research.webm"
 import {
   AdaptsSection,
+  BETA_URL,
   EnterExperienceButton,
   FaqSection,
-  FEATURES,
-  FeatureCard,
   LandingFooter,
   LandingNav,
   PortalVideo,
@@ -16,6 +17,91 @@ import {
   WORKFLOW_CHIPS,
   WorkflowChip,
 } from "./shared"
+
+const WORKFLOW_DEMOS = [
+  {
+    id: "research",
+    title: "Research About",
+    accent: "Any Topic",
+    description:
+      "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
+    cta: "Research a Topic",
+    nextLabel: "Browse The Web",
+    mutedAction: "See Report Samples Generated",
+    video: researchVideo,
+    ariaLabel: "Construct researching a topic in the product interface",
+  },
+  {
+    id: "browse",
+    title: "Browse Across",
+    accent: "Any Website",
+    description:
+      "Construct uses a real browser to navigate pages, fill forms, extract details, and continue work across sessions.",
+    cta: "Browse the Web",
+    nextLabel: "Manage Your Calendar",
+    mutedAction: "Review Browsing Steps",
+    video: researchVideo,
+    ariaLabel: "Construct browsing the web in the product interface",
+  },
+  {
+    id: "calendar",
+    title: "Schedule Around",
+    accent: "Your Calendar",
+    description:
+      "Construct coordinates availability, prepares meeting context, and keeps follow-ups moving without manual back-and-forth.",
+    cta: "Plan a Meeting",
+    nextLabel: "Triage Your Email",
+    mutedAction: "See Meetings Prepared",
+    video: researchVideo,
+    ariaLabel: "Construct managing calendar work in the product interface",
+  },
+  {
+    id: "email",
+    title: "Handle Every",
+    accent: "Email Thread",
+    description:
+      "Construct reads long threads, drafts replies in your voice, and flags the decisions that still need your attention.",
+    cta: "Draft a Reply",
+    nextLabel: "Research About Any Topic",
+    mutedAction: "Preview Draft Replies",
+    video: researchVideo,
+    ariaLabel: "Construct handling email work in the product interface",
+  },
+] as const
+
+type WorkflowDemo = (typeof WORKFLOW_DEMOS)[number]
+
+function getWorkflowDemo(index: number): WorkflowDemo {
+  return WORKFLOW_DEMOS[index % WORKFLOW_DEMOS.length] ?? WORKFLOW_DEMOS[0]
+}
+
+function clamp(value: number, min = 0, max = 1) {
+  return Math.min(Math.max(value, min), max)
+}
+
+function smoothStep(value: number) {
+  const x = clamp(value)
+  return x * x * (3 - 2 * x)
+}
+
+function lerp(start: number, end: number, amount: number) {
+  return start + (end - start) * amount
+}
+
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setPrefersReducedMotion(media.matches)
+
+    const onChange = () => setPrefersReducedMotion(media.matches)
+    media.addEventListener("change", onChange)
+    return () => media.removeEventListener("change", onChange)
+  }, [])
+
+  return prefersReducedMotion
+}
 
 /* ------------------------------------------------------------------ */
 /* Hero                                                               */
@@ -111,33 +197,390 @@ function CloudsTransition() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/* Features grid (2x2)                                                */
-/* ------------------------------------------------------------------ */
-function FeatureGrid() {
+function WorkflowVideoPanel({
+  workflowPosition,
+  isVisible,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  isVisible: boolean
+  reducedMotion: boolean
+}) {
+  const dominantIndex = Math.min(
+    Math.floor(workflowPosition + 0.1),
+    WORKFLOW_DEMOS.length - 1
+  )
+
+  return (
+    <div className="relative aspect-964/694 overflow-hidden rounded-[53px] bg-white/20">
+      {WORKFLOW_DEMOS.map((demo, index) => {
+        const distance = index - workflowPosition
+        const isDominant = index === dominantIndex
+
+        if (reducedMotion && !isDominant) return null
+        if (!reducedMotion && (distance <= -1.05 || distance >= 1.05)) return null
+
+        return (
+          <WorkflowVideoLayer
+            key={demo.id}
+            demo={demo}
+            distance={distance}
+            isDominant={isDominant}
+            isVisible={isVisible}
+            reducedMotion={reducedMotion}
+          />
+        )
+      })}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-linear-to-br from-white/25 via-transparent to-[#ddfaff]/35"
+      />
+    </div>
+  )
+}
+
+function WorkflowVideoLayer({
+  demo,
+  distance,
+  isDominant,
+  isVisible,
+  reducedMotion,
+}: {
+  demo: WorkflowDemo
+  distance: number
+  isDominant: boolean
+  isVisible: boolean
+  reducedMotion: boolean
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const wasDominantRef = useRef(false)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (isDominant && !wasDominantRef.current) video.currentTime = 0
+    wasDominantRef.current = isDominant
+
+    if (isVisible && isDominant) {
+      void video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+  }, [demo.id, isDominant, isVisible])
+
+  const exiting = smoothStep(clamp(-distance))
+  const entering = smoothStep(clamp(1 - distance))
+  const opacity = reducedMotion
+    ? isDominant
+      ? 1
+      : 0
+    : distance < 0
+      ? 1 - exiting
+      : lerp(0, 1, entering)
+  const translateY = reducedMotion
+    ? 0
+    : distance < 0
+      ? lerp(0, 28, exiting)
+      : lerp(-28, 0, entering)
+  const scale = reducedMotion
+    ? 1
+    : distance < 0
+      ? lerp(1, 0.985, exiting)
+      : lerp(1.018, 1, entering)
+  const blur = reducedMotion
+    ? 0
+    : distance < 0
+      ? 8 * exiting
+      : 8 * (1 - entering)
+
+  return (
+    <video
+      ref={videoRef}
+      muted
+      loop
+      playsInline
+      preload="auto"
+      aria-label={isDominant ? demo.ariaLabel : undefined}
+      aria-hidden={!isDominant}
+      onLoadedMetadata={(event) => {
+        const video = event.currentTarget
+        if (isDominant) video.currentTime = 0
+        if (isVisible && isDominant) {
+          void video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      }}
+      style={{
+        opacity,
+        transform: `translateY(${translateY}px) scale(${scale})`,
+        filter: `blur(${blur}px)`,
+        zIndex: Math.round(20 - Math.abs(distance) * 10),
+        willChange: "opacity, transform, filter",
+      }}
+      className="absolute inset-0 h-full w-full object-cover"
+    >
+      <source src={demo.video} type="video/webm" />
+    </video>
+  )
+}
+
+function WorkflowScrollCopy({
+  workflowPosition,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  reducedMotion: boolean
+}) {
+  return (
+    <div className="absolute inset-0 overflow-visible">
+      {WORKFLOW_DEMOS.map((demo, index) => (
+        <WorkflowTextLayer
+          key={demo.id}
+          demo={demo}
+          distance={index - workflowPosition}
+          reducedMotion={reducedMotion}
+        />
+      ))}
+    </div>
+  )
+}
+
+function WorkflowTextLayer({
+  demo,
+  distance,
+  reducedMotion,
+}: {
+  demo: WorkflowDemo
+  distance: number
+  reducedMotion: boolean
+}) {
+  const titleAnchorY = 0
+  const exitTitleY = -58
+  const upNextAnchorY = 360
+  const belowAnchorY = 460
+
+  const exiting = smoothStep(clamp(-distance))
+  const entering = smoothStep(clamp(1 - distance))
+  const preEnter = smoothStep((1.24 - distance) / 0.24)
+  const nearby = distance > -1.05 && distance < 1.24
+
+  if (!nearby) return null
+
+  const headlineY = reducedMotion
+    ? titleAnchorY
+    : distance < 0
+      ? lerp(titleAnchorY, exitTitleY, exiting)
+      : distance <= 1
+        ? lerp(upNextAnchorY, titleAnchorY, entering)
+        : lerp(belowAnchorY, upNextAnchorY, preEnter)
+  const headlineOpacity = reducedMotion
+    ? Math.round(distance) === 0
+      ? 1
+      : 0
+    : distance < 0
+      ? 1 - exiting
+      : distance <= 1
+        ? lerp(0.58, 1, entering)
+        : lerp(0, 0.58, preEnter)
+  const headlineScale = reducedMotion
+    ? 1
+    : distance < 0
+      ? 1
+      : distance <= 1
+        ? lerp(0.78, 1, entering)
+        : lerp(0.74, 0.78, preEnter)
+  const descriptionOpacity = reducedMotion
+    ? headlineOpacity
+    : distance < 0
+      ? 1 - exiting
+      : smoothStep((entering - 0.72) / 0.28)
+  const upNextOpacity = reducedMotion
+    ? 0
+    : distance > 0
+      ? distance <= 1
+        ? 1 - entering
+        : preEnter
+      : 0
+  const blur = reducedMotion
+    ? 0
+    : distance < 0
+      ? 5 * exiting
+      : 0
+  const supportAmount = reducedMotion
+    ? Math.round(distance) === 0
+      ? 1
+      : 0
+    : smoothStep(1 - Math.abs(distance) / 0.54)
+
+  return (
+    <>
+      <div
+        style={{
+          opacity: headlineOpacity,
+          transform: `translateY(${headlineY}px) scale(${headlineScale})`,
+          transformOrigin: "left top",
+          filter: `blur(${blur}px)`,
+          zIndex: Math.round(20 - Math.abs(distance) * 10),
+          willChange: "opacity, transform, filter",
+        }}
+        className="absolute inset-x-0 top-0"
+      >
+        <p
+          style={{ opacity: upNextOpacity }}
+          className="font-ui mb-3 w-[86px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] leading-[22px] text-transparent"
+        >
+          Up Next
+        </p>
+        <h3 className="text-[31px] leading-[58px] text-[#4e4646]">
+          {demo.title}{" "}
+          <span className="font-display italic text-[#01b4c8]">{demo.accent}</span>
+        </h3>
+        <p
+          style={{ opacity: descriptionOpacity }}
+          className="mt-9 max-w-[300px] text-[16px] leading-[21px] text-[#627c86]"
+        >
+          {demo.description}
+        </p>
+      </div>
+
+      <div
+        style={{
+          opacity: supportAmount,
+          transform: `translateY(${28 * (1 - supportAmount)}px)`,
+          pointerEvents: supportAmount > 0.85 ? "auto" : "none",
+          willChange: "opacity, transform",
+        }}
+        className="absolute inset-x-0 bottom-10"
+      >
+        <a
+          href={BETA_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] pt-px text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+        >
+          <span className="text-[21px] leading-[60px] text-white">{demo.cta}</span>
+        </a>
+
+        <p className="mt-8 w-[181px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">
+          {demo.mutedAction}
+        </p>
+      </div>
+    </>
+  )
+}
+
+function WorkflowProgressRail({
+  workflowPosition,
+  reducedMotion,
+}: {
+  workflowPosition: number
+  reducedMotion: boolean
+}) {
+  const railStartY = 35
+  const railEndY = 545
+  const totalStops = WORKFLOW_DEMOS.length - 1
+  const progress = totalStops === 0 ? 0 : clamp(workflowPosition / totalStops)
+  const dotY = lerp(railStartY, railEndY, progress)
+
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute bottom-0 left-0 top-0 w-px"
+    >
+      <div className="absolute inset-y-0 left-0 w-px bg-[#9dddea]/70" />
+      <span
+        style={{
+          transform: `translate(-50%, ${dotY}px)`,
+          willChange: reducedMotion ? undefined : "transform",
+        }}
+        className="absolute left-0 top-0 h-3 w-3 rounded-full bg-[#4cd8ff] shadow-[0_0_16px_rgba(76,216,255,0.65)]"
+      />
+    </div>
+  )
+}
+
+function WorkflowDemoSection() {
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
+
+  useEffect(() => {
+    let cleanup: (() => void) | undefined
+    let cancelled = false
+
+    async function setupScrollTrigger() {
+      const section = sectionRef.current
+      if (!section) return
+
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ])
+
+      if (cancelled) return
+
+      gsap.registerPlugin(ScrollTrigger)
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${window.innerHeight * WORKFLOW_DEMOS.length}`,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: () => setIsWorkflowVisible(true),
+        onEnterBack: () => setIsWorkflowVisible(true),
+        onLeave: () => setIsWorkflowVisible(false),
+        onLeaveBack: () => setIsWorkflowVisible(false),
+        onToggle: (self) => setIsWorkflowVisible(self.isActive),
+        onUpdate: (self) => setScrollProgress(self.progress),
+      })
+
+      cleanup = () => trigger.kill()
+    }
+
+    void setupScrollTrigger()
+
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
+  }, [])
+
+  const workflowPosition = clamp(scrollProgress) * (WORKFLOW_DEMOS.length - 1)
   return (
     <section
-      aria-labelledby="features-heading-desktop"
-      className="relative w-full pb-28"
+      ref={sectionRef}
+      aria-labelledby="workflow-demo-heading"
+      className="relative flex min-h-screen w-full items-center py-20"
     >
-      <h2 id="features-heading-desktop" className="sr-only">
-        Product capabilities
+      <h2 id="workflow-demo-heading" className="sr-only">
+        Research workflow demo
       </h2>
       <div className="mx-auto w-full max-w-[1500px] px-6 lg:px-16">
-        <div className="relative">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[#e5e7eb]"
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,3fr)] items-stretch gap-10">
+          <aside className="font-ui relative pl-10 pt-7">
+            <WorkflowProgressRail
+              workflowPosition={workflowPosition}
+              reducedMotion={reducedMotion}
+            />
+            <div className="relative h-full min-h-[580px] overflow-visible pr-2">
+              <WorkflowScrollCopy
+                workflowPosition={workflowPosition}
+                reducedMotion={reducedMotion}
+              />
+            </div>
+          </aside>
+
+          <WorkflowVideoPanel
+            workflowPosition={workflowPosition}
+            isVisible={isWorkflowVisible}
+            reducedMotion={reducedMotion}
           />
-          <div className="grid grid-cols-2 divide-y-0">
-            {FEATURES.slice(0, 2).map((f) => (
-              <FeatureCard key={f.title} title={f.title} description={f.description} />
-            ))}
-            <div aria-hidden className="col-span-2 h-px w-full bg-[#e5e7eb]" />
-            {FEATURES.slice(2).map((f) => (
-              <FeatureCard key={f.title} title={f.title} description={f.description} />
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -164,11 +607,11 @@ export function DesktopLanding() {
             alt=""
             aria-hidden
             className="pointer-events-none absolute left-0 z-0 w-full select-none"
-            style={{ top: "18%" }}
+            style={{ top: "6%" }}
           />
           <div className="relative z-10">
             <CloudsTransition />
-            <FeatureGrid />
+            <WorkflowDemoSection />
           </div>
         </div>
         <FaqSection />
