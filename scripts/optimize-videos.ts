@@ -3,6 +3,9 @@
  * Re-encode workflow demo videos from `videos/` into compact, 30 fps
  * `.mp4` and `.webm` assets in `src/assets/`.
  *
+ * Transparent VP9 sources: **MP4** is matted onto white (`yuv420p`).
+ * **WebM** keeps alpha (`yuva420p` + libvpx-vp9) for browsers that prefer it.
+ *
  * Requires ffmpeg/ffprobe. By default they are provided by:
  *   nix-shell -p ffmpeg --run '<command>'
  *
@@ -164,7 +167,8 @@ function inputArgs(job: Job, meta: Probe): string {
   return `${decoder}-i ${JSON.stringify(job.source)}`
 }
 
-function filterArgs(job: Job, meta: Probe): string {
+/** Opaque MP4: mat transparent sources onto white; otherwise plain yuv420p. */
+function filterArgsMp4(job: Job, meta: Probe): string {
   const scale = `fps=${TARGET_FPS},scale=-2:${job.height}:flags=lanczos`
 
   if (!hasAlpha(meta)) {
@@ -180,6 +184,17 @@ function filterArgs(job: Job, meta: Probe): string {
   return `-filter_complex ${JSON.stringify(graph)} -map "[out]"`
 }
 
+/** Transparent WebM: keep alpha; opaque sources stay yuv420p. */
+function filterArgsWebm(job: Job, meta: Probe): string {
+  const scale = `fps=${TARGET_FPS},scale=-2:${job.height}:flags=lanczos`
+
+  if (!hasAlpha(meta)) {
+    return `-vf "${scale},format=yuv420p"`
+  }
+
+  return `-vf "${scale},format=yuva420p"`
+}
+
 async function encodeJob(job: Job, stageDir: string, assetDir: string): Promise<EncodedAsset[]> {
   if (!(await exists(resolve(root, job.source)))) {
     throw new Error(`Source missing: ${job.source}`)
@@ -188,7 +203,8 @@ async function encodeJob(job: Job, stageDir: string, assetDir: string): Promise<
   const meta = await probe(job.source)
   const width = scaledWidth(meta, job.height)
   const inputs = inputArgs(job, meta)
-  const filters = filterArgs(job, meta)
+  const filtersMp4 = filterArgsMp4(job, meta)
+  const filtersWebm = filterArgsWebm(job, meta)
   const stagedBase = join(stageDir, job.name)
 
   console.log(
@@ -201,7 +217,7 @@ async function encodeJob(job: Job, stageDir: string, assetDir: string): Promise<
     [
       "ffmpeg -y -hide_banner",
       inputs,
-      filters,
+      filtersMp4,
       "-an",
       "-c:v libx264",
       `-preset slow -crf ${job.x264Crf}`,
@@ -212,21 +228,23 @@ async function encodeJob(job: Job, stageDir: string, assetDir: string): Promise<
   )
 
   const stagedWebm = `${stagedBase}.webm`
+  const webmPixFmt = hasAlpha(meta) ? "yuva420p" : "yuv420p"
   await run(
     `${job.name}.webm`,
     [
       "ffmpeg -y -hide_banner",
       inputs,
-      filters,
+      filtersWebm,
       "-an",
       "-c:v libvpx-vp9",
+      ...(hasAlpha(meta) ? ["-auto-alt-ref 0"] : []),
       "-b:v 0",
       `-crf ${job.vp9Crf}`,
       "-deadline good",
       "-cpu-used 4",
       "-row-mt 1",
       "-tile-columns 2",
-      "-pix_fmt yuv420p",
+      `-pix_fmt ${webmPixFmt}`,
       JSON.stringify(stagedWebm),
     ].join(" "),
   )

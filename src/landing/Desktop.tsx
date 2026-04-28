@@ -87,6 +87,26 @@ function getHeldWorkflowPosition(progress: number) {
   return segment + localTransition
 }
 
+/** Portion of raw ScrollTrigger progress (0–1) used to ease first/last clips in/out. */
+const WORKFLOW_SCROLL_EDGE_FADE = 0.14
+
+function workflowScrollEdgeFade(
+  demoIndex: number,
+  demoCount: number,
+  scrollProgress: number,
+  reducedMotion: boolean,
+): number {
+  if (reducedMotion) return 1
+  const p = clamp(scrollProgress)
+  const fadeIn =
+    demoIndex === 0 ? smoothStep(p / WORKFLOW_SCROLL_EDGE_FADE) : 1
+  const fadeOut =
+    demoIndex === demoCount - 1
+      ? smoothStep((1 - p) / WORKFLOW_SCROLL_EDGE_FADE)
+      : 1
+  return fadeIn * fadeOut
+}
+
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
@@ -198,10 +218,12 @@ function CloudsTransition() {
 
 function WorkflowVideoPanel({
   workflowPosition,
+  scrollProgress,
   isVisible,
   reducedMotion,
 }: {
   workflowPosition: number
+  scrollProgress: number
   isVisible: boolean
   reducedMotion: boolean
 }) {
@@ -223,9 +245,11 @@ function WorkflowVideoPanel({
           <WorkflowVideoLayer
             key={demo.id}
             demo={demo}
+            demoIndex={index}
             distance={distance}
             isDominant={isDominant}
             isVisible={isVisible}
+            scrollProgress={scrollProgress}
             reducedMotion={reducedMotion}
           />
         )
@@ -240,15 +264,19 @@ function WorkflowVideoPanel({
 
 function WorkflowVideoLayer({
   demo,
+  demoIndex,
   distance,
   isDominant,
   isVisible,
+  scrollProgress,
   reducedMotion,
 }: {
   demo: WorkflowDemo
+  demoIndex: number
   distance: number
   isDominant: boolean
   isVisible: boolean
+  scrollProgress: number
   reducedMotion: boolean
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -265,18 +293,23 @@ function WorkflowVideoLayer({
       void video.play().catch(() => {})
     } else {
       video.pause()
+      video.currentTime = 0
     }
   }, [demo.id, isDominant, isVisible])
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
+  const edgeFade = workflowScrollEdgeFade(
+    demoIndex,
+    WORKFLOW_DEMOS.length,
+    scrollProgress,
+    reducedMotion,
+  )
   const opacity = reducedMotion
     ? isDominant
-      ? 1
+      ? 1 * edgeFade
       : 0
-    : distance < 0
-      ? 1 - exiting
-      : lerp(0, 1, entering)
+    : (distance < 0 ? 1 - exiting : lerp(0, 1, entering)) * edgeFade
   const translateY = reducedMotion
     ? 0
     : distance < 0
@@ -305,11 +338,12 @@ function WorkflowVideoLayer({
       aria-hidden={!isDominant}
       onLoadedMetadata={(event) => {
         const video = event.currentTarget
-        if (isDominant) video.currentTime = 0
         if (isVisible && isDominant) {
+          video.currentTime = 0
           void video.play().catch(() => {})
         } else {
           video.pause()
+          video.currentTime = 0
         }
       }}
       style={{
@@ -321,8 +355,8 @@ function WorkflowVideoLayer({
       }}
       className="absolute inset-0 h-full w-full object-cover"
     >
-      <source src={demo.videoMp4} type="video/mp4" />
       <source src={demo.video} type="video/webm" />
+      <source src={demo.videoMp4} type="video/mp4" />
     </video>
   )
 }
@@ -581,6 +615,7 @@ function WorkflowDemoSection() {
 
           <WorkflowVideoPanel
             workflowPosition={workflowPosition}
+            scrollProgress={scrollProgress}
             isVisible={isWorkflowVisible}
             reducedMotion={reducedMotion}
           />

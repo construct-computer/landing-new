@@ -1,8 +1,9 @@
 # Video Processing Reference
 
-This project ships short, looping videos in `src/assets/`. They are all
-**opaque** (composited onto a solid white background where the source had
-transparency) and capped at **30 fps** so the landing page stays light.
+This project ships short, looping videos in `src/assets/`. Workflow clips
+are capped at **30 fps**. **MP4** outputs are opaque (`yuv420p`); **WebM**
+workflow outputs keep **alpha** (`yuva420p`) where the source is
+transparent. The hero background assets are opaque.
 
 The high-quality sources live in `videos/` (gitignored, large) and never
 ship in the bundle:
@@ -14,8 +15,9 @@ ship in the bundle:
 | `videos/slack.webm`     | `src/assets/slack.mp4`, `src/assets/slack.webm`              | 900p, 30 fps   |
 
 The current workflow sources carry VP9 `alpha_mode=1`. The optimizer decodes
-them with `libvpx-vp9` and flattens them onto a solid white canvas so shipped
-assets do not need alpha-aware playback.
+them with `libvpx-vp9`. **MP4** is flattened onto a solid white canvas for
+Safari and other H.264 fallbacks. **WebM** keeps the alpha plane for
+browsers that pick the VP9 source first.
 
 ## Asset Roles
 
@@ -36,15 +38,16 @@ bun run videos:optimize
 The script:
 
 1. Reads source dimensions + duration with `ffprobe`.
-2. Scales each source to `-2:900`, drops to 30 fps, and flattens to
-   `yuv420p`. Transparent sources are overlaid onto a 900-tall white
-   canvas inside the same `-filter_complex` so the encoder never sees an
-   alpha plane.
-3. Encodes MP4 with **libx264** (`-crf 27`, `-preset slow`,
+2. Scales each source to `-2:900` and drops to 30 fps.
+3. **MP4**: transparent sources are overlaid onto a 900-tall white canvas
+   (`-filter_complex` → `yuv420p`). Opaque sources use a plain `-vf` chain.
+4. **WebM**: transparent sources stay **`yuva420p`** (no matting), with
+   **`-auto-alt-ref 0`** for correct VP9 alpha. Opaque sources use `yuv420p`.
+5. Encodes MP4 with **libx264** (`-crf 27`, `-preset slow`,
    `-movflags +faststart`, `-pix_fmt yuv420p`).
-4. Encodes WebM with **libvpx-vp9** (`-crf 35`, `-b:v 0`, `-row-mt 1`,
-   `-cpu-used 4`, `-pix_fmt yuv420p`).
-5. Writes everything to a temp directory first, prints a before/after table,
+6. Encodes WebM with **libvpx-vp9** (`-crf 35`, `-b:v 0`, `-row-mt 1`,
+   `-cpu-used 4`, `-pix_fmt yuva420p` or `yuv420p` by source).
+7. Writes everything to a temp directory first, prints a before/after table,
    then copies only `research.mp4`, `research.webm`, `slack.mp4`, and
    `slack.webm` into `src/assets/` after every encode succeeds.
 
@@ -92,8 +95,9 @@ nix-shell -p ffmpeg --run 'for f in src/assets/{research,slack}.{mp4,webm}; do
 done'
 ```
 
-Expect each workflow output to report `pix_fmt=yuv420p`, `r_frame_rate=30/1`,
-and `height=900`. There should be no audio stream.
+Expect each workflow output to report `r_frame_rate=30/1` and `height=900`.
+MP4 should be `pix_fmt=yuv420p`; WebM from transparent sources should be
+`pix_fmt=yuva420p`. There should be no audio stream.
 
 Then:
 
@@ -108,8 +112,8 @@ at the new (smaller) size.
 ## Common Pitfalls
 
 - **Do not** feed a transparent WebM into x264 directly — the alpha plane
-  becomes a solid black background. Always composite onto white inside
-  the same `-filter_complex` (the script does this automatically).
+  becomes a solid black background. The script composites onto white **only
+  for MP4**. WebM keeps alpha (`yuva420p` + `-auto-alt-ref 0`).
 - **Do not** drop the hero quality budget further to chase bytes. The
   hero is above the fold and visibly sensitive to blockiness.
 - If `nix-shell` cold-starts, the first invocation can spend a minute or
