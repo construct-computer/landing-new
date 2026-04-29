@@ -3,6 +3,7 @@ import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
+import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import slackVideoMp4 from "@/assets/slack.mp4"
@@ -16,6 +17,8 @@ import {
   LandingNav,
   NAV_HEIGHT_PX,
   PortalVideo,
+  PRICING_BUTTON_BOX_SHADOW,
+  PRICING_PRICE_TEXT_SHADOW,
   WhatConstructIsSection,
   useSoftPinTransform,
 } from "./shared"
@@ -923,6 +926,190 @@ function MobileWorkflowShowcase() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Mobile pricing                                                     */
+/* ------------------------------------------------------------------ */
+function MobilePricingCard({ plan }: { plan: PricingPlan }) {
+  return (
+    <article className="relative isolate w-full overflow-hidden rounded-[22px] bg-white/10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-20 rounded-[22px] border border-[#35949a]/50"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+        }}
+      />
+
+      <div
+        className="relative h-[220px] overflow-hidden rounded-t-[18px]"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, black 0%, black 52%, transparent 96%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, black 52%, transparent 96%)",
+        }}
+      >
+        <img
+          src={plan.image}
+          alt={plan.imageAlt}
+          className="absolute inset-0 h-full w-full object-cover object-bottom"
+        />
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[220px] px-6 py-6 text-white">
+        <h3
+          className="text-[30px] leading-[24px]"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
+          {plan.name}
+        </h3>
+        <div
+          className="absolute bottom-[24px] left-6 flex items-end gap-[5px]"
+          style={{ textShadow: PRICING_PRICE_TEXT_SHADOW }}
+        >
+          <span
+            className="text-[58px] leading-[0.78]"
+            style={{
+              fontFamily: "Georgia, serif",
+              fontFeatureSettings: "'lnum' 1, 'pnum' 1",
+            }}
+          >
+            {plan.price}
+          </span>
+          <span className="font-ui mb-[5px] text-[15px] leading-[18px]">
+            / month
+          </span>
+        </div>
+      </div>
+
+      <a
+        href={BETA_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Try Construct on the ${plan.name} plan`}
+        style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
+        className="font-ui relative z-10 mx-6 mt-5 flex h-[52px] items-center justify-center rounded-[26px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[17px] font-medium leading-[22px] text-white active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+      >
+        Try Construct
+      </a>
+
+      <ul className="font-ui relative z-10 flex flex-col gap-[14px] px-6 pb-7 pt-5 text-[15px] leading-[20px] text-[#4e4646]">
+        {plan.features.map((feature) => (
+          <li key={feature}>{feature}</li>
+        ))}
+      </ul>
+    </article>
+  )
+}
+
+function MobileEnterprisePanel({ className }: { className?: string }) {
+  return (
+    <div className={"relative h-[520px] w-full " + (className ?? "")}>
+      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(140%,520px)] -translate-x-1/2 -translate-y-1/2">
+        <PortalVideo />
+      </div>
+
+      <article
+        aria-labelledby="mobile-enterprise-heading"
+        className="relative z-10 h-full w-full rounded-[22px]"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 rounded-[22px] bg-white/90"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, black 0%, black 70%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 0%, black 70%, transparent 100%)",
+          }}
+        />
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-20 rounded-[22px] border border-[#35949a]/50"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+          }}
+        />
+
+        <div className="relative z-10 flex h-full flex-col items-center justify-start px-5 pt-[64px] text-center">
+          <p className="font-ui text-[12px] font-medium uppercase leading-[16px] tracking-[0.22em] text-[#01b4c8]">
+            Talk To Us
+          </p>
+
+          <h3
+            id="mobile-enterprise-heading"
+            className="mt-4 text-balance text-[30px] capitalize leading-[36px]"
+          >
+            <span className="font-ui text-[#4e4646]">Need Something </span>
+            <span className="font-display italic text-[#01b4c8]">Different?</span>
+          </h3>
+
+          <p className="font-ui mt-4 max-w-[310px] text-[14px] leading-[20px] text-[#627c86]">
+            Need Construct for your company, or have a question about how it
+            could fit your workflow? Drop us a line and we&rsquo;ll get back
+            to you.
+          </p>
+
+          <a
+            href="mailto:enterprise@construct.computer"
+            style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
+            className="font-ui mt-6 inline-flex h-[54px] w-full max-w-[312px] items-center justify-center gap-[10px] rounded-[27px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-4 text-[14px] font-medium leading-[18px] text-white active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+          >
+            <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden>
+              <path
+                fill="currentColor"
+                d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 8.5L20 7H4l8 6.5Z"
+              />
+            </svg>
+            <span className="whitespace-nowrap">enterprise@construct.computer</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  )
+}
+
+function MobilePricingSection() {
+  return (
+    <section
+      id="pricing"
+      aria-labelledby="mobile-pricing-heading"
+      className="relative isolate w-full px-5 py-16"
+    >
+      <div className="mx-auto max-w-[400px] text-center">
+        <h2
+          id="mobile-pricing-heading"
+          className="text-balance text-[32px] capitalize leading-[38px]"
+        >
+          <span className="font-ui text-[#4e4646]">Perfect Plan </span>
+          <span className="font-display italic text-[#01b4c8]">
+            For Your Every Need
+          </span>
+        </h2>
+        <p className="font-ui mx-auto mt-4 max-w-[340px] text-[15px] leading-[21px] text-[#627c86]">
+          Construct is built to adapt to your task, it handles everything and
+          can automate most of the workflows without any monitoring.
+        </p>
+      </div>
+
+      <div className="mx-auto mt-10 flex w-full max-w-[420px] flex-col gap-6">
+        {PRICING_PLANS.map((plan) => (
+          <MobilePricingCard key={plan.name} plan={plan} />
+        ))}
+
+        <MobileEnterprisePanel className="mt-0" />
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 export function MobileLanding() {
   return (
     <div className="relative min-h-dvh w-full overflow-x-clip bg-white text-[#4e4646]">
@@ -949,6 +1136,7 @@ export function MobileLanding() {
             <MobileCloudsTransition />
             <AdaptsSection className="py-10" />
             <MobileWorkflowShowcase />
+            <MobilePricingSection />
           </div>
         </div>
         <FaqSection />

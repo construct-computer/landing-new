@@ -14,9 +14,7 @@ import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
-import imgPricingFree from "../assets/pricing-free.jpg"
-import imgPricingPro from "../assets/pricing-pro.jpg"
-import imgPricingStarter from "../assets/pricing-starter.jpg"
+import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import {
   AdaptsSection,
   BETA_URL,
@@ -24,6 +22,8 @@ import {
   LandingFooter,
   LandingNav,
   PortalVideo,
+  PRICING_BUTTON_BOX_SHADOW,
+  PRICING_PRICE_TEXT_SHADOW,
   WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
@@ -61,58 +61,7 @@ const WORKFLOW_DEMOS = [
   },
 ] as const
 
-const PRICING_PLANS = [
-  {
-    name: "Free",
-    price: "$0",
-    image: imgPricingFree,
-    imageAlt: "Dark night sky with bright cumulus clouds illuminated by moonlight",
-    features: [
-      "15 Steps Per Task",
-      "5 min Task Execution Time",
-      "2 Concurrent Subagents",
-      "100 Mb Cloud Storage",
-      "Full Platform Integrations",
-      "Bring Your Own Keys Available",
-    ],
-  },
-  {
-    name: "Starter",
-    price: "$59",
-    image: imgPricingStarter,
-    imageAlt: "Mystical cloud-shrouded golden temple gateway opening into bright light",
-    features: [
-      "6x More Usage Than Free",
-      "50 Steps Per Task",
-      "1 hr Task Execution Time",
-      "6 Concurrent Subagents",
-      "1 Gb Cloud Storage",
-      "Full Platform Integrations",
-      "Bring Your Own Keys Available",
-      "Agent Email Address",
-    ],
-  },
-  {
-    name: "Pro",
-    price: "$299",
-    image: imgPricingPro,
-    imageAlt: "Vivid orange and red sunburst with radiant light rays",
-    features: [
-      "45x More Usage Than Free",
-      "100 Steps Per Task",
-      "3 hr Task Execution Time",
-      "Unlimited Concurrent Subagents",
-      "3 Gb Cloud Storage",
-      "Full Platform Integrations",
-      "Bring Your Own Keys Available",
-      "Agent Email Address",
-      "Background Execution",
-    ],
-  },
-] as const
-
 type WorkflowDemo = (typeof WORKFLOW_DEMOS)[number]
-type PricingPlan = (typeof PRICING_PLANS)[number]
 
 function getWorkflowDemo(index: number): WorkflowDemo {
   return WORKFLOW_DEMOS[index % WORKFLOW_DEMOS.length] ?? WORKFLOW_DEMOS[0]
@@ -991,23 +940,6 @@ function WorkflowDemoSection() {
 /*   • CTA: 299×64, top:266 centered, dark navy gradient, multi-layer  */
 /*     drop shadow + inset top highlight, Inter Medium 22px white      */
 /* ------------------------------------------------------------------ */
-
-const PRICING_BUTTON_BOX_SHADOW = [
-  "0px 241px 68px rgba(0,0,0,0)",
-  "0px 154px 62px rgba(0,0,0,0.01)",
-  "0px 87px 52px rgba(0,0,0,0.05)",
-  "0px 39px 39px rgba(0,0,0,0.09)",
-  "0px 10px 21px rgba(0,0,0,0.1)",
-  "inset 0px 7px 4px #2b476e",
-].join(", ")
-
-const PRICING_PRICE_TEXT_SHADOW = [
-  "0px 3px 6px rgba(0,0,0,0.05)",
-  "0px 11px 11px rgba(0,0,0,0.04)",
-  "0px 24px 14px rgba(0,0,0,0.03)",
-  "0px 42px 17px rgba(0,0,0,0.01)",
-  "0px 66px 18px rgba(0,0,0,0)",
-].join(", ")
 
 function PricingCard({ plan }: { plan: PricingPlan }) {
   return (

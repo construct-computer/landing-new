@@ -9,6 +9,23 @@ import imgGmeet from "@/assets/gmeet.png"
 import { LANDING_FAQ } from "@/content/faq"
 import { Link } from "@/router"
 
+export const PRICING_BUTTON_BOX_SHADOW = [
+  "0px 241px 68px rgba(0,0,0,0)",
+  "0px 154px 62px rgba(0,0,0,0.01)",
+  "0px 87px 52px rgba(0,0,0,0.05)",
+  "0px 39px 39px rgba(0,0,0,0.09)",
+  "0px 10px 21px rgba(0,0,0,0.1)",
+  "inset 0px 7px 4px #2b476e",
+].join(", ")
+
+export const PRICING_PRICE_TEXT_SHADOW = [
+  "0px 3px 6px rgba(0,0,0,0.05)",
+  "0px 11px 11px rgba(0,0,0,0.04)",
+  "0px 24px 14px rgba(0,0,0,0.03)",
+  "0px 42px 17px rgba(0,0,0,0.01)",
+  "0px 66px 18px rgba(0,0,0,0)",
+].join(", ")
+
 /* ------------------------------------------------------------------ */
 /* Shared hooks                                                       */
 /* ------------------------------------------------------------------ */
@@ -257,7 +274,7 @@ export function SkipToMain() {
   return (
     <a
       href="#main"
-      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-md focus:bg-black focus:px-3 focus:py-2 focus:text-xs focus:font-medium focus:text-white"
+      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-100 focus:rounded-md focus:bg-black focus:px-3 focus:py-2 focus:text-xs focus:font-medium focus:text-white"
     >
       Skip to main content
     </a>
@@ -556,7 +573,7 @@ export function FeatureCard({
           (compact ? "h-[200px]" : "h-[280px] lg:h-[340px]")
         }
       >
-        <div className="h-full w-full bg-gradient-to-b from-[#e4f7fa] via-[#f2fbfd] to-white" />
+        <div className="h-full w-full bg-linear-to-b from-[#e4f7fa] via-[#f2fbfd] to-white" />
       </div>
       <div className="font-ui space-y-2">
         <h3 className="text-[20px] leading-[21px] text-[#235061]">{title}</h3>
