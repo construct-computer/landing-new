@@ -384,7 +384,10 @@ function MobileWorkflowVideoPanel({
   )
 
   return (
-    <div className="relative mx-auto aspect-964/694 w-full max-w-[440px] overflow-hidden rounded-[32px] bg-white/20">
+    <div 
+      className="relative mx-auto aspect-964/694 w-full max-w-[440px] overflow-hidden rounded-[32px] bg-white/20"
+      style={{ maxWidth: 'min(440px, 60dvh)' }}
+    >
       {MOBILE_WORKFLOW_DEMOS.map((demo, index) => {
         const distance = index - workflowPosition
         const isDominant = index === dominantIndex
@@ -463,12 +466,23 @@ function MobileWorkflowVideoLayer({
     wasDominantRef.current = isDominant
 
     if (isVisible && isDominant) {
-      void video.play().catch(() => {})
+      if (demoIndex === workflowDemoCount - 1) {
+        const isAtEnd = video.currentTime > 0 && video.currentTime >= (video.duration || 0) - 0.5
+        if (!isAtEnd) {
+          void video.play().catch(() => {})
+        }
+      } else {
+        void video.play().catch(() => {})
+      }
     } else {
       video.pause()
-      video.currentTime = 0
+      if (demoIndex === workflowDemoCount - 1 && isDominant) {
+        video.currentTime = 999999
+      } else {
+        video.currentTime = 0
+      }
     }
-  }, [demo.id, isDominant, isVisible])
+  }, [demo.id, isDominant, isVisible, demoIndex, workflowDemoCount])
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
@@ -530,11 +544,23 @@ function MobileWorkflowVideoLayer({
       onLoadedMetadata={(event) => {
         const video = event.currentTarget
         if (isVisible && isDominant) {
-          video.currentTime = 0
-          void video.play().catch(() => {})
+          if (demoIndex === workflowDemoCount - 1) {
+            const isAtEnd = video.currentTime > 0 && video.currentTime >= (video.duration || 0) - 0.5
+            if (!isAtEnd) {
+              video.currentTime = 0
+              void video.play().catch(() => {})
+            }
+          } else {
+            video.currentTime = 0
+            void video.play().catch(() => {})
+          }
         } else {
           video.pause()
-          video.currentTime = 0
+          if (demoIndex === workflowDemoCount - 1 && isDominant) {
+            video.currentTime = 999999
+          } else {
+            video.currentTime = 0
+          }
         }
       }}
       style={{
@@ -560,7 +586,7 @@ function MobileWorkflowText({
   reducedMotion: boolean
 }) {
   return (
-    <div className="relative mx-auto mt-8 min-h-[390px] w-full max-w-[420px] overflow-visible text-left">
+    <div className="relative mx-auto mt-5 min-h-[310px] w-full max-w-[420px] overflow-visible text-left">
       {MOBILE_WORKFLOW_DEMOS.map((demo, index) => (
         <MobileWorkflowTextLayer
           key={demo.id}
@@ -583,10 +609,10 @@ function MobileWorkflowTextLayer({
   reducedMotion: boolean
 }) {
   const titleAnchorY = 0
-  const exitTitleY = -28
-  const upNextAnchorY = 170
-  const belowAnchorY = 230
-  const supportTopY = 285
+  const exitTitleY = -24
+  const upNextAnchorY = 240
+  const belowAnchorY = 290
+  const supportTopY = 145
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
@@ -660,13 +686,13 @@ function MobileWorkflowTextLayer({
         >
           Up Next
         </p>
-        <h3 className="max-w-[350px] text-[26px] leading-[34px] text-[#4e4646]">
+        <h3 className="max-w-[350px] text-[26px] leading-[32px] text-[#4e4646]">
           {demo.title}{" "}
           <span className="font-display italic text-[#01b4c8]">{demo.accent}</span>
         </h3>
         <p
           style={{ opacity: descriptionOpacity }}
-          className="mt-4 max-w-[330px] text-[15px] leading-[22px] text-[#627c86]"
+          className="mt-3 max-w-[330px] text-[15px] leading-[21px] text-[#627c86]"
         >
           {demo.description}
         </p>
@@ -685,13 +711,13 @@ function MobileWorkflowTextLayer({
           href={BETA_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-12 min-w-[190px] max-w-[min(100%,260px)] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-5 py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+          className="inline-flex min-h-11 min-w-[190px] max-w-[min(100%,260px)] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-5 py-2 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
           <span className="text-balance text-[17px] leading-snug text-white">
             {demo.cta}
           </span>
         </a>
-        <p className="mt-5 w-[180px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[14px] capitalize leading-[20px] text-transparent">
+        <p className="mt-3 whitespace-nowrap bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[13px] capitalize leading-[20px] text-transparent">
           {demo.mutedAction}
         </p>
       </div>
@@ -712,7 +738,7 @@ function MobileWorkflowProgress({
   return (
     <div
       aria-hidden
-      className="relative mx-auto mt-5 h-7 w-full max-w-[260px]"
+      className="relative mx-auto mt-4 h-6 w-full max-w-[260px]"
     >
       <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-[#9dddea]/70" />
       {MOBILE_WORKFLOW_DEMOS.map((demo, index) => {
@@ -873,8 +899,8 @@ function MobileWorkflowShowcase() {
       <h2 id="mobile-workflow-heading" className="sr-only">
         Workflow demos
       </h2>
-      <div ref={softPinContentRef} className="mx-auto w-full max-w-[460px] will-change-transform">
-        <div ref={videoPanelRef}>
+      <div ref={softPinContentRef} className="mx-auto flex w-full max-w-[460px] flex-col items-center will-change-transform">
+        <div ref={videoPanelRef} className="w-full">
           <MobileWorkflowVideoPanel
             workflowPosition={workflowPosition}
             sectionVisibilityFraction={sectionVisibilityFraction}
