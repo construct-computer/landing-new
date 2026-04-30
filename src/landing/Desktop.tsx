@@ -17,7 +17,7 @@ import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
-import workVideo from "../../videos/work.mp4"
+import workVideo from "@/assets/work.mp4"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import {
   AdaptsSection,
