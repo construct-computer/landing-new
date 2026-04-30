@@ -215,7 +215,7 @@ export function WorkflowChip({
     <div
       style={style}
       className={
-        "font-ui flex h-[38px] w-[216px] items-center gap-[14px] rounded-[8px] border border-[#f0f0f0] bg-white px-2 shadow-[0_4px_14px_-6px_rgba(15,23,42,0.18),inset_0_4px_4px_0_rgba(255,255,255,0.25)] " +
+        "font-inter flex h-[38px] w-[216px] items-center gap-[14px] rounded-[8px] border border-[#f0f0f0] bg-white px-2 shadow-[0_4px_14px_-6px_rgba(15,23,42,0.18),inset_0_4px_4px_0_rgba(255,255,255,0.25)] " +
         (className ?? "")
       }
     >
@@ -236,7 +236,7 @@ export function EnterExperienceButton({ className }: { className?: string }) {
       rel="noopener noreferrer"
       style={{ backgroundImage: `url(${buttonBg})`, backgroundSize: "100% 100%" }}
       className={
-        "font-ui inline-flex h-[57px] w-[227px] items-center justify-center bg-center bg-no-repeat text-center " +
+        "font-cta inline-flex h-[57px] w-[227px] items-center justify-center bg-center bg-no-repeat text-center " +
         (className ?? "")
       }
     >

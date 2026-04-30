@@ -760,7 +760,7 @@ function WorkflowTextLayer({
           href={BETA_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-[57px] w-full max-w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+          className="font-cta inline-flex min-h-[57px] w-full max-w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
           <span className="text-balance text-center text-[21px] leading-snug text-white">
             {demo.cta}
@@ -1104,7 +1104,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           >
             {plan.price}
           </span>
-          <span className="font-ui mb-[8px] text-[20px] leading-[22px]">
+          <span className="font-inter mb-[8px] text-[20px] leading-[22px]">
             / month
           </span>
         </div>
@@ -1116,12 +1116,12 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         rel="noopener noreferrer"
         aria-label={`Try Construct on the ${plan.name} plan`}
         style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
-        className="font-ui absolute left-1/2 top-[266px] z-10 inline-flex h-[64px] w-[299px] -translate-x-1/2 items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-x-1/2 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+        className="font-inter absolute left-1/2 top-[266px] z-10 inline-flex h-[64px] w-[299px] -translate-x-1/2 items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-x-1/2 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
       >
         Try Construct
       </a>
 
-      <ul className="font-ui absolute left-[33px] right-[33px] top-[383px] z-10 flex flex-col gap-[20px] text-[16px] leading-[22px] text-[#4e4646]">
+      <ul className="font-inter absolute left-[33px] right-[33px] top-[383px] z-10 flex flex-col gap-[20px] text-[16px] leading-[22px] text-[#4e4646]">
         {plan.features.map((feature) => (
           <li key={feature}>{feature}</li>
         ))}
@@ -1156,7 +1156,7 @@ function EnterprisePanel() {
       />
 
       <div className="relative z-10 flex h-full">
-        <div className="font-ui flex flex-1 flex-col px-[54px] pt-[45px]">
+        <div className="font-inter flex flex-1 flex-col px-[54px] pt-[45px]">
           <h3
             id="enterprise-heading"
             className="text-[40px] leading-[22px] text-[#656565]"
@@ -1187,20 +1187,20 @@ function EnterprisePanel() {
               target="_blank"
               rel="noopener noreferrer"
               style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
-              className="font-ui inline-flex h-[64px] w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+              className="font-inter inline-flex h-[64px] w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
             >
               Book A Call
             </a>
             <a
               href="mailto:enterprise@construct.computer"
-              className="font-ui text-[22px] font-medium leading-[22px] text-[#39abdb] transition-colors hover:text-[#2978b9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+              className="font-inter text-[22px] font-medium leading-[22px] text-[#39abdb] transition-colors hover:text-[#2978b9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
             >
               or send us an email
             </a>
           </div>
         </div>
 
-        <p className="font-ui absolute right-[112px] top-[41px] z-20 max-w-[272px] text-[18px] leading-[22px] text-[#484848]">
+        <p className="font-inter absolute right-[112px] top-[41px] z-20 max-w-[272px] text-[18px] leading-[22px] text-[#484848]">
           *Enterprise Includes everything in{" "}
           <span className="text-[#2978b9]">Pro</span>
           <br />
@@ -1286,7 +1286,7 @@ function FaqAccordionItem({ question, answer }: { question: string; answer: stri
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="font-ui flex w-full items-center justify-between gap-6 px-[55px] py-[30px] text-left"
+        className="font-inter flex w-full items-center justify-between gap-6 px-[55px] py-[30px] text-left"
       >
         <span className="text-[26px] font-medium leading-[28px] tracking-[-1px] text-[#565656]">
           {question}
@@ -1316,7 +1316,7 @@ function FaqAccordionItem({ question, answer }: { question: string; answer: stri
         }
       >
         <div className="overflow-hidden">
-          <p className="font-ui px-[55px] pb-[28px] text-[16px] leading-[22px] text-[#627c86]">
+          <p className="font-inter px-[55px] pb-[28px] text-[16px] leading-[22px] text-[#627c86]">
             {answer}
           </p>
         </div>
@@ -1354,7 +1354,7 @@ function DesktopFaqSection() {
 
           <a
             href="mailto:hello@construct.computer"
-            className="font-ui mt-[40px] inline-flex h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+            className="font-cta mt-[40px] inline-flex h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
           >
             <span className="text-[21px] capitalize leading-[60px] text-white">
               Send Us Hello
@@ -1414,7 +1414,7 @@ function FooterCtaBlock() {
               href={BETA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-ui mt-10 inline-flex h-[64px] min-w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-10 text-[22px] font-medium leading-[22px] text-white shadow-[0_10px_21px_rgba(0,0,0,0.1),0_39px_39px_rgba(0,0,0,0.09),0_87px_52px_rgba(0,0,0,0.05),inset_0_7px_4px_#2b476e] transition-transform duration-150 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d6f8c]"
+              className="font-inter mt-10 inline-flex h-[64px] min-w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-10 text-[22px] font-medium leading-[22px] text-white shadow-[0_10px_21px_rgba(0,0,0,0.1),0_39px_39px_rgba(0,0,0,0.09),0_87px_52px_rgba(0,0,0,0.05),inset_0_7px_4px_#2b476e] transition-transform duration-150 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d6f8c]"
             >
               Try Construct
             </a>
