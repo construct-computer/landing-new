@@ -936,9 +936,9 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
         className="pointer-events-none absolute inset-0 z-20 rounded-[22px] border border-[#35949a]/50"
         style={{
           maskImage:
-            "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+            "linear-gradient(to bottom, black 0%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 28%, transparent 100%)",
+            "linear-gradient(to bottom, black 0%, transparent 100%)",
         }}
       />
 
@@ -946,9 +946,10 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
         className="relative h-[220px] overflow-hidden rounded-t-[18px]"
         style={{
           maskImage:
-            "linear-gradient(to bottom, black 0%, black 52%, transparent 96%)",
+            "linear-gradient(to bottom, black 0%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 52%, transparent 96%)",
+            "linear-gradient(to bottom, black 0%, transparent 100%)",
+          background: "rgba(0,0,0,1)",
         }}
       >
         <img
@@ -958,7 +959,7 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[220px] px-6 py-6 text-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[140px] px-6 py-6 text-white">
         <h3
           className="text-[30px] leading-[24px]"
           style={{ fontFamily: "Georgia, serif" }}

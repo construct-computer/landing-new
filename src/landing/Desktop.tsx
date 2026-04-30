@@ -632,10 +632,25 @@ function WorkflowTextLayer({
   distance: number
   reducedMotion: boolean
 }) {
+  /*
+   * Y anchors are tuned to keep the upcoming demo's preview block (Up Next +
+   * 2-line wrapped headline) from colliding with the active demo's CTA
+   * support area at the narrow end of the desktop band (~1024px), where the
+   * aside collapses to its 300px min-width and headlines like
+   * "Work Together Across Channels" wrap to 2 lines.
+   *
+   * Container math (worst case at lg breakpoint):
+   *   container min-h:           720px
+   *   support `bottom-6` (24px) + content height (57+24+22 = 103px)
+   *     → support top:           720 - 24 - 103 = 593px
+   *   upcoming block at upNext (340) with 2-line headline (~71px tight leading)
+   *     → upcoming bottom:        340 + 22 (Up Next) + 12 (mb-3) + 71 = 445px
+   *   gap:                       148px ✓
+   */
   const titleAnchorY = 0
   const exitTitleY = -58
-  const upNextAnchorY = 360
-  const belowAnchorY = 460
+  const upNextAnchorY = 340
+  const belowAnchorY = 440
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
@@ -709,13 +724,24 @@ function WorkflowTextLayer({
         >
           Up Next
         </p>
-        <h3 className="text-[31px] leading-[58px] text-[#4e4646]">
+        <h3
+          style={{
+            fontSize: "clamp(24px, 2vw, 31px)",
+            lineHeight: 1.15,
+          }}
+          className="text-[#4e4646]"
+        >
           {demo.title}{" "}
           <span className="font-display italic text-[#01b4c8]">{demo.accent}</span>
         </h3>
         <p
-          style={{ opacity: descriptionOpacity }}
-          className="mt-9 max-w-[300px] text-[16px] leading-[21px] text-[#627c86]"
+          style={{
+            opacity: descriptionOpacity,
+            fontSize: "clamp(14px, 1.05vw, 16px)",
+            lineHeight: 1.32,
+            maxWidth: "min(100%, 300px)",
+          }}
+          className="mt-7 text-[#627c86]"
         >
           {demo.description}
         </p>
@@ -728,20 +754,20 @@ function WorkflowTextLayer({
           pointerEvents: supportAmount > 0.85 ? "auto" : "none",
           willChange: "opacity, transform",
         }}
-        className="absolute inset-x-0 bottom-10"
+        className="absolute inset-x-0 bottom-6"
       >
         <a
           href={BETA_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
+          className="inline-flex min-h-[57px] w-full max-w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
           <span className="text-balance text-center text-[21px] leading-snug text-white">
             {demo.cta}
           </span>
         </a>
 
-        <p className="mt-8 w-[181px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">
+        <p className="mt-6 max-w-[200px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">
           {demo.mutedAction}
         </p>
       </div>
@@ -757,7 +783,7 @@ function WorkflowProgressRail({
   reducedMotion: boolean
 }) {
   const railStartY = 35
-  const railEndY = 545
+  const railEndY = 640
   const totalStops = WORKFLOW_DEMOS.length - 1
   const progress = totalStops === 0 ? 0 : clamp(workflowPosition / totalStops)
   const dotY = lerp(railStartY, railEndY, progress)
@@ -897,19 +923,31 @@ function WorkflowDemoSection() {
     <section
       ref={sectionRef}
       aria-labelledby="workflow-demo-heading"
-      className="relative flex min-h-screen w-full items-center py-20"
+      className="relative flex min-h-screen w-full items-center py-14 lg:py-16"
     >
       <h2 id="workflow-demo-heading" className="sr-only">
         Research workflow demo
       </h2>
-      <div ref={softPinContentRef} className="mx-auto w-full max-w-[1500px] px-6 lg:px-16 will-change-transform">
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,3fr)] items-stretch gap-10">
-          <aside className="font-ui relative pl-10 pt-7">
+      <div
+        ref={softPinContentRef}
+        className="mx-auto w-full max-w-[1500px] px-6 lg:px-10 xl:px-16 will-change-transform"
+      >
+        {/*
+         * `items-center` (not stretch) lets the video keep its natural
+         * aspect ratio (964:694) — at narrow widths the column is narrower
+         * so the video gets shorter, while the aside keeps a fixed `min-h`
+         * to reserve enough vertical space for the workflow text states
+         * (active title + 2-line wrapped upcoming preview + CTA support).
+         * Centering vertically aligns the shorter video alongside the
+         * taller aside instead of stretching/cropping the video.
+         */}
+        <div className="grid grid-cols-[minmax(300px,0.95fr)_minmax(0,2.6fr)] items-center gap-6 lg:gap-7 xl:grid-cols-[minmax(320px,1fr)_minmax(0,3fr)] xl:gap-10">
+          <aside className="font-ui relative pl-7 pt-7 lg:pl-8 xl:pl-10">
             <WorkflowProgressRail
               workflowPosition={workflowPosition}
               reducedMotion={reducedMotion}
             />
-            <div className="relative h-full min-h-[580px] overflow-visible pr-2">
+            <div className="relative h-full min-h-[680px] overflow-visible pr-2">
               <WorkflowScrollCopy
                 workflowPosition={workflowPosition}
                 reducedMotion={reducedMotion}
@@ -1033,9 +1071,10 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         className="pointer-events-none absolute left-[5px] right-[5px] top-[5px] h-[299px] overflow-hidden rounded-tl-[21px] rounded-tr-[21px]"
         style={{
           maskImage:
-            "linear-gradient(to bottom, black 0%, black 50%, transparent 95%)",
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 50%, transparent 95%)",
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
+          background: "rgba(0,0,0,1)",
         }}
       >
         <img
@@ -1168,11 +1207,19 @@ function EnterprisePanel() {
           <span className="text-[#2978b9]">+ Specific MCP/s</span>
         </p>
 
-        <img
-          src={imgEnterprise}
-          alt="Construct enterprise agent with beams of light"
-          className="pointer-events-none absolute right-[-38px] top-[-46px] z-10 w-[472px] select-none"
-        />
+        {/*
+          Inset 54px from top, right, and bottom of the card (matches left
+          column horizontal padding); slot begins at 45% so art stays clear
+          of copy. Image is vertically centered in the slot and right-aligned
+          with object-contain so it respects the inset frame.
+        */}
+        <div className="pointer-events-none absolute inset-y-[54px] right-[72px] z-10 flex items-center justify-end">
+          <img
+            src={imgEnterprise}
+            alt="Construct enterprise agent with beams of light"
+            className="max-h-full max-w-[472px] object-contain object-right select-none"
+          />
+        </div>
       </div>
     </article>
   )
