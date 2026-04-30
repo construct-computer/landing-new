@@ -7,6 +7,9 @@ import {
 } from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
+import imgEnterprise from "@/assets/enterprise.png"
+import imgEnterpriseBg from "@/assets/enterprise-bg.png"
+import imgGrass from "@/assets/grass.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
@@ -14,6 +17,7 @@ import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
+import workVideo from "../../videos/work.mp4"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import {
   AdaptsSection,
@@ -927,6 +931,68 @@ function WorkflowDemoSection() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Work video section — Figma nodes 827:13378 / 675:13444 / 839:13091 */
+/* ------------------------------------------------------------------ */
+
+function WorkVideoSection() {
+  return (
+    <section
+      aria-labelledby="work-video-heading"
+      className="relative z-20 overflow-visible bg-transparent px-6 pb-28 pt-[260px] lg:px-16 lg:pb-36 lg:pt-[320px]"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-[140px] z-0 h-[420px] lg:top-[180px] lg:h-[520px]"
+      >
+        <img
+          src={imgGrass}
+          alt=""
+          className="absolute inset-x-0 bottom-0 w-full select-none"
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-[1574px]">
+        <div className="relative h-[944px] overflow-hidden rounded-[79px] bg-white backdrop-blur-[13.55px]">
+          <div className="relative z-10 flex h-full flex-col items-center pt-[108px]">
+            <h2
+              id="work-video-heading"
+              className="w-full max-w-[813px] text-center text-[32.8px] capitalize leading-[46px]"
+            >
+              <span className="font-ui text-[#4e4646]">
+                Your Business Shouldn&rsquo;t Loop Around Dealing With
+              </span>{" "}
+              <span className="font-display italic text-[#01b4c8]">
+                Emails, Files And CRM
+              </span>
+            </h2>
+
+            <div className="mt-[76px] aspect-1166/653 w-full max-w-[1166px] overflow-hidden rounded-[79px] bg-white">
+              <video
+                src={workVideo}
+                muted
+                autoPlay
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="Construct organizing work across emails, files, and CRM"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <p className="mt-[32px] w-full max-w-[857px] text-center text-[32.8px] capitalize leading-[46px]">
+              <span className="font-display italic text-[#01b4c8]">
+                Let Construct
+              </span>{" "}
+              <span className="font-ui text-[#4e4646]">Do It For You</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /* Pricing — pixel-perfect rebuild from Figma node 793:13167          */
 /*                                                                    */
 /* Card spec:                                                          */
@@ -1025,178 +1091,90 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
   )
 }
 
-/**
- * Concentric semicircular rings rising from the bottom of the pricing
- * section — five circles sharing a single vertical center placed 147px
- * above the section's bottom edge (matching Figma `Mask group` 793:13167).
- *
- * Each ring is positioned by anchoring its bottom edge `radius - 147` px
- * below the section's bottom, so they share a perfectly common center and
- * only the upper arc of each pokes into the visible area.
- *
- *   center distance from section bottom = 147px
- *   ring bottom offset                  = -(radius - 147) px
- *
- * Outer two rings are dashed cyan strokes; inner three are filled with a
- * white-to-transparent (or radial cyan→white) gradient plus an inset cyan
- * glow that softly lights the area inside each arc.
- */
-const RING_CENTER_FROM_BOTTOM_PX = 147
-
-function ringBottomOffset(radius: number) {
-  return `${RING_CENTER_FROM_BOTTOM_PX - radius}px`
-}
-
-function PricingRingsBackdrop() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-    >
-      {/* Ring 1 — outermost, 1390×1390 (r=695), dashed #43daeb */}
-      <div
-        className="absolute left-1/2 size-[1390px] -translate-x-1/2 rounded-full border border-dashed border-[#43daeb] opacity-65"
-        style={{ bottom: ringBottomOffset(695) }}
-      />
-      {/* Ring 2 — 1142×1142 (r=571), dashed #91eaf4 */}
-      <div
-        className="absolute left-1/2 size-[1142px] -translate-x-1/2 rounded-full border border-dashed border-[#91eaf4] opacity-65"
-        style={{ bottom: ringBottomOffset(571) }}
-      />
-      {/* Ring 3 — 950×950 (r=475), bottom-fade + soft cyan inset glow */}
-      <div
-        className="absolute left-1/2 size-[950px] -translate-x-1/2 rounded-full bg-linear-to-b from-transparent to-white opacity-65 shadow-[inset_0_9px_20.6px_rgba(145,234,244,0.19)]"
-        style={{ bottom: ringBottomOffset(475) }}
-      />
-      {/* Ring 4 — 764×764 (r=382), bottom-fade + stronger cyan inset glow */}
-      <div
-        className="absolute left-1/2 size-[764px] -translate-x-1/2 rounded-full bg-linear-to-b from-transparent to-white opacity-65 shadow-[inset_0_9px_20.6px_rgba(145,234,244,0.43)]"
-        style={{ bottom: ringBottomOffset(382) }}
-      />
-      {/* Ring 5 — innermost, 600×600 (r=300), radial white→cyan + inset glow */}
-      <div
-        className="absolute left-1/2 size-[600px] -translate-x-1/2 rounded-full opacity-65 shadow-[inset_0_9px_20.6px_rgba(145,234,244,0.43)]"
-        style={{
-          bottom: ringBottomOffset(300),
-          background:
-            "radial-gradient(circle at center, rgba(255,255,255,1) 66.8%, rgba(194,234,238,0.765) 75.1%, rgba(133,213,222,0.53) 83.4%, rgba(73,192,205,0.295) 91.7%, rgba(12,171,189,0.06) 100%)",
-        }}
-      />
-    </div>
-  )
-}
-
 /* ------------------------------------------------------------------ */
-/* Enterprise panel — sits below the three pricing cards.             */
-/*                                                                    */
-/* Open "talk to us" invitation rather than a list of fixed enterprise */
-/* commitments — anything specific (dedicated support, SLAs, on-prem) */
-/* would be dishonest to put on a marketing page until we actually    */
-/* offer it. Reuses the pricing card's fading-border technique and    */
-/* the same dark navy CTA gradient so it reads as a companion to the  */
-/* three priced tiers, plus the hero portal video as a soft backdrop. */
+/* Enterprise panel — Figma node 843:13238, below pricing cards.      */
 /* ------------------------------------------------------------------ */
 
 function EnterprisePanel() {
   return (
-    /*
-     * The portal video sits as an unclipped backdrop *behind* the panel —
-     * visible through the panel via its 50%-white fill AND spilling around
-     * the panel's edges as a soft halo. The article itself stays at full
-     * opacity (so the copy reads crisp); only the white scrim is at 50%.
-     *
-     * The article also drops `overflow-hidden` so the navy CTA's layered
-     * drop shadow can fall cleanly into the section's bottom padding rather
-     * than being chopped off at the panel's bottom edge.
-     */
-    <div className="relative mt-[19px] h-[600px] w-full">
+    <article
+      aria-labelledby="enterprise-heading"
+      className="relative mt-[19px] h-[436px] w-full overflow-hidden rounded-[26px] border border-[#b3d6f6] bg-white"
+    >
       {/*
-       * Centered hero portal video, same sizing as the hero stage. NOT
-       * clipped to the panel — section-level `overflow-hidden` (on the
-       * pricing <section>) is what bounds the spill.
-       */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(120%,1100px)] -translate-x-1/2 -translate-y-1/2">
-        <PortalVideo />
-      </div>
+        Per Figma node 843:13238: a single 1674×1674 baked ring asset is
+        positioned at top:0 with its horizontal center matching the panel's,
+        so the rings' shared center sits ~400px below the visible area and
+        only the upper arcs sweep into the lower half of the card. Solid
+        white bg keeps it visually contained — the global pricing rings do
+        NOT bleed through (they're a separate motif behind the cards above).
+      */}
+      <img
+        src={imgEnterpriseBg}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 size-[1674px] max-w-none -translate-x-1/2 select-none opacity-[0.71]"
+      />
 
-      <article
-        aria-labelledby="enterprise-heading"
-        className="relative z-10 h-full w-full rounded-[26px]"
-      >
-        {/*
-         * White scrim — split out from the article so it can fade with a
-         * top→bottom mask. The mask stays fully opaque through the top 70%
-         * (where every piece of copy + the CTA sits) and only dissolves
-         * across the bottom 30%, so the panel reads as solid white behind
-         * the text but still blends softly into the portal video underneath
-         * — no hard horizontal seam at the rounded bottom edge.
-         */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-0 rounded-[26px] bg-white/90"
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, black 0%, black 70%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 0%, black 70%, transparent 100%)",
-          }}
-        />
-
-        {/* Faded border overlay — same top→bottom dissolve as the cards. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-20 rounded-[26px] border border-[#35949a]/50"
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, black 0%, black 25%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 0%, black 25%, transparent 100%)",
-          }}
-        />
-
-        {/*
-         * Content is anchored to the top (`justify-start` + `pt-[100px]`)
-         * rather than vertically centered, so the headline / description /
-         * CTA all sit comfortably inside the solid 90%-white scrim region
-         * (top 70% of the panel). The lower 30% of the panel is left
-         * intentionally empty so the gradient can dissolve into the portal
-         * video underneath without ever passing through any copy.
-         */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-start px-[80px] pt-[100px] text-center">
-          <p className="font-ui text-[13px] font-medium uppercase leading-[16px] tracking-[0.22em] text-[#01b4c8]">
-            Talk To Us
-          </p>
-
+      <div className="relative z-10 flex h-full">
+        <div className="font-ui flex flex-1 flex-col px-[54px] pt-[45px]">
           <h3
             id="enterprise-heading"
-            className="mt-[18px] text-balance text-[44px] capitalize leading-[52px]"
+            className="text-[40px] leading-[22px] text-[#656565]"
+            style={{ fontFamily: "Georgia, serif" }}
           >
-            <span className="font-ui text-[#4e4646]">Need Something </span>
-            <span className="font-display italic text-[#01b4c8]">Different?</span>
+            Enterprise
           </h3>
 
-          <p className="font-ui mt-[20px] max-w-[620px] text-[16px] leading-[22px] text-[#627c86]">
-            Need Construct for your company, or have a question about how it
-            could fit your workflow? Drop us a line and we&rsquo;ll get back
-            to you.
+          <p className="mt-[57px] max-w-[825px] text-[24px] leading-[36px] text-[#787878]">
+            For Business with{" "}
+            <span className="font-display italic text-[#2978b9]">
+              Specific MCP
+            </span>{" "}
+            requirement we offer the{" "}
+            <span className="font-display italic text-[#2978b9]">
+              Enterprise Plan
+            </span>
+            . We discuss the custom mcp with your organization and deliver
+            construct built to meet your{" "}
+            <span className="font-display italic text-[#2978b9]">
+              Business Needs.
+            </span>
           </p>
 
-          <a
-            href="mailto:enterprise@construct.computer"
-            style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
-            className="font-ui mt-[32px] inline-flex h-[60px] items-center justify-center gap-[12px] rounded-[30px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-[26px] text-[17px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
-          >
-            <svg viewBox="0 0 24 24" className="h-[20px] w-[20px]" aria-hidden>
-              <path
-                fill="currentColor"
-                d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 8.5L20 7H4l8 6.5Z"
-              />
-            </svg>
-            <span>enterprise@construct.computer</span>
-          </a>
+          <div className="mt-[61px] flex items-center gap-[27px]">
+            <a
+              href="https://cal.com/construct/15min"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
+              className="font-ui inline-flex h-[64px] w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+            >
+              Book A Call
+            </a>
+            <a
+              href="mailto:enterprise@construct.computer"
+              className="font-ui text-[22px] font-medium leading-[22px] text-[#39abdb] transition-colors hover:text-[#2978b9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
+            >
+              or send us an email
+            </a>
+          </div>
         </div>
-      </article>
-    </div>
+
+        <p className="font-ui absolute right-[112px] top-[41px] z-20 max-w-[272px] text-[18px] leading-[22px] text-[#484848]">
+          *Enterprise Includes everything in{" "}
+          <span className="text-[#2978b9]">Pro</span>
+          <br />
+          <span className="text-[#2978b9]">+ Specific MCP/s</span>
+        </p>
+
+        <img
+          src={imgEnterprise}
+          alt="Construct enterprise agent with beams of light"
+          className="pointer-events-none absolute right-[-38px] top-[-46px] z-10 w-[472px] select-none"
+        />
+      </div>
+    </article>
   )
 }
 
@@ -1207,8 +1185,6 @@ function PricingSection() {
       aria-labelledby="pricing-heading"
       className="relative isolate overflow-hidden bg-white px-6 pb-44 pt-28 lg:px-16 lg:pt-36"
     >
-      <PricingRingsBackdrop />
-
       <div className="relative mx-auto w-full max-w-[1395px]">
         <div className="mx-auto max-w-[671px] text-center">
           <h2
@@ -1228,11 +1204,9 @@ function PricingSection() {
 
         {/*
          * `relative z-10` lifts the cards into their own stacking layer
-         * above the EnterprisePanel wrapper below them. Without this, the
-         * panel's absolutely-positioned portal video — which spills above
-         * the panel by ~330px — would paint on top of the cards' content
-         * (the cards themselves are static, so they paint before any
-         * positioned sibling lower in the DOM).
+         * above the positioned EnterprisePanel artwork below them. The cards
+         * themselves are static, so the layer keeps lower decorative content
+         * from painting over card copy.
          */}
         <div className="relative z-10 mt-[100px] grid grid-cols-3 gap-[28px]">
           {PRICING_PLANS.map((plan) => (
@@ -1431,6 +1405,7 @@ export function DesktopLanding() {
             <WorkflowDemoSection />
           </div>
         </div>
+        <WorkVideoSection />
         <PricingSection />
         <DesktopFaqSection />
         <FooterCtaBlock />
