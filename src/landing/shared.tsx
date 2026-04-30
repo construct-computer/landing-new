@@ -1,11 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from "react"
-import type { CSSProperties, ReactNode } from "react"
+import type { CSSProperties, ReactNode, SVGProps } from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
 import imgDocs from "@/assets/docs.png"
 import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
+import type { PricingFeatureIconId } from "@/content/pricing"
 import { LANDING_FAQ } from "@/content/faq"
 import { Link } from "@/router"
 
@@ -25,6 +26,132 @@ export const PRICING_PRICE_TEXT_SHADOW = [
   "0px 42px 17px rgba(0,0,0,0.01)",
   "0px 66px 18px rgba(0,0,0,0)",
 ].join(", ")
+
+/* ------------------------------------------------------------------ */
+/* Pricing benefit icons                                              */
+/* Inline SVG paths sourced from the Iconify sets used in Figma:       */
+/*   bolt        → material-symbols:electric-bolt-rounded              */
+/*   footprint   → material-symbols-light:footprint                    */
+/*   timer       → ri:timer-2-fill                                     */
+/*   tree        → lsicon:tree-filled (16 viewBox)                     */
+/*   cloud       → ri:cloud-fill                                       */
+/*   integration → carbon:ibm-webmethods-integration-server (32 vb)    */
+/*   key         → heroicons-solid:key (20 viewBox)                    */
+/*   email       → ic:sharp-alternate-email                            */
+/*   tabs        → fluent:tabs-24-filled                               */
+/* `currentColor` lets callers tint via Tailwind text colors.          */
+/* ------------------------------------------------------------------ */
+
+type PricingIconDef = {
+  readonly viewBox: string
+  readonly children: ReactNode
+}
+
+const PRICING_FEATURE_ICONS: Record<PricingFeatureIconId, PricingIconDef> = {
+  bolt: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="m11 14.5l-5.925-.75q-.625-.075-.813-.675t.263-1.025l10.225-9.8q.125-.125.3-.187T15.525 2q.5 0 .763.425t.012.875L13 9.5l5.925.75q.625.075.813.675t-.263 1.025L9.25 21.75q-.125.125-.3.188T8.475 22q-.5 0-.763-.425T7.7 20.7z"
+      />
+    ),
+  },
+  footprint: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="M6.5 2q1.529 0 2.515 1.484Q10 4.967 10 7q0 1.16-.337 2.344q-.338 1.185-.71 2.025L4.58 12.43q-.721-1.167-1.15-2.493T3 7q0-2.152.996-3.576T6.5 2m1.375 15q-1.313 0-2.09-1.035Q5.01 14.929 5 13.342l4.162-.992q.296.502.567 1.107T10 14.675q0 1.002-.599 1.664T7.875 17M17.5 7q1.508 0 2.504 1.424T21 12q0 1.667-.467 3.013t-1.227 2.57l-4.298-1.29q-.352-.841-.68-1.997Q14 13.141 14 12q0-2.033.986-3.516Q15.97 7 17.5 7m-1.375 15q-.927 0-1.526-.662T14 19.676q0-.633.29-1.257t.587-1.145l4.117 1.262q-.048 1.47-.821 2.468Q17.4 22 16.125 22"
+      />
+    ),
+  },
+  timer: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2m3.536 5.05L10.586 12L12 13.414l4.95-4.95z"
+      />
+    ),
+  },
+  tree: {
+    viewBox: "0 0 16 16",
+    children: (
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.146 2.153a.5.5 0 0 1 .354-.146h3a.5.5 0 0 1 .5.5V4.51a.5.5 0 0 1-.5.5H8.497V7h4.5a.5.5 0 0 1 .5.5V10H14.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h.997V8h-4v2H9.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h.997V8h-4v2H4.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h.997V7.5a.5.5 0 0 1 .5-.5h4.5V5.01H6.5a.5.5 0 0 1-.5-.5V2.508a.5.5 0 0 1 .146-.354"
+      />
+    ),
+  },
+  cloud: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="M17 7a8 8 0 0 0-7.493 5.19l1.874.703A6.002 6.002 0 0 1 23 15a6 6 0 0 1-6 6H7A6 6 0 0 1 5.008 9.339a7 7 0 0 1 13.757-2.143A8 8 0 0 0 17 7"
+      />
+    ),
+  },
+  integration: {
+    viewBox: "0 0 32 32",
+    children: (
+      <path
+        fill="currentColor"
+        d="M13 28c0 1.654 1.346 3 3 3s3-1.346 3-3a2.995 2.995 0 0 0-2-2.816V22h-2v3.184A2.995 2.995 0 0 0 13 28m3-1a1 1 0 0 1 0 2a1 1 0 0 1 0-2M15 6.816V10h2V6.816A2.995 2.995 0 0 0 19 4c0-1.654-1.346-3-3-3s-3 1.346-3 3c0 1.302.839 2.402 2 2.816M15 4a1 1 0 0 1 2 0a1 1 0 0 1-2 0m11 15a2.97 2.97 0 0 0-1.897.695l-2.627-1.576l-1 1.733l2.584 1.55A3.003 3.003 0 0 0 26 25c1.654 0 3-1.346 3-3s-1.346-3-3-3m0 4a1 1 0 0 1 0-2a1 1 0 0 1 0 2m0-16a3.003 3.003 0 0 0-2.94 3.598l-2.536 1.521l1 1.733l2.579-1.547A2.97 2.97 0 0 0 26 13c1.654 0 3-1.346 3-3s-1.346-3-3-3m0 4a1 1 0 0 1 0-2a1 1 0 0 1 0 2m-14.524 1.12L8.94 10.598Q9 10.308 9 10c0-1.654-1.346-3-3-3s-3 1.346-3 3s1.346 3 3 3a2.97 2.97 0 0 0 1.897-.695l2.58 1.547zM6 11a1 1 0 0 1 0-2a1 1 0 0 1 0 2m5.464 8.888l-1-1.733l-2.567 1.54A2.97 2.97 0 0 0 6 19c-1.654 0-3 1.346-3 3s1.346 3 3 3a3.003 3.003 0 0 0 2.94-3.597zM6 23a1 1 0 0 1 0-2a1 1 0 0 1 0 2m10-3c-2.206 0-4-1.794-4-4s1.794-4 4-4s4 1.794 4 4s-1.794 4-4 4m0-6c-1.102 0-2 .897-2 2s.898 2 2 2s2-.897 2-2s-.897-2-2-2"
+      />
+    ),
+  },
+  key: {
+    viewBox: "0 0 20 20",
+    children: (
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M18 8a6 6 0 0 1-7.743 5.743L10 14l-1 1l-1 1H6v2H2v-4l4.257-4.257A6 6 0 1 1 18 8m-6-4a1 1 0 1 0 0 2a2 2 0 0 1 2 2a1 1 0 1 0 2 0a4 4 0 0 0-4-4"
+      />
+    ),
+  },
+  email: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h5v-2h-5c-4.34 0-8-3.66-8-8s3.66-8 8-8s8 3.66 8 8v1.43c0 .79-.71 1.57-1.5 1.57s-1.5-.78-1.5-1.57V12c0-2.76-2.24-5-5-5s-5 2.24-5 5s2.24 5 5 5c1.38 0 2.64-.56 3.54-1.47c.65.89 1.77 1.47 2.96 1.47c1.97 0 3.5-1.6 3.5-3.57V12c0-5.52-4.48-10-10-10m0 13c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3"
+      />
+    ),
+  },
+  tabs: {
+    viewBox: "0 0 24 24",
+    children: (
+      <path
+        fill="currentColor"
+        d="M2 9.25A7.25 7.25 0 0 1 9.25 2h3.5a3.25 3.25 0 0 1 3 2h-5.5A6.25 6.25 0 0 0 4 10.25v5.5a3.25 3.25 0 0 1-2-3zm3 1C5 7.35 7.35 5 10.25 5h5.5a3.25 3.25 0 0 1 3 2h-7.5A4.25 4.25 0 0 0 7 11.25v7.5a3.25 3.25 0 0 1-2-3zM11.25 8A3.25 3.25 0 0 0 8 11.25v7.5A3.25 3.25 0 0 0 11.25 22h7.5A3.25 3.25 0 0 0 22 18.75v-7.5A3.25 3.25 0 0 0 18.75 8z"
+      />
+    ),
+  },
+}
+
+export function PricingFeatureIcon({
+  icon,
+  ...rest
+}: { icon: PricingFeatureIconId } & SVGProps<SVGSVGElement>) {
+  const def = PRICING_FEATURE_ICONS[icon]
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={def.viewBox}
+      aria-hidden="true"
+      focusable="false"
+      {...rest}
+    >
+      {def.children}
+    </svg>
+  )
+}
 
 /* ------------------------------------------------------------------ */
 /* Shared hooks                                                       */

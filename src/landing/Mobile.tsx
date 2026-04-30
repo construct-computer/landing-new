@@ -23,6 +23,7 @@ import {
   PortalVideo,
   PRICING_BUTTON_BOX_SHADOW,
   PRICING_PRICE_TEXT_SHADOW,
+  PricingFeatureIcon,
   WhatConstructIsSection,
   useSoftPinTransform,
 } from "./shared"
@@ -1187,17 +1188,17 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
           <ul className="font-inter flex min-w-0 flex-col gap-[7px] text-[12.5px] leading-[15px] text-[#4e4646]">
             {plan.features.map((feature, index) => (
               <li
-                key={feature}
+                key={feature.label}
                 className={
-                  "flex min-w-0 items-start gap-2 " +
+                  "flex min-w-0 items-center gap-2 " +
                   (index >= 4 ? "text-[#627c86]" : "text-[#4e4646]")
                 }
               >
-                <span
-                  aria-hidden
-                  className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#01b4c8]/70"
+                <PricingFeatureIcon
+                  icon={feature.icon}
+                  className="h-[14px] w-[14px] shrink-0 text-[#39abdb]"
                 />
-                <span className="min-w-0">{feature}</span>
+                <span className="min-w-0">{feature.label}</span>
               </li>
             ))}
           </ul>

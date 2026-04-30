@@ -28,6 +28,7 @@ import {
   PortalVideo,
   PRICING_BUTTON_BOX_SHADOW,
   PRICING_PRICE_TEXT_SHADOW,
+  PricingFeatureIcon,
   WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
@@ -1123,7 +1124,13 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
 
       <ul className="font-inter absolute left-[33px] right-[33px] top-[383px] z-10 flex flex-col gap-[20px] text-[16px] leading-[22px] text-[#4e4646]">
         {plan.features.map((feature) => (
-          <li key={feature}>{feature}</li>
+          <li key={feature.label} className="flex items-center gap-[14px]">
+            <PricingFeatureIcon
+              icon={feature.icon}
+              className="h-[22px] w-[22px] shrink-0 text-[#39abdb]"
+            />
+            <span>{feature.label}</span>
+          </li>
         ))}
       </ul>
     </article>
