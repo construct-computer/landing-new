@@ -4,21 +4,18 @@ import type { PostHogConfig } from "posthog-js"
 /** Reverse proxy to PostHog EU (ingest + assets); see project plan. */
 export const DEFAULT_POSTHOG_API_HOST = "https://x.construct.computer"
 
+/** Public project API key (always shipped in the browser bundle). */
+const POSTHOG_PROJECT_KEY =
+  "phc_Wgx6j1nXV6CCqEL602SpqRXrF9fb235klLVzUYHJlpZ"
+
 let didInit = false
 
 function readEnvString(value: string | undefined): string {
   return (value ?? "").trim()
 }
 
-/**
- * Project API key (`phc_…`). Inlined at build time via `build.ts` `define`;
- * in dev, loaded from the environment.
- */
 export function getPostHogKey(): string {
-  if (typeof process !== "undefined" && typeof process.env !== "undefined") {
-    return readEnvString(process.env.POSTHOG_KEY)
-  }
-  return ""
+  return POSTHOG_PROJECT_KEY
 }
 
 /**
@@ -27,7 +24,10 @@ export function getPostHogKey(): string {
  */
 export function getPostHogApiHost(): string {
   if (typeof process !== "undefined" && typeof process.env !== "undefined") {
-    const h = readEnvString(process.env.POSTHOG_API_HOST)
+    const h = readEnvString(
+      process.env.POSTHOG_API_HOST ??
+        process.env.BUN_PUBLIC_POSTHOG_API_HOST,
+    )
     if (h) return h
   }
   return DEFAULT_POSTHOG_API_HOST

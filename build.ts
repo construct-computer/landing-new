@@ -128,9 +128,6 @@ console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? 
 // `ReferenceError: process is not defined` during hydration - taking every
 // downstream effect down with it (including the responsive layout swap).
 const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
-const POSTHOG_KEY = process.env.POSTHOG_KEY ?? "";
-const POSTHOG_API_HOST =
-  process.env.POSTHOG_API_HOST ?? "https://x.construct.computer";
 
 const result = await Bun.build({
   entrypoints,
@@ -146,8 +143,6 @@ const result = await Bun.build({
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
     "process.env.SITE_URL": JSON.stringify(SITE_URL),
-    "process.env.POSTHOG_KEY": JSON.stringify(POSTHOG_KEY),
-    "process.env.POSTHOG_API_HOST": JSON.stringify(POSTHOG_API_HOST),
   },
   ...cliConfig,
 });
