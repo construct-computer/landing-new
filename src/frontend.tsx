@@ -7,13 +7,27 @@
 
 import { StrictMode } from "react";
 import { createRoot, hydrateRoot, type Root } from "react-dom/client";
+import { PostHogProvider } from "posthog-js/react";
 import { App } from "./App";
+import {
+  initPostHog,
+  isPostHogEnabled,
+  posthog,
+} from "./lib/posthog-client";
 import "./index.css"
+
+initPostHog();
 
 const elem = document.getElementById("root")!;
 const app = (
   <StrictMode>
-    <App />
+    {isPostHogEnabled() ? (
+      <PostHogProvider client={posthog}>
+        <App />
+      </PostHogProvider>
+    ) : (
+      <App />
+    )}
   </StrictMode>
 );
 
