@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react"
-import type { CSSProperties, ReactNode, SVGProps } from "react"
+import type { CSSProperties, DragEvent, ReactNode, SVGProps } from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
@@ -26,6 +26,11 @@ export const PRICING_PRICE_TEXT_SHADOW = [
   "0px 42px 17px rgba(0,0,0,0.01)",
   "0px 66px 18px rgba(0,0,0,0)",
 ].join(", ")
+
+/** Applied on desktop/mobile landing roots so decorative images cannot be dragged. */
+export function preventLandingImageDrag(event: DragEvent) {
+  if (event.target instanceof HTMLImageElement) event.preventDefault()
+}
 
 /* ------------------------------------------------------------------ */
 /* Pricing benefit icons                                              */
@@ -346,7 +351,12 @@ export function WorkflowChip({
         (className ?? "")
       }
     >
-      <img src={icon} alt="" className="h-7 w-7 shrink-0 rounded-[20px] object-contain" />
+      <img
+        src={icon}
+        alt=""
+        draggable={false}
+        className="h-7 w-7 shrink-0 rounded-[20px] object-contain"
+      />
       <p className="truncate text-[12px] leading-none text-[#0b0b0b]">{label}</p>
     </div>
   )

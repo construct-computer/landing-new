@@ -8,6 +8,11 @@
   body {
     @apply min-w-[320px] min-h-screen w-full m-0 bg-background text-foreground antialiased;
   }
+
+  .landing-page img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 }
 
 /* cool Bun background animation 😎 */

@@ -32,8 +32,10 @@ import {
   WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
+  preventLandingImageDrag,
   useSoftPinTransform,
 } from "./shared"
+import { FeatureGridSection } from "./FeatureGridSection"
 import { LANDING_FAQ } from "@/content/faq"
 
 const WORKFLOW_DEMOS = [
@@ -1384,58 +1386,12 @@ function DesktopFaqSection() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer CTA - oversized rounded gradient block                       */
-/* (#6bbfe3 → rgba(0,117,150,0.94)) sitting just above the footer.     */
-/* ------------------------------------------------------------------ */
-function FooterCtaBlock() {
-  return (
-    <section
-      aria-labelledby="footer-cta-heading"
-      className="relative w-full px-6 pb-20 pt-10 lg:px-16"
-    >
-      <div className="mx-auto w-full max-w-[1526px]">
-        <div
-          className="relative isolate overflow-hidden rounded-[61px] px-12 py-20 lg:px-24 lg:py-28"
-          style={{
-            background:
-              "linear-gradient(to bottom, #6bbfe3 0%, rgba(0,117,150,0.94) 100%)",
-          }}
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,0.45),transparent_55%)]"
-          />
-          <div className="mx-auto flex max-w-[820px] flex-col items-center text-center text-white">
-            <h2
-              id="footer-cta-heading"
-              className="text-balance text-[51.8px] capitalize leading-[58px]"
-            >
-              <span className="font-ui">Give your work to </span>
-              <span className="font-display italic">Construct</span>
-            </h2>
-            <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-white/85">
-              Deploy your own autonomous cloud computer in seconds. Construct
-              handles research, code, and email so you can focus on what matters.
-            </p>
-            <a
-              href={BETA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-inter mt-10 inline-flex h-[64px] min-w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-10 text-[22px] font-medium leading-[22px] text-white shadow-[0_10px_21px_rgba(0,0,0,0.1),0_39px_39px_rgba(0,0,0,0.09),0_87px_52px_rgba(0,0,0,0.05),inset_0_7px_4px_#2b476e] transition-transform duration-150 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d6f8c]"
-            >
-              Try Construct
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 export function DesktopLanding() {
   return (
-    <div className="relative min-h-screen w-full overflow-x-clip bg-white text-[#4e4646]">
+    <div
+      className="landing-page relative min-h-screen w-full overflow-x-clip bg-white text-[#4e4646]"
+      onDragStart={preventLandingImageDrag}
+    >
       <LandingNav />
       <main id="main" className="pt-12 lg:pt-14">
         <HeroStage />
@@ -1457,12 +1413,12 @@ export function DesktopLanding() {
           <div className="relative z-10">
             <CloudsTransition />
             <WorkflowDemoSection />
+            <FeatureGridSection />
           </div>
         </div>
         <WorkVideoSection />
         <PricingSection />
         <DesktopFaqSection />
-        <FooterCtaBlock />
       </main>
       <LandingFooter />
     </div>

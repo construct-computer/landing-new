@@ -25,8 +25,10 @@ import {
   PRICING_PRICE_TEXT_SHADOW,
   PricingFeatureIcon,
   WhatConstructIsSection,
+  preventLandingImageDrag,
   useSoftPinTransform,
 } from "./shared"
+import { MobileFeatureGridSection } from "./FeatureGridSection"
 
 const MOBILE_WORKFLOW_DEMOS = [
   {
@@ -1436,55 +1438,13 @@ function MobileFaqSection() {
   )
 }
 
-function MobileFooterCtaBlock() {
-  return (
-    <section
-      aria-labelledby="mobile-footer-cta-heading"
-      className="relative w-full px-5 pb-14 pt-2"
-    >
-      <div className="mx-auto w-full max-w-[430px]">
-        <div
-          className="relative isolate overflow-hidden rounded-[38px] px-6 py-12"
-          style={{
-            background:
-              "linear-gradient(to bottom, #6bbfe3 0%, rgba(0,117,150,0.94) 100%)",
-          }}
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-12%,rgba(255,255,255,0.46),transparent_58%)]"
-          />
-          <div className="mx-auto flex max-w-[330px] flex-col items-center text-center text-white">
-            <h2
-              id="mobile-footer-cta-heading"
-              className="text-balance text-[34px] capitalize leading-[40px]"
-            >
-              <span className="font-ui">Give Your Work To </span>
-              <span className="font-display italic">Construct</span>
-            </h2>
-            <p className="font-ui mt-5 text-[15px] leading-[21px] text-white/85">
-              Deploy your own autonomous cloud computer in seconds. Construct
-              handles research, code, and email so you can focus on what matters.
-            </p>
-            <a
-              href={BETA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-inter mt-8 inline-flex h-[54px] min-w-[220px] items-center justify-center rounded-[27px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-8 text-[17px] font-medium leading-[22px] text-white shadow-[0_10px_21px_rgba(0,0,0,0.1),0_39px_39px_rgba(0,0,0,0.09),0_87px_52px_rgba(0,0,0,0.05),inset_0_7px_4px_#2b476e] active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d6f8c]"
-            >
-              Try Construct
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ------------------------------------------------------------------ */
 export function MobileLanding() {
   return (
-    <div className="relative min-h-dvh w-full overflow-x-clip bg-white text-[#4e4646]">
+    <div
+      className="landing-page relative min-h-dvh w-full overflow-x-clip bg-white text-[#4e4646]"
+      onDragStart={preventLandingImageDrag}
+    >
       <LandingNav />
       <main id="main">
         <HeroWithStraddlingPortal />
@@ -1508,12 +1468,12 @@ export function MobileLanding() {
             <MobileCloudsTransition />
             <AdaptsSection className="py-10" />
             <MobileWorkflowShowcase />
+            <MobileFeatureGridSection />
             <MobileWorkVideoSection />
             <MobilePricingSection />
           </div>
         </div>
         <MobileFaqSection />
-        <MobileFooterCtaBlock />
       </main>
       <LandingFooter />
     </div>
