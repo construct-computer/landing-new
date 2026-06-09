@@ -114,12 +114,13 @@ Construct Computer is an AI agent with its own computer in the cloud. Unlike a c
 - Integrations: Google Workspace, Gmail, Slack, Notion, Linear, Jira, GitHub, HubSpot, Airtable, Dropbox, and 1,000+ others through Composio; additional apps from the public Construct App Registry.
 
 ## Models
-- Default agent model: Moonshot Kimi K2.6 served via Cloudflare Workers AI.
-- Fallback / premium tier: Google Gemini 3.1 Pro.
+- The same model stack is used on every plan - paid plans buy more usage, steps, runtime, parallelism, and storage rather than a better model.
+- Main agent loop: xAI Grok 4.3; sub-agents and tool-heavy escalation: Google Gemini; coding tasks: Moonshot Kimi K2.6 via Cloudflare Workers AI. All routed through Cloudflare AI Gateway.
 - Bring Your Own Key (BYOK) via OpenRouter is available on every tier.
 
 ## Plans
-- Free, Starter, and Pro subscriptions.
+- Free, Starter, and Pro subscriptions; the same model quality on all three.
+- Plans differ in steps per task, command runtime, concurrent sub-agents, scheduled tasks, and workspace storage. Free: 50 steps, 5 min runtime, 2 sub-agents, 100 MB storage. Starter: 150 steps, 30 min runtime, 5 sub-agents, 1 GB storage, agent email + background tasks. Pro: 1,000 steps, 1 hr runtime, unlimited sub-agents, 3 GB storage, agent email + background tasks.
 - Metered by real model cost via Cloudflare AI Gateway, with a weekly budget and a 4-hour burst window cap - not per-message.
 - Pro auto-downgrades to a lighter model at 80% of the weekly budget and hard-stops at 100%.
 - Bonus credits available for sharing the product; BYOK usage never counts against the bundled budget.

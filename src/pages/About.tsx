@@ -47,7 +47,7 @@ export function AboutPage() {
           </li>
           <li>
             A persistent cloud workspace (Cloudflare R2) that survives across
-            sessions - up to 2 GB, searchable, drag-and-drop uploadable
+            sessions - up to 3 GB, searchable, drag-and-drop uploadable
           </li>
           <li>
             A dedicated email inbox at{" "}
