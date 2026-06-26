@@ -2,6 +2,12 @@ import { useEffect } from "react"
 import { getRouteMeta, type RouteMeta } from "./routes"
 import { OG_LOCALE, serializeJsonLd } from "./jsonLd"
 
+/** Optional Search Console token — set `GOOGLE_SITE_VERIFICATION` at build time. */
+const googleSiteVerification: string | undefined =
+  typeof process !== "undefined" && typeof process.env !== "undefined"
+    ? process.env.GOOGLE_SITE_VERIFICATION || undefined
+    : undefined
+
 /**
  * Shared helpers for head management across SSG (build-time) and client
  * (runtime). Both the build loop and the client's `useRouteMeta` write the
@@ -35,7 +41,12 @@ export function renderHeadForRoute(route: RouteMeta): string {
   parts.push(nameMeta("description", route.description))
   if (route.keywords) parts.push(nameMeta("keywords", route.keywords))
   if (route.robots) parts.push(nameMeta("robots", route.robots))
+  if (googleSiteVerification) {
+    parts.push(nameMeta("google-site-verification", googleSiteVerification))
+  }
 
+  parts.push(`<link rel="icon" href="/favicon.ico" sizes="any" />`)
+  parts.push(`<link rel="icon" type="image/png" href="/logo.png" />`)
   parts.push(`<link rel="manifest" href="/manifest.webmanifest" />`)
   parts.push(`<link rel="preload" as="image" href="/logo.png" />`)
   parts.push(`<link rel="canonical" href="${escapeAttr(route.canonical)}" />`)
@@ -88,6 +99,9 @@ function applyRouteMeta(route: RouteMeta) {
   setMeta("name", "description", route.description)
   setMeta("name", "keywords", route.keywords)
   if (route.robots) setMeta("name", "robots", route.robots)
+  if (googleSiteVerification) {
+    setMeta("name", "google-site-verification", googleSiteVerification)
+  }
   setLink("canonical", route.canonical)
 
   setMeta("property", "og:title", route.title)

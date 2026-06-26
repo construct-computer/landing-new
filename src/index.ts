@@ -5,9 +5,9 @@ import index from "./index.html";
 /**
  * Dev server. In prod the site is served as pre-rendered static files
  * produced by `build.ts`, so this is really just a convenience wrapper
- * for `bun dev`. We map every known client-side route to the same
- * `index.html` so direct-hit URLs (e.g. `/about`) resolve instead of
- * 404-ing.
+ * for `bun dev`. Known routes map to the SPA shell; everything else
+ * still loads the shell (HTTP 200) so the client router can render the
+ * 404 page. Production returns `dist/404.html` with a real 404 status.
  */
 const server = serve({
   routes: {

@@ -6,7 +6,9 @@ import { AboutPage } from "@/pages/About"
 import { CareersPage } from "@/pages/Careers"
 import { PrivacyPolicyPage } from "@/pages/PrivacyPolicy"
 import { SupportPage } from "@/pages/Support"
+import { NotFoundPage } from "@/pages/NotFound"
 import { TermsPage } from "@/pages/Terms"
+import { isKnownRoute } from "@/seo/routes"
 import { RouterProvider, useRoute } from "@/router"
 
 const DESKTOP_QUERY = "(min-width: 1024px)"
@@ -56,10 +58,13 @@ function Landing() {
 
 /**
  * Static route table. Kept tiny on purpose - this is a marketing site, not
- * an app. Unknown paths fall back to the landing.
+ * an app. Unknown paths render the 404 page (and `dist/404.html` in prod).
  */
 function Routes() {
   const pathname = useRoute()
+  if (!isKnownRoute(pathname)) {
+    return <NotFoundPage />
+  }
   switch (pathname) {
     case "/about":
       return <AboutPage />

@@ -165,7 +165,7 @@ export function breadcrumbListJsonLd(items: readonly Breadcrumb[]) {
       "@type": "ListItem",
       position: i + 1,
       name: b.name,
-      item: `${SITE_URL}${b.path === "/" ? "" : b.path}`,
+      item: `${SITE_URL}${b.path === "/" ? "/" : `${b.path}/`}`,
     })),
   } as const
 }

@@ -26,11 +26,11 @@ export const LANDING_FAQ: readonly FaqItem[] = [
   {
     question: "Is my data private and secure?",
     answer:
-      "Each user runs on a dedicated Cloudflare Durable Object with an isolated Docker sandbox. OAuth tokens and API keys are encrypted with AES-256-GCM. You can inspect, forget, or bulk-delete agent memories at any time, and every tool call is written to a queryable audit log.",
+      "Each user gets an isolated workspace and sandbox. Stored credentials and API keys are encrypted. You can inspect, edit, or bulk-delete agent memories at any time, and every tool call is written to a queryable audit log.",
   },
   {
     question: "How is Construct priced?",
     answer:
-      "Free, Starter, and Pro tiers. Usage is metered by real model cost via Cloudflare AI Gateway with a weekly budget and a 4-hour burst cap, not per message. Bring-your-own-key is available on every tier and does not count against the bundled budget.",
+      "Free ($0), Starter ($59/mo), and Pro ($299/mo). Usage is metered by a weekly compute budget with a 4-hour burst cap, not per message. Agent email and background work start on Starter. Bring-your-own-key is available on every tier and does not count against the bundled budget.",
   },
 ]

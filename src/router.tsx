@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react"
 import { useRouteMeta } from "@/seo/head"
+import { capturePostHogPageview } from "@/lib/posthog-client"
 import { normalizePathname } from "@/seo/routes"
 
 /**
@@ -50,6 +51,10 @@ export function RouterProvider({
 
   // Keep <title>/meta/JSON-LD in sync on client-side navigations.
   useRouteMeta(pathname)
+
+  useEffect(() => {
+    capturePostHogPageview(pathname)
+  }, [pathname])
 
   return (
     <RouteContext.Provider value={pathname}>{children}</RouteContext.Provider>

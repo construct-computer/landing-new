@@ -41,6 +41,8 @@ function buildOptions(): Partial<PostHogConfig> {
   return {
     api_host: getPostHogApiHost(),
     defaults: "2026-01-30",
+    // RouterProvider emits $pageview on every pathname change (incl. first paint).
+    capture_pageview: false,
     capture_pageleave: true,
     enable_heatmaps: true,
     disable_session_recording: false,
@@ -57,6 +59,15 @@ export function initPostHog(): void {
 
   posthog.init(key, buildOptions())
   didInit = true
+}
+
+/** Fire a `$pageview` for SPA navigations and the initial hydrated route. */
+export function capturePostHogPageview(pathname: string): void {
+  if (!didInit || typeof window === "undefined") return
+  posthog.capture("$pageview", {
+    $current_url: window.location.href,
+    $pathname: pathname,
+  })
 }
 
 export { posthog }

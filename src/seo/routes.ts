@@ -65,7 +65,7 @@ const DEFAULT_OG = {
 } as const satisfies Partial<RouteMeta>
 
 function canonical(path: string): string {
-  return path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`
+  return path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}/`
 }
 
 function homeBreadcrumbs(page: { name: string; path: string }) {
@@ -143,6 +143,25 @@ const ROUTE_MAP: Record<string, RouteMeta> = Object.fromEntries(
   ROUTES.map((r) => [r.path, r]),
 )
 
+const KNOWN_PATHS = new Set(ROUTES.map((r) => r.path))
+
+/** SEO metadata for `dist/404.html` and client-side unknown routes. */
+export const NOT_FOUND_META: RouteMeta = {
+  ...DEFAULT_OG,
+  path: "/404",
+  title: "Page not found - Construct Computer",
+  description:
+    "The page you requested does not exist on construct.computer. Return to the homepage or contact support for help.",
+  keywords: KEYWORDS_COMMON,
+  canonical: canonical("/"),
+  robots: "noindex, follow",
+  jsonLd: [organizationJsonLd()],
+}
+
+export function isKnownRoute(pathname: string): boolean {
+  return KNOWN_PATHS.has(normalizePathname(pathname))
+}
+
 /**
  * Strip trailing slashes so `/support/` (common after static hosts redirect
  * directory indexes) matches the same route as `/support`.
@@ -152,8 +171,9 @@ export function normalizePathname(pathname: string): string {
   return trimmed === "" ? "/" : trimmed
 }
 
-/** Fallback used on unknown pathnames (client-side) or for 404-ish hits. */
+/** Route SEO metadata; unknown paths get `NOT_FOUND_META` (noindex). */
 export function getRouteMeta(pathname: string): RouteMeta {
   const normalized = normalizePathname(pathname)
-  return ROUTE_MAP[normalized] ?? ROUTE_MAP["/"]!
+  if (!isKnownRoute(normalized)) return NOT_FOUND_META
+  return ROUTE_MAP[normalized]!
 }

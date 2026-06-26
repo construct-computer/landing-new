@@ -128,6 +128,7 @@ console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? 
 // `ReferenceError: process is not defined` during hydration - taking every
 // downstream effect down with it (including the responsive layout swap).
 const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION ?? "";
 
 const result = await Bun.build({
   entrypoints,
@@ -143,6 +144,9 @@ const result = await Bun.build({
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
     "process.env.SITE_URL": JSON.stringify(SITE_URL),
+    "process.env.GOOGLE_SITE_VERIFICATION": JSON.stringify(
+      GOOGLE_SITE_VERIFICATION,
+    ),
   },
   ...cliConfig,
 });
@@ -185,6 +189,12 @@ if (existsSync(logoSrc)) {
   console.log(
     `🖼  Logo → ${path.relative(process.cwd(), logoDest)} (${formatFileSize(bytes)}${optimized ? ", sips-resized 512px" : ""})`,
   );
+
+  const faviconDest = path.join(outdir, "favicon.ico");
+  await copyFile(logoDest, faviconDest);
+  console.log(
+    `🔖 Favicon → ${path.relative(process.cwd(), faviconDest)} (${formatFileSize(Bun.file(faviconDest).size)})`,
+  );
 }
 
 // Emit the OG/Twitter share card at a stable, unhashed path. The source is
@@ -226,9 +236,11 @@ if (existsSync(ogCardSrc)) {
     // sips not available; PNG fallback below.
   }
   if (jpegOk) {
+    await copyFile(ogCardSrc, ogCardPngDest);
     const bytes = Bun.file(ogCardJpgDest).size;
+    const pngBytes = Bun.file(ogCardPngDest).size;
     console.log(
-      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, sips JPEG q90)`,
+      `🏷️  OG card → ${path.relative(process.cwd(), ogCardJpgDest)} (${formatFileSize(bytes)}, sips JPEG q90), ${path.relative(process.cwd(), ogCardPngDest)} (${formatFileSize(pngBytes)})`,
     );
   } else {
     // No sips: emit the PNG at the expected URL. jsonLd.ts points at the
@@ -264,13 +276,14 @@ const ssgStart = performance.now();
 const { renderToString } = await import("react-dom/server");
 const { createElement } = await import("react");
 const { App } = await import("./src/App");
-const { ROUTES } = await import("./src/seo/routes");
+const { ROUTES, NOT_FOUND_META } = await import("./src/seo/routes");
 const { renderHeadForRoute } = await import("./src/seo/head");
 const {
   robotsTxt,
   sitemapXml,
   llmsTxt,
   llmsFullTxt,
+  agentsMd,
   securityTxt,
   manifestJson,
 } = await import("./src/seo/crawlerFiles");
@@ -357,6 +370,22 @@ for (const route of ROUTES) {
   });
 }
 
+// `wrangler.jsonc` sets `not_found_handling: "404-page"` so Cloudflare serves
+// this file with a 404 status for any URL that has no matching asset.
+const notFoundBody = rewriteAssets(
+  renderToString(createElement(App as any, { initialPath: "/__not-found__" })),
+);
+const notFoundHtml = template
+  .replace(HEAD_BLOCK, renderHeadForRoute(NOT_FOUND_META))
+  .replace(ROOT_BLOCK, notFoundBody);
+const notFoundFile = path.join(outdir, "404.html");
+await writeFile(notFoundFile, notFoundHtml, "utf8");
+renderedRoutes.push({
+  path: "(404)",
+  file: path.relative(process.cwd(), notFoundFile),
+  bytes: Buffer.byteLength(notFoundHtml),
+});
+
 console.table(
   renderedRoutes.map((r) => ({
     Route: r.path,
@@ -373,6 +402,7 @@ await writeFile(path.join(outdir, "robots.txt"), robotsTxt(), "utf8");
 await writeFile(path.join(outdir, "sitemap.xml"), sitemapXml(), "utf8");
 await writeFile(path.join(outdir, "llms.txt"), llmsTxt(), "utf8");
 await writeFile(path.join(outdir, "llms-full.txt"), llmsFullTxt(), "utf8");
+await writeFile(path.join(outdir, "agents.md"), agentsMd(), "utf8");
 await writeFile(path.join(outdir, "manifest.webmanifest"), manifestJson(), "utf8");
 
 const wellKnownDir = path.join(outdir, ".well-known");
@@ -384,5 +414,5 @@ console.log(
   `\n✅ SSG + crawler files written in ${(ssgEnd - ssgStart).toFixed(2)}ms`,
 );
 console.log(
-  `   - ${renderedRoutes.length} pre-rendered routes\n   - robots.txt, sitemap.xml, llms.txt, llms-full.txt, manifest.webmanifest, .well-known/security.txt\n`,
+  `   - ${renderedRoutes.length} pre-rendered routes (incl. 404.html)\n   - robots.txt, sitemap.xml, llms.txt, llms-full.txt, agents.md, manifest.webmanifest, .well-known/security.txt\n`,
 );
