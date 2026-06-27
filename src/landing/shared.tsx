@@ -8,6 +8,13 @@ import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
 import type { PricingFeatureIconId } from "@/content/pricing"
 import { LANDING_FAQ } from "@/content/faq"
+import {
+  CTA,
+  DIFFERENTIATION,
+  HERO,
+  HOW_IT_WORKS,
+  SECTIONS,
+} from "@/content/landing-copy"
 import { Link } from "@/router"
 
 export const PRICING_BUTTON_BOX_SHADOW = [
@@ -240,39 +247,13 @@ export function useSoftPinTransform(
 /* ------------------------------------------------------------------ */
 export const BETA_URL = "https://beta.construct.computer"
 
-export const SECTION_BLURB =
-  "Construct adapts to any task — it handles the full workflow end to end and automates most of it without monitoring."
+/** Shared vertical rhythm for landing marketing sections. */
+export const LANDING_SECTION_Y = "py-16 lg:py-20"
 
-/**
- * Per-feature copy. Each card has a distinct 2-line paragraph so the page
- * has unique indexable text for every capability while staying scannable:
- * the aim is for a visitor to absorb all four in one sweep without having
- * to slow down and read. Every removed phrase (e.g. "handled by TinyFish",
- * "straight into your R2 workspace") is infrastructure detail that wasn't
- * part of any meta description or JSON-LD — no SEO signal lost.
- */
-export const FEATURES: readonly { title: string; description: string }[] = [
-  {
-    title: "Construct Browsing",
-    description:
-      "A real browser inside your sandbox — sessions persist across tasks while the agent navigates pages and fills forms.",
-  },
-  {
-    title: "Research and Reports",
-    description:
-      "Ask for a brief — the agent gathers sources, cross-references them, and writes a cited PDF or Markdown report.",
-  },
-  {
-    title: "Live Terminal",
-    description:
-      "A dedicated Linux sandbox. The agent runs shell, Python, and the GitHub CLI, shipping code live as you watch.",
-  },
-  {
-    title: "Manages Emails",
-    description:
-      "Construct has its own inbox — triages mail, drafts replies, schedules meetings, and pings you when a decision is needed.",
-  },
-]
+/** White band below hero: clears portal bleed and keeps copy above decorative media. */
+export const POST_HERO_CLEARANCE = "relative z-20 bg-white pt-28 lg:pt-36"
+
+export const SECTION_BLURB = SECTIONS.adapts.blurb
 
 export const WORKFLOW_CHIPS: readonly { icon: string; label: string; offset: string }[] = [
   { icon: imgGmeet, label: "Attended The Meeting", offset: "0%" },
@@ -363,7 +344,7 @@ export function WorkflowChip({
 }
 
 /* ------------------------------------------------------------------ */
-/* Call-to-action button ("Enter Experience")                         */
+/* Primary CTA button (cyan pill)                                              */
 /* ------------------------------------------------------------------ */
 export function EnterExperienceButton({ className }: { className?: string }) {
   return (
@@ -377,7 +358,7 @@ export function EnterExperienceButton({ className }: { className?: string }) {
         (className ?? "")
       }
     >
-      <span className="px-2 text-[21px] leading-[60px] text-white">Enter Experience</span>
+      <span className="px-2 text-[21px] leading-[60px] text-white">{CTA.primary}</span>
     </a>
   )
 }
@@ -396,7 +377,7 @@ export function EarlyAccessPill({ className }: { className?: string }) {
         (className ?? "")
       }
     >
-      <span className="relative z-10">Early Beta Access</span>
+      <span className="relative z-10">{CTA.primary}</span>
     </a>
   )
 }
@@ -455,63 +436,169 @@ export function LandingNav() {
 }
 
 /* ------------------------------------------------------------------ */
-/* "What Construct is" - keyword-weighted intro shown after hero       */
+/* Shared section typography                                          */
 /* ------------------------------------------------------------------ */
-export function WhatConstructIsSection({ className }: { className?: string }) {
-  return <></>
-  // not needed
-  // return (
-  //   <section
-  //     id="what"
-  //     aria-labelledby="what-heading"
-  //     className={
-  //       "mx-auto w-full max-w-3xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
-  //     }
-  //   >
-  //     <h2
-  //       id="what-heading"
-  //       className="text-balance text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
-  //     >
-  //       <span className="font-ui text-[#4e4646]">The AI employee with their own</span>{" "}
-  //       <span className="font-display italic text-[#01b4c8]">computer</span>
-  //     </h2>
-  //     <div className="font-ui mx-auto mt-6 max-w-[620px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
-  //       <p>
-  //         Construct is an <strong className="text-[#4e4646]">AI agent</strong> with
-  //         its own cloud computer. Every user gets a dedicated Linux sandbox, a
-  //         real web browser, an email inbox, long-term memory, a calendar, and a
-  //         live terminal - all wrapped in a virtual desktop you can watch in real
-  //         time.
-  //       </p>
-  //       <p>
-  //         Reach it from the web, Slack, Telegram, or email. It connects to
-  //         Gmail, Notion, Linear, Jira, GitHub, HubSpot, and 1,000+ other apps
-  //         through Composio, and it leaves a full audit log of every action so
-  //         you stay in control.
-  //       </p>
-  //       <p>
-  //         Built on Cloudflare Durable Objects, D1, R2, and the Sandbox SDK for
-  //         per-user isolation - with models served through the Cloudflare AI
-  //         Gateway and BYOK available on every tier.
-  //       </p>
-  //     </div>
-  //   </section>
-  // )
+export function SectionHeading({
+  id,
+  neutral,
+  accent,
+}: {
+  id?: string
+  neutral: string
+  accent: string
+}) {
+  return (
+    <h2
+      id={id}
+      className="text-balance text-3xl capitalize sm:text-4xl lg:text-[51.8px] lg:leading-[58px]"
+    >
+      <span className="font-ui text-[#4e4646]">{neutral}</span>
+      <span className="font-display italic text-[#01b4c8]">{accent}</span>
+    </h2>
+  )
+}
+
+export function SectionBlurb({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <p
+      className={
+        "font-ui mx-auto mt-6 max-w-[495px] text-[16px] leading-[21px] text-[#627c86] " +
+        (className ?? "")
+      }
+    >
+      {children}
+    </p>
+  )
 }
 
 /* ------------------------------------------------------------------ */
-/* Mid-section heading ("It Adapts, Learns and Automates...")         */
+/* Hero headline (shared desktop + mobile)                            */
+/* ------------------------------------------------------------------ */
+export function HeroHeadline({ variant }: { variant: "desktop" | "mobile" }) {
+  const isMobile = variant === "mobile"
+
+  return (
+    <div
+      className={
+        isMobile
+          ? "mx-auto max-w-[420px] text-center"
+          : "pointer-events-auto max-w-[560px]"
+      }
+    >
+      <p
+        className={
+          "font-ui text-[13px] leading-[18px] text-[#8a9aa2] " +
+          (isMobile ? "mb-4" : "mb-5")
+        }
+      >
+        {HERO.eyebrow}
+      </p>
+      <h1
+        className={
+          "font-display text-balance capitalize italic leading-[1.1] text-[#4e4646] " +
+          (isMobile
+            ? "text-[38px]"
+            : "text-5xl lg:text-[51.8px] lg:leading-[58px]")
+        }
+      >
+        <span>{HERO.headlineNeutralBefore}</span>
+        <span className="text-[#01b4c8]">{HERO.headlineAccent}</span>
+        <span>{HERO.headlineNeutralAfter}</span>
+      </h1>
+      <p
+        className={
+          "font-ui text-[#627c86] " +
+          (isMobile
+            ? "mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px]"
+            : "mt-6 max-w-[520px] text-[16px] leading-[22px]")
+        }
+      >
+        {isMobile ? HERO.subheadMobile : HERO.subhead}
+      </p>
+      <EnterExperienceButton className={isMobile ? "mt-7" : "mt-8"} />
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Differentiation — shown after hero                                 */
+/* ------------------------------------------------------------------ */
+export function WhatConstructIsSection({ className }: { className?: string }) {
+  return (
+    <section
+      id="what"
+      aria-labelledby="what-heading"
+      className={
+        "mx-auto w-full max-w-3xl px-6 pb-12 text-center lg:pb-14 mt-64 " + (className ?? "")
+      }
+    >
+      <SectionHeading
+        id="what-heading"
+        neutral={DIFFERENTIATION.headlineNeutral}
+        accent={DIFFERENTIATION.headlineAccent}
+      />
+      <SectionBlurb className="max-w-[480px]">{DIFFERENTIATION.body}</SectionBlurb>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* How it works — 3 steps after differentiation                       */
+/* ------------------------------------------------------------------ */
+export function HowItWorksSection({ className }: { className?: string }) {
+  return (
+    <section
+      aria-labelledby="how-it-works-heading"
+      className={
+        "mx-auto w-full max-w-[1078px] border-t border-[#e8eef0] px-6 pb-16 pt-12 text-center lg:pb-20 lg:pt-16 " +
+        (className ?? "")
+      }
+    >
+      <SectionHeading
+        id="how-it-works-heading"
+        neutral={HOW_IT_WORKS.headlineNeutral}
+        accent={HOW_IT_WORKS.headlineAccent}
+      />
+      <div className="mt-8 grid grid-cols-1 gap-8 text-left sm:grid-cols-3 sm:gap-6 lg:gap-[31px]">
+        {HOW_IT_WORKS.steps.map((item) => (
+          <article key={item.step} className="font-ui px-2">
+            <p className="text-[28px] leading-none text-[#01b4c8] lg:text-[32px]">
+              {item.step}
+            </p>
+            <h3 className="mt-3 text-[17px] leading-[22px] text-[#235061] lg:mt-4 lg:text-[18px] lg:leading-[24px]">
+              {item.title}
+            </h3>
+            <p className="mt-1.5 text-[14px] leading-[20px] text-[#627c86] lg:mt-2 lg:text-[15px] lg:leading-[22px]">
+              {item.body}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Mid-section heading                                                */
 /* ------------------------------------------------------------------ */
 export function AdaptsSection({ className }: { className?: string }) {
   return (
-    <section className={"mx-auto max-w-3xl px-6 text-center " + (className ?? "pb-10 pt-8")}>
-      <h2 className="text-balance text-3xl capitalize sm:text-4xl lg:text-[51.8px] lg:leading-[58px]">
-        <span className="font-ui text-[#4e4646]">It Adapts, Learns and</span>{" "}
-        <span className="font-display italic text-[#01b4c8]">Automates Your Workflow</span>
-      </h2>
-      <p className="font-ui mx-auto mt-6 max-w-[495px] text-[16px] leading-[21px] text-[#627c86]">
-        {SECTION_BLURB}
-      </p>
+    <section
+      className={
+        "mx-auto max-w-3xl px-6 text-center " + LANDING_SECTION_Y + " " + (className ?? "")
+      }
+    >
+      <SectionHeading
+        neutral={SECTIONS.adapts.headlineNeutral}
+        accent={SECTIONS.adapts.headlineAccent}
+      />
+      <SectionBlurb>{SECTION_BLURB}</SectionBlurb>
     </section>
   )
 }
@@ -682,42 +769,5 @@ export function LandingFooter() {
         </p>
       </div>
     </footer>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/* Feature card                                                       */
-/* ------------------------------------------------------------------ */
-export function FeatureCard({
-  title,
-  description,
-  compact = false,
-}: {
-  title: string
-  description: string
-  compact?: boolean
-}) {
-  return (
-    <article
-      className={
-        "flex flex-col gap-5 " + (compact ? "px-4 py-6" : "px-5 py-10 lg:px-10 lg:py-14")
-      }
-    >
-      <div
-        aria-hidden
-        className={
-          "relative w-full overflow-hidden rounded-[28px] border border-[#8adcdf] " +
-          (compact ? "h-[200px]" : "h-[280px] lg:h-[340px]")
-        }
-      >
-        <div className="h-full w-full bg-linear-to-b from-[#e4f7fa] via-[#f2fbfd] to-white" />
-      </div>
-      <div className="font-ui space-y-2">
-        <h3 className="text-[20px] leading-[21px] text-[#235061]">{title}</h3>
-        <p className="max-w-[544px] text-[16px] leading-[21px] text-[#627c86]">
-          {description}
-        </p>
-      </div>
-    </article>
   )
 }

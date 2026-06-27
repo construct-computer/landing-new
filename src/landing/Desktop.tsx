@@ -19,12 +19,15 @@ import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
 import workVideo from "@/assets/work.mp4"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
+import { CTA, SECTIONS, WORKFLOW_DEMOS_COPY } from "@/content/landing-copy"
 import {
   AdaptsSection,
   BETA_URL,
-  EnterExperienceButton,
+  HeroHeadline,
+  HowItWorksSection,
   LandingFooter,
   LandingNav,
+  POST_HERO_CLEARANCE,
   PortalVideo,
   PRICING_BUTTON_BOX_SHADOW,
   PRICING_PRICE_TEXT_SHADOW,
@@ -41,26 +44,24 @@ import { LANDING_FAQ } from "@/content/faq"
 const WORKFLOW_DEMOS = [
   {
     id: "research",
-    title: "Research About",
-    accent: "Any Topic",
-    description:
-      "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
-    cta: "Research a Topic",
+    title: WORKFLOW_DEMOS_COPY.research.title,
+    accent: WORKFLOW_DEMOS_COPY.research.accent,
+    description: WORKFLOW_DEMOS_COPY.research.description,
+    cta: CTA.workflowDemo,
     nextLabel: "Work Together Across Channels",
-    mutedAction: "See Report Samples Generated",
+    mutedAction: WORKFLOW_DEMOS_COPY.research.mutedAction,
     video: researchVideo,
     videoMp4: researchVideoMp4,
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
     id: "channels",
-    title: "Work Together",
-    accent: "Across Channels",
-    description:
-      "Bring Construct into Slack, Telegram, Discord, email, and more so your team can share context, assign work, and move together.",
-    cta: "Collaborate",
+    title: WORKFLOW_DEMOS_COPY.channels.title,
+    accent: WORKFLOW_DEMOS_COPY.channels.accent,
+    description: WORKFLOW_DEMOS_COPY.channels.description,
+    cta: CTA.workflowDemo,
     nextLabel: "Research About Any Topic",
-    mutedAction: "See Shared Threads",
+    mutedAction: WORKFLOW_DEMOS_COPY.channels.mutedAction,
     video: slackVideo,
     videoMp4: slackVideoMp4,
     ariaLabel:
@@ -296,27 +297,10 @@ function usePrefersReducedMotion() {
 /* ------------------------------------------------------------------ */
 /* Hero                                                               */
 /* ------------------------------------------------------------------ */
-function HeroHeadline() {
-  return (
-    <div className="pointer-events-auto max-w-[560px]">
-      <h1 className="font-display text-balance text-5xl capitalize italic leading-[1.1] text-[#4e4646] lg:text-[51.8px] lg:leading-[58px]">
-        <span className="text-[#01b4c8]">Autonomous </span>
-        <span>Computer that </span>
-        <span className="text-[#01b4c8]">Works For You</span>
-      </h1>
-      <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-[#627c86]">
-        Construct is an AI agent with its own cloud computer - it runs code,
-        sends email, and works across Slack, Telegram, and your inbox.
-      </p>
-      <EnterExperienceButton className="mt-8" />
-    </div>
-  )
-}
-
 function HeroStage() {
   return (
-    <section className="relative mx-auto w-full max-w-[1500px] px-6 lg:px-16">
-      <div className="relative isolate mx-auto h-[900px] w-full max-w-[1400px]">
+    <section className="relative mx-auto w-full max-w-[1500px] overflow-hidden px-6 lg:px-16">
+      <div className="relative isolate mx-auto h-[900px] w-full max-w-[1400px] overflow-hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute left-3/4 top-1/2 z-0 aspect-square w-[min(120%,1100px)] -translate-x-1/2 -translate-y-1/2"
@@ -325,7 +309,7 @@ function HeroStage() {
         </div>
 
         <div className="absolute left-0 top-1/2 z-20 -translate-y-1/2 lg:left-2">
-          <HeroHeadline />
+          <HeroHeadline variant="desktop" />
         </div>
 
         <img
@@ -979,16 +963,16 @@ function WorkVideoSection() {
   return (
     <section
       aria-labelledby="work-video-heading"
-      className="relative z-20 overflow-visible bg-transparent px-6 pb-28 pt-[260px] lg:px-16 lg:pb-36 lg:pt-[320px]"
+      className="relative z-0 overflow-visible bg-transparent px-6 pb-28 pt-[260px] lg:px-16 lg:pb-36 lg:pt-[640px]"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[140px] z-0 h-[420px] lg:top-[180px] lg:h-[520px]"
+        className="pointer-events-none absolute inset-x-0 top-[60px] z-0 w-full -translate-y-1/2 lg:top-[80px]"
       >
         <img
           src={imgGrass}
           alt=""
-          className="absolute inset-x-0 bottom-0 w-full select-none"
+          className="block w-full select-none"
         />
       </div>
 
@@ -1000,10 +984,10 @@ function WorkVideoSection() {
               className="w-full max-w-[813px] text-center text-[32.8px] capitalize leading-[46px]"
             >
               <span className="font-ui text-[#4e4646]">
-                Your Business Shouldn&rsquo;t Loop Around Dealing With
+                {SECTIONS.pain.headlineNeutral}
               </span>{" "}
               <span className="font-display italic text-[#01b4c8]">
-                Emails, Files And CRM
+                {SECTIONS.pain.headlineAccent}
               </span>
             </h2>
 
@@ -1022,9 +1006,11 @@ function WorkVideoSection() {
 
             <p className="mt-[32px] w-full max-w-[857px] text-center text-[32.8px] capitalize leading-[46px]">
               <span className="font-display italic text-[#01b4c8]">
-                Let Construct
+                {SECTIONS.pain.closingAccent}
               </span>{" "}
-              <span className="font-ui text-[#4e4646]">Do It For You</span>
+              <span className="font-ui text-[#4e4646]">
+                {SECTIONS.pain.closingNeutral}
+              </span>
             </p>
           </div>
         </div>
@@ -1117,11 +1103,11 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         href={BETA_URL}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Try Construct on the ${plan.name} plan`}
+        aria-label={`${CTA.pricing} on the ${plan.name} plan`}
         style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
         className="font-inter absolute left-1/2 top-[266px] z-10 inline-flex h-[64px] w-[299px] -translate-x-1/2 items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-x-1/2 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
       >
-        Try Construct
+        {CTA.pricing}
       </a>
 
       <ul className="font-inter absolute left-[33px] right-[33px] top-[383px] z-10 flex flex-col gap-[20px] text-[16px] leading-[22px] text-[#4e4646]">
@@ -1175,18 +1161,14 @@ function EnterprisePanel() {
           </h3>
 
           <p className="mt-[57px] max-w-[825px] text-[24px] leading-[36px] text-[#787878]">
-            For Business with{" "}
             <span className="font-display italic text-[#2978b9]">
-              Specific MCP
-            </span>{" "}
-            requirement we offer the{" "}
-            <span className="font-display italic text-[#2978b9]">
-              Enterprise Plan
+              {SECTIONS.enterprise.headlineNeutral}
             </span>
-            . We discuss the custom mcp with your organization and deliver
-            construct built to meet your{" "}
             <span className="font-display italic text-[#2978b9]">
-              Business Needs.
+              {SECTIONS.enterprise.headlineAccent}
+            </span>{" "}
+            <span className="font-inter text-[#787878]">
+              {SECTIONS.enterprise.body}
             </span>
           </p>
 
@@ -1198,7 +1180,7 @@ function EnterprisePanel() {
               style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
               className="font-inter inline-flex h-[64px] w-[299px] items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
             >
-              Book A Call
+              {CTA.enterprise}
             </a>
             <a
               href="mailto:enterprise@construct.computer"
@@ -1210,10 +1192,10 @@ function EnterprisePanel() {
         </div>
 
         <p className="font-inter absolute right-[112px] top-[41px] z-20 max-w-[272px] text-[18px] leading-[22px] text-[#484848]">
-          *Enterprise Includes everything in{" "}
-          <span className="text-[#2978b9]">Pro</span>
+          *Enterprise includes everything in{" "}
+          <span className="text-[#2978b9]">{SECTIONS.enterprise.footnotePro}</span>
           <br />
-          <span className="text-[#2978b9]">+ Specific MCP/s</span>
+          <span className="text-[#2978b9]">{SECTIONS.enterprise.footnotePlus}</span>
         </p>
 
         {/*
@@ -1239,7 +1221,7 @@ function PricingSection() {
     <section
       id="pricing"
       aria-labelledby="pricing-heading"
-      className="relative isolate overflow-hidden bg-white px-6 pb-44 pt-28 lg:px-16 lg:pt-36"
+      className="relative isolate overflow-visible bg-white px-6 pb-44 pt-28 lg:px-16 lg:pt-36"
     >
       <div className="relative mx-auto w-full max-w-[1395px]">
         <div className="mx-auto max-w-[671px] text-center">
@@ -1247,14 +1229,15 @@ function PricingSection() {
             id="pricing-heading"
             className="text-balance text-[51.8px] capitalize leading-[58px]"
           >
-            <span className="font-ui text-[#4e4646]">Perfect Plan </span>
+            <span className="font-ui text-[#4e4646]">
+              {SECTIONS.pricing.headlineNeutral}
+            </span>
             <span className="font-display italic text-[#01b4c8]">
-              For Your Every Need
+              {SECTIONS.pricing.headlineAccent}
             </span>
           </h2>
           <p className="font-ui mx-auto mt-[22px] max-w-[495px] text-[16px] leading-[21px] text-[#627c86]">
-            Construct is built to adapt to your task, it handles everything and
-            can automate most of the workflows without any monitoring.
+            {SECTIONS.pricing.subhead}
           </p>
         </div>
 
@@ -1351,8 +1334,7 @@ function DesktopFaqSection() {
             <span className="font-display italic text-[#01b4c8]">Questions</span>
           </h2>
           <p className="font-ui mt-[20px] max-w-[371px] text-[16px] leading-[21px] text-[#627c86]">
-            We believe clarity and transparency with our users, thus if you have
-            more queries contact us at{" "}
+            {SECTIONS.faqIntro} Contact us at{" "}
             <a
               href="mailto:hello@construct.computer"
               className="text-[#01b4c8] underline-offset-2 hover:underline"
@@ -1366,7 +1348,7 @@ function DesktopFaqSection() {
             className="font-cta mt-[40px] inline-flex h-[57px] w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
           >
             <span className="text-[21px] capitalize leading-[60px] text-white">
-              Send Us Hello
+              {CTA.faq}
             </span>
           </a>
         </div>
@@ -1395,7 +1377,10 @@ export function DesktopLanding() {
       <LandingNav />
       <main id="main" className="pt-12 lg:pt-14">
         <HeroStage />
-        <WhatConstructIsSection />
+        <div className={POST_HERO_CLEARANCE}>
+          <WhatConstructIsSection />
+          <HowItWorksSection />
+        </div>
         <div
           className="relative w-full overflow-hidden"
           style={{
@@ -1413,9 +1398,9 @@ export function DesktopLanding() {
           <div className="relative z-10">
             <CloudsTransition />
             <WorkflowDemoSection />
-            <FeatureGridSection />
           </div>
         </div>
+        <FeatureGridSection />
         <WorkVideoSection />
         <PricingSection />
         <DesktopFaqSection />

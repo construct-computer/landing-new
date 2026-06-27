@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgEnterprise from "@/assets/enterprise.png"
 import imgEnterpriseBg from "@/assets/enterprise-bg.png"
 import imgGrass from "@/assets/grass.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
-import imgReport from "@/assets/report.png"
 import workVideo from "@/assets/work.mp4"
 import { LANDING_FAQ } from "@/content/faq"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
@@ -13,10 +11,12 @@ import researchVideoMp4 from "@/assets/research.mp4"
 import researchVideo from "@/assets/research.webm"
 import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
+import { CTA, SECTIONS, WORKFLOW_DEMOS_COPY } from "@/content/landing-copy"
 import {
   AdaptsSection,
   BETA_URL,
-  EnterExperienceButton,
+  HeroHeadline,
+  HowItWorksSection,
   LandingFooter,
   LandingNav,
   NAV_HEIGHT_PX,
@@ -33,24 +33,22 @@ import { MobileFeatureGridSection } from "./FeatureGridSection"
 const MOBILE_WORKFLOW_DEMOS = [
   {
     id: "research",
-    title: "Research About",
-    accent: "Any Topic",
-    description:
-      "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
-    cta: "Research a Topic",
-    mutedAction: "See Report Samples Generated",
+    title: WORKFLOW_DEMOS_COPY.research.title,
+    accent: WORKFLOW_DEMOS_COPY.research.accent,
+    description: WORKFLOW_DEMOS_COPY.research.description,
+    cta: CTA.workflowDemo,
+    mutedAction: WORKFLOW_DEMOS_COPY.research.mutedAction,
     video: researchVideo,
     videoMp4: researchVideoMp4,
     ariaLabel: "Construct researching a topic in the product interface",
   },
   {
     id: "channels",
-    title: "Work Together",
-    accent: "Across Channels",
-    description:
-      "Bring Construct into Slack, Telegram, Discord, email, and more so your team can share context, assign work, and move together.",
-    cta: "Collaborate",
-    mutedAction: "See Shared Threads",
+    title: WORKFLOW_DEMOS_COPY.channels.title,
+    accent: WORKFLOW_DEMOS_COPY.channels.accent,
+    description: WORKFLOW_DEMOS_COPY.channels.description,
+    cta: CTA.workflowDemo,
+    mutedAction: WORKFLOW_DEMOS_COPY.channels.mutedAction,
     video: slackVideo,
     videoMp4: slackVideoMp4,
     ariaLabel:
@@ -311,26 +309,6 @@ const PORTAL_WIDTH = "min(150vw, 100dvh, 900px)"
 const PORTAL_REVEAL = "min(42vw, 28dvh, 240px)"
 
 /* ------------------------------------------------------------------ */
-/* Hero text                                                          */
-/* ------------------------------------------------------------------ */
-function HeroHeadline() {
-  return (
-    <div className="mx-auto max-w-[420px] text-center">
-      <h1 className="font-display text-balance text-[38px] capitalize italic leading-[1.1] text-[#4e4646]">
-        <span className="text-[#01b4c8]">Autonomous </span>
-        <span>Computer that </span>
-        <span className="text-[#01b4c8]">Works For You</span>
-      </h1>
-      <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
-        An AI agent with its own cloud computer — works across Slack,
-        Telegram, and email, on any device.
-      </p>
-      <EnterExperienceButton className="mt-7" />
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /* Hero section + straddling portal                                   */
 /* ------------------------------------------------------------------ */
 /**
@@ -356,7 +334,7 @@ function HeroWithStraddlingPortal() {
           <PortalVideo />
         </div>
 
-        <HeroHeadline />
+        <HeroHeadline variant="mobile" />
       </section>
 
       {/* Spacer revealed on scroll so the portal's lower half can breathe before
@@ -365,29 +343,6 @@ function HeroWithStraddlingPortal() {
          its meaningful pixels. */}
       <div aria-hidden className="w-full" style={{ height: PORTAL_REVEAL }} />
     </>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/* Showcase - the UI capabilities stacked vertically                  */
-/* ------------------------------------------------------------------ */
-function ShowcaseStrip() {
-  return (
-    <section
-      aria-label="Capabilities"
-      className="mx-auto flex w-full max-w-[440px] flex-col items-center gap-12 px-5 pb-16 pt-16"
-    >
-      <img
-        src={imgReport}
-        alt="Generated PDF research report produced by the Construct AI agent"
-        className="w-full max-w-[380px] drop-shadow-[0_16px_30px_rgba(71,156,223,0.15)]"
-      />
-      <img
-        src={imgChat}
-        alt="Construct agent chat window handling an inbound email autonomously"
-        className="w-full max-w-[360px] drop-shadow-[0_16px_30px_rgba(71,156,223,0.15)]"
-      />
-    </section>
   )
 }
 
@@ -1056,18 +1011,17 @@ function MobileWorkVideoSection() {
   return (
     <section
       aria-labelledby="mobile-work-video-heading"
-      className="relative z-20 overflow-visible bg-transparent px-5 pb-16 pt-24"
+      className="relative z-0 -mt-24 overflow-visible bg-transparent px-5 pb-16 pt-24"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[-92px] z-0 h-[390px]"
+        className="pointer-events-none absolute inset-x-0 top-[-140px] z-0 w-full"
       >
         <img
           src={imgGrass}
           alt=""
-          className="absolute bottom-0 left-1/2 w-[205%] max-w-none -translate-x-1/2 select-none opacity-85"
+          className="absolute left-1/2 block w-[205%] max-w-none -translate-x-1/2 -translate-y-1/2 select-none opacity-85"
         />
-        <div className="absolute inset-x-0 -bottom-px h-28 bg-linear-to-b from-transparent to-white" />
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[430px]">
@@ -1077,10 +1031,10 @@ function MobileWorkVideoSection() {
             className="mx-auto max-w-[360px] text-center text-[31px] capitalize leading-[38px]"
           >
             <span className="font-ui text-[#4e4646]">
-              Your Business Shouldn&rsquo;t Loop Around Dealing With
+              {SECTIONS.pain.headlineNeutral}
             </span>{" "}
             <span className="font-display italic text-[#01b4c8]">
-              Emails, Files And CRM
+              {SECTIONS.pain.headlineAccent}
             </span>
           </h2>
 
@@ -1099,9 +1053,11 @@ function MobileWorkVideoSection() {
 
           <p className="mx-auto mt-6 max-w-[330px] text-center text-[31px] capitalize leading-[38px]">
             <span className="font-display italic text-[#01b4c8]">
-              Let Construct
+              {SECTIONS.pain.closingAccent}
             </span>{" "}
-            <span className="font-ui text-[#4e4646]">Do It For You</span>
+            <span className="font-ui text-[#4e4646]">
+              {SECTIONS.pain.closingNeutral}
+            </span>
           </p>
         </div>
       </div>
@@ -1175,11 +1131,11 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
             href={BETA_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Try Construct on the ${plan.name} plan`}
+            aria-label={`${CTA.pricing} on the ${plan.name} plan`}
             style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
             className="font-inter inline-flex h-[38px] w-full max-w-[132px] items-center justify-center rounded-[20px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-3 text-[12px] font-medium leading-[16px] text-white active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
           >
-            Try Construct
+            {CTA.pricing}
           </a>
         </div>
 
@@ -1238,26 +1194,20 @@ function MobileEnterprisePanel({ className }: { className?: string }) {
 
           <p className="font-inter max-w-[145px] text-right text-[13px] leading-[17px] text-[#484848]">
             *Includes everything in{" "}
-            <span className="text-[#2978b9]">Pro</span>
+            <span className="text-[#2978b9]">{SECTIONS.enterprise.footnotePro}</span>
             <br />
-            <span className="text-[#2978b9]">+ Specific MCP/s</span>
+            <span className="text-[#2978b9]">{SECTIONS.enterprise.footnotePlus}</span>
           </p>
         </div>
 
         <p className="font-inter mt-8 text-[16px] leading-[24px] text-[#787878]">
-          For Business with{" "}
           <span className="font-display italic text-[#2978b9]">
-            Specific MCP
+            {SECTIONS.enterprise.headlineNeutral}
+          </span>
+          <span className="font-display italic text-[#2978b9]">
+            {SECTIONS.enterprise.headlineAccent}
           </span>{" "}
-          requirement we offer the{" "}
-          <span className="font-display italic text-[#2978b9]">
-            Enterprise Plan
-          </span>
-          . We discuss the custom mcp with your organization and deliver
-          construct built to meet your{" "}
-          <span className="font-display italic text-[#2978b9]">
-            Business Needs.
-          </span>
+          {SECTIONS.enterprise.body}
         </p>
 
         <div className="mt-7 flex justify-center">
@@ -1276,7 +1226,7 @@ function MobileEnterprisePanel({ className }: { className?: string }) {
             style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
             className="font-inter inline-flex h-[54px] w-full items-center justify-center rounded-[27px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-5 text-[17px] font-medium leading-[22px] text-white active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
           >
-            Book A Call
+            {CTA.enterprise}
           </a>
           <a
             href="mailto:enterprise@construct.computer"
@@ -1302,14 +1252,15 @@ function MobilePricingSection() {
           id="mobile-pricing-heading"
           className="text-balance text-[32px] capitalize leading-[38px]"
         >
-          <span className="font-ui text-[#4e4646]">Perfect Plan </span>
+          <span className="font-ui text-[#4e4646]">
+            {SECTIONS.pricing.headlineNeutral}
+          </span>
           <span className="font-display italic text-[#01b4c8]">
-            For Your Every Need
+            {SECTIONS.pricing.headlineAccent}
           </span>
         </h2>
         <p className="font-ui mx-auto mt-4 max-w-[340px] text-[15px] leading-[21px] text-[#627c86]">
-          Construct is built to adapt to your task, it handles everything and
-          can automate most of the workflows without any monitoring.
+          {SECTIONS.pricing.subhead}
         </p>
       </div>
 
@@ -1405,8 +1356,7 @@ function MobileFaqSection() {
             </span>
           </h2>
           <p className="font-ui mx-auto mt-4 max-w-[340px] text-[15px] leading-[21px] text-[#627c86]">
-            We believe clarity and transparency with our users, thus if you have
-            more queries contact us at{" "}
+            {SECTIONS.faqIntro} Contact us at{" "}
             <a
               href="mailto:hello@construct.computer"
               className="text-[#01b4c8] underline-offset-2 hover:underline"
@@ -1419,7 +1369,7 @@ function MobileFaqSection() {
             className="font-cta mt-7 inline-flex h-[50px] min-w-[190px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-6 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
           >
             <span className="text-[17px] capitalize leading-[50px] text-white">
-              Send Us Hello
+              {CTA.faq}
             </span>
           </a>
         </div>
@@ -1448,10 +1398,12 @@ export function MobileLanding() {
       <LandingNav />
       <main id="main">
         <HeroWithStraddlingPortal />
-        <ShowcaseStrip />
-        <WhatConstructIsSection className="pt-0" />
+        <div className="relative z-20 bg-white pt-6">
+          <WhatConstructIsSection />
+          <HowItWorksSection />
+        </div>
         <div
-          className="relative w-full overflow-visible"
+          className="relative w-full overflow-hidden"
           style={{
             background:
               "linear-gradient(to bottom, #ffffff 0%, #ffffff 4%, #ddfaff 10%, #ddfaff 10%, #fefefe 50%, #ffffff 100%)",
@@ -1466,13 +1418,13 @@ export function MobileLanding() {
           />
           <div className="relative z-10">
             <MobileCloudsTransition />
-            <AdaptsSection className="py-10" />
+            <AdaptsSection />
             <MobileWorkflowShowcase />
-            <MobileFeatureGridSection />
-            <MobileWorkVideoSection />
-            <MobilePricingSection />
           </div>
         </div>
+        <MobileFeatureGridSection />
+        <MobileWorkVideoSection />
+        <MobilePricingSection />
         <MobileFaqSection />
       </main>
       <LandingFooter />

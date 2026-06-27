@@ -1,4 +1,5 @@
 import { LANDING_FAQ } from "@/content/faq"
+import { SEO_HOME } from "@/content/landing-copy"
 import {
   breadcrumbListJsonLd,
   faqPageJsonLd,
@@ -79,9 +80,8 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/",
-    title: "Construct Computer - the AI employee with their own computer",
-    description:
-      "Construct is an AI agent with its own cloud computer. It logs into a full virtual desktop, runs code, sends email, and works across Slack, Telegram, and your inbox - scheduled, persistent, on any device.",
+    title: SEO_HOME.title,
+    description: SEO_HOME.description,
     keywords:
       "AI agent, AI employee, autonomous AI, virtual desktop, cloud desktop, AI assistant, Construct Computer, AI for Slack, AI for Telegram, AI for email, Cloudflare agent",
     canonical: canonical("/"),
