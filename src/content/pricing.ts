@@ -39,7 +39,7 @@ export const PRICING_PLANS = [
     image: imgPricingStarter,
     imageAlt: "Mystical cloud-shrouded golden temple gateway opening into bright light",
     features: [
-      { label: "2x More Usage Than Free", icon: "bolt" },
+      { label: "4x More Usage Than Free", icon: "bolt" },
       { label: "150 Steps Per Task", icon: "footprint" },
       { label: "30 min Task Execution Time", icon: "timer" },
       { label: "5 Concurrent Subagents", icon: "tree" },
@@ -55,7 +55,7 @@ export const PRICING_PLANS = [
     image: imgPricingPro,
     imageAlt: "Vivid orange and red sunburst with radiant light rays",
     features: [
-      { label: "13x More Usage Than Free", icon: "bolt" },
+      { label: "24x More Usage Than Free", icon: "bolt" },
       { label: "1,000 Steps Per Task", icon: "footprint" },
       { label: "1 hr Task Execution Time", icon: "timer" },
       { label: "Unlimited Concurrent Subagents", icon: "tree" },
