@@ -10,6 +10,7 @@ import { NotFoundPage } from "@/pages/NotFound"
 import { TermsPage } from "@/pages/Terms"
 import { isKnownRoute } from "@/seo/routes"
 import { RouterProvider, useRoute } from "@/router"
+import { BetaAccessProvider } from "@/landing/beta-access/BetaAccessProvider"
 
 const DESKTOP_QUERY = "(min-width: 1024px)"
 
@@ -84,7 +85,9 @@ function Routes() {
 export function App({ initialPath }: { initialPath?: string } = {}) {
   return (
     <RouterProvider initialPath={initialPath}>
-      <Routes />
+      <BetaAccessProvider>
+        <Routes />
+      </BetaAccessProvider>
     </RouterProvider>
   )
 }

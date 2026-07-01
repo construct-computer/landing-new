@@ -15,7 +15,6 @@ import slackVideoMp4 from "@/assets/slack.mp4"
 import slackVideo from "@/assets/slack.webm"
 import {
   AdaptsSection,
-  BETA_URL,
   EnterExperienceButton,
   LandingFooter,
   LandingNav,
@@ -28,6 +27,8 @@ import {
   preventLandingImageDrag,
   useSoftPinTransform,
 } from "./shared"
+import { isLayoutVisible } from "./scroll-utils"
+import { BetaAccessTrigger } from "./beta-access/BetaAccessTrigger"
 import { MobileFeatureGridSection } from "./FeatureGridSection"
 
 const MOBILE_WORKFLOW_DEMOS = [
@@ -801,16 +802,14 @@ function MobileWorkflowTextLayer({
         }}
         className="absolute inset-x-0 bottom-0"
       >
-        <a
-          href={BETA_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <BetaAccessTrigger
+          source={demo.id === "research" ? "workflow-research" : "workflow-channels"}
           className={ctaClass}
         >
           <span className="text-balance text-[17px] leading-snug text-white">
             {demo.cta}
           </span>
-        </a>
+        </BetaAccessTrigger>
         {showMutedAction ? (
           <p className="mt-3 whitespace-nowrap bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[13px] capitalize leading-[20px] text-transparent">
             {demo.mutedAction}
@@ -943,7 +942,7 @@ function MobileWorkflowShowcase() {
 
     async function setupScrollTrigger() {
       const section = sectionRef.current
-      if (!section) return
+      if (!section || !isLayoutVisible(section)) return
 
       const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
@@ -1171,16 +1170,14 @@ function MobilePricingCard({ plan }: { plan: PricingPlan }) {
             </div>
           </div>
 
-          <a
-            href={BETA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <BetaAccessTrigger
+            source={`pricing-${plan.name.toLowerCase()}`}
             aria-label={`Try Construct on the ${plan.name} plan`}
             style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
             className="font-inter inline-flex h-[38px] w-full max-w-[132px] items-center justify-center rounded-[20px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] px-3 text-[12px] font-medium leading-[16px] text-white active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
           >
             Try Construct
-          </a>
+          </BetaAccessTrigger>
         </div>
 
         <div className="flex min-w-0 flex-col justify-center py-5 pl-2 pr-4">

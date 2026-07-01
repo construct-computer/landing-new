@@ -9,6 +9,10 @@ import imgGmeet from "@/assets/gmeet.png"
 import type { PricingFeatureIconId } from "@/content/pricing"
 import { LANDING_FAQ } from "@/content/faq"
 import { Link } from "@/router"
+import { BetaAccessTrigger } from "@/landing/beta-access/BetaAccessTrigger"
+import { BETA_URL } from "@/landing/constants"
+
+export { BETA_URL }
 
 export const PRICING_BUTTON_BOX_SHADOW = [
   "0px 241px 68px rgba(0,0,0,0)",
@@ -238,8 +242,6 @@ export function useSoftPinTransform(
 /* ------------------------------------------------------------------ */
 /* Shared data                                                        */
 /* ------------------------------------------------------------------ */
-export const BETA_URL = "https://beta.construct.computer"
-
 export const SECTION_BLURB =
   "Construct adapts to any task — it handles the full workflow end to end and automates most of it without monitoring."
 
@@ -367,18 +369,16 @@ export function WorkflowChip({
 /* ------------------------------------------------------------------ */
 export function EnterExperienceButton({ className }: { className?: string }) {
   return (
-    <a
-      href={BETA_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ backgroundImage: `url(${buttonBg})`, backgroundSize: "100% 100%" }}
+    <BetaAccessTrigger
+      source="hero"
       className={
         "font-cta inline-flex h-[57px] w-[227px] items-center justify-center bg-center bg-no-repeat text-center " +
         (className ?? "")
       }
+      style={{ backgroundImage: `url(${buttonBg})`, backgroundSize: "100% 100%" }}
     >
       <span className="px-2 text-[21px] leading-[60px] text-white">Enter Experience</span>
-    </a>
+    </BetaAccessTrigger>
   )
 }
 
@@ -387,17 +387,15 @@ export function EnterExperienceButton({ className }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 export function EarlyAccessPill({ className }: { className?: string }) {
   return (
-    <a
-      href={BETA_URL}
-      target="_blank"
-      rel="noopener noreferrer"
+    <BetaAccessTrigger
+      source="nav"
       className={
         "relative inline-flex items-center justify-center overflow-hidden rounded-full bg-black px-4 py-2 text-[12px] font-semibold leading-4 text-white shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_-3px_2px_0_rgba(255,255,255,0.15),inset_0_3px_2px_0_rgba(255,255,255,0.18)] " +
         (className ?? "")
       }
     >
       <span className="relative z-10">Early Beta Access</span>
-    </a>
+    </BetaAccessTrigger>
   )
 }
 
@@ -556,10 +554,10 @@ export function FaqSection({ className }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 /* Footer - intentionally minimal + stylised                          */
 /* ------------------------------------------------------------------ */
-type FooterLink = { label: string; href: string; external?: boolean }
+type FooterLink = { label: string; href?: string; external?: boolean; betaGate?: boolean }
 
 const FOOTER_LINKS: readonly FooterLink[] = [
-  { label: "Beta", href: BETA_URL, external: true },
+  { label: "Beta", betaGate: true },
   { label: "About", href: "/about" },
   { label: "Careers", href: "/careers" },
   { label: "Support", href: "/support" },
@@ -623,14 +621,24 @@ export function LandingFooter() {
                   className="hidden h-[3px] w-[3px] rounded-full bg-[#cfd7db] sm:inline-block"
                 />
               )}
-              <Link
-                to={l.href}
-                target={l.external ? "_blank" : undefined}
-                rel={l.external ? "noopener noreferrer" : undefined}
-                className="transition-colors duration-150 hover:text-[#01b4c8]"
-              >
-                {l.label}
-              </Link>
+              {l.betaGate ? (
+                <BetaAccessTrigger
+                  source="footer"
+                  variant="link"
+                  className="transition-colors duration-150 hover:text-[#01b4c8]"
+                >
+                  {l.label}
+                </BetaAccessTrigger>
+              ) : (
+                <Link
+                  to={l.href!}
+                  target={l.external ? "_blank" : undefined}
+                  rel={l.external ? "noopener noreferrer" : undefined}
+                  className="transition-colors duration-150 hover:text-[#01b4c8]"
+                >
+                  {l.label}
+                </Link>
+              )}
             </Fragment>
           ))}
         </nav>

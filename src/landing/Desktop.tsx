@@ -21,7 +21,6 @@ import workVideo from "@/assets/work.mp4"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import {
   AdaptsSection,
-  BETA_URL,
   EnterExperienceButton,
   LandingFooter,
   LandingNav,
@@ -35,6 +34,8 @@ import {
   preventLandingImageDrag,
   useSoftPinTransform,
 } from "./shared"
+import { isLayoutVisible } from "./scroll-utils"
+import { BetaAccessTrigger } from "./beta-access/BetaAccessTrigger"
 import { FeatureGridSection } from "./FeatureGridSection"
 import { LANDING_FAQ } from "@/content/faq"
 
@@ -759,16 +760,14 @@ function WorkflowTextLayer({
         }}
         className="absolute inset-x-0 bottom-6"
       >
-        <a
-          href={BETA_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <BetaAccessTrigger
+          source={demo.id === "research" ? "workflow-research" : "workflow-channels"}
           className="font-cta inline-flex min-h-[57px] w-full max-w-[227px] items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] px-[30px] py-2.5 text-center shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)]"
         >
           <span className="text-balance text-center text-[21px] leading-snug text-white">
             {demo.cta}
           </span>
-        </a>
+        </BetaAccessTrigger>
 
         <p className="mt-6 max-w-[200px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">
           {demo.mutedAction}
@@ -874,7 +873,7 @@ function WorkflowDemoSection() {
 
     async function setupScrollTrigger() {
       const section = sectionRef.current
-      if (!section) return
+      if (!section || !isLayoutVisible(section)) return
 
       const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
@@ -1113,16 +1112,14 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         </div>
       </div>
 
-      <a
-        href={BETA_URL}
-        target="_blank"
-        rel="noopener noreferrer"
+      <BetaAccessTrigger
+        source={`pricing-${plan.name.toLowerCase()}`}
         aria-label={`Try Construct on the ${plan.name} plan`}
         style={{ boxShadow: PRICING_BUTTON_BOX_SHADOW }}
         className="font-inter absolute left-1/2 top-[266px] z-10 inline-flex h-[64px] w-[299px] -translate-x-1/2 items-center justify-center rounded-[32px] border border-[#253c5c] bg-linear-to-b from-[#253c5c] to-[#1b2b42] text-[22px] font-medium leading-[22px] text-white transition-transform duration-150 ease-out hover:-translate-x-1/2 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cd8ff] focus-visible:ring-offset-2"
       >
         Try Construct
-      </a>
+      </BetaAccessTrigger>
 
       <ul className="font-inter absolute left-[33px] right-[33px] top-[383px] z-10 flex flex-col gap-[20px] text-[16px] leading-[22px] text-[#4e4646]">
         {plan.features.map((feature) => (

@@ -1,4 +1,6 @@
-interface Env {
+import { handleBetaSignup, type BetaSignupEnv } from "./worker/routes/beta-signup"
+
+interface Env extends BetaSignupEnv {
   ASSETS: Fetcher
 }
 
@@ -20,6 +22,10 @@ export default {
     if (url.hostname === "www.construct.computer") {
       url.hostname = "construct.computer"
       return Response.redirect(url.toString(), 301)
+    }
+
+    if (url.pathname === "/api/beta-signup") {
+      return handleBetaSignup(request, env)
     }
 
     return env.ASSETS.fetch(request)

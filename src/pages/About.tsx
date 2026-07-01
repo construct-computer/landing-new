@@ -5,6 +5,7 @@ import {
   LegalSection,
   LegalShell,
 } from "./LegalShell"
+import { BetaAccessTrigger } from "@/landing/beta-access/BetaAccessTrigger"
 
 export function AboutPage() {
   return (
@@ -130,9 +131,9 @@ export function AboutPage() {
       <LegalSection title="Say hello">
         <p>
           We&rsquo;re a small team shipping fast and listening hard.{" "}
-          <InlineLink href="https://beta.construct.computer">
+          <BetaAccessTrigger source="about" variant="link">
             Try the beta
-          </InlineLink>
+          </BetaAccessTrigger>
           , join us on{" "}
           <InlineLink href="https://discord.gg/puArEQHYN9">Discord</InlineLink>
           , or reach out at{" "}
