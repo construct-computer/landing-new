@@ -5,6 +5,7 @@ export function identifyBetaVisitor(
   source?: string,
   referralSource?: string,
   referralSourceDetail?: string,
+  landingReferrer?: string,
 ): void {
   if (!isPostHogEnabled() || typeof window === "undefined") return
   const normalized = email.toLowerCase().trim()
@@ -16,28 +17,33 @@ export function identifyBetaVisitor(
     ...(referralSourceDetail
       ? { beta_referral_source_detail: referralSourceDetail }
       : {}),
+    ...(landingReferrer ? { landing_referrer: landingReferrer } : {}),
   })
 }
 
 export function trackBetaSignupSubmitted(
   source?: string,
   referralSource?: string,
+  landingReferrer?: string,
 ): void {
   if (!isPostHogEnabled()) return
   posthog.capture("beta_signup_submitted", {
     source: source ?? "unknown",
     ...(referralSource ? { referral_source: referralSource } : {}),
+    ...(landingReferrer ? { landing_referrer: landingReferrer } : {}),
   })
 }
 
 export function trackBetaSignupGranted(
   source?: string,
   referralSource?: string,
+  landingReferrer?: string,
 ): void {
   if (!isPostHogEnabled()) return
   posthog.capture("beta_signup_granted", {
     source: source ?? "unknown",
     ...(referralSource ? { referral_source: referralSource } : {}),
+    ...(landingReferrer ? { landing_referrer: landingReferrer } : {}),
   })
 }
 

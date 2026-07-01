@@ -36,6 +36,7 @@ import {
   normalizeEmailInput,
   writeBetaAccessGrant,
 } from "./storage"
+import { readLandingAttribution } from "./attribution"
 import { getTurnstileSiteKey, TurnstileWidget } from "./TurnstileWidget"
 
 export type BetaModalPhase = "form" | "granting" | "success"
@@ -151,11 +152,18 @@ export function BetaAccessModal({
       normalized: string,
       referral: ReferralSourceId,
       referralDetail: string,
+      landingRef: string,
     ) => {
       const referralLabel = formatReferralForSheet(referral, referralDetail)
       writeBetaAccessGrant(normalized)
-      identifyBetaVisitor(normalized, source, referral, referralDetail)
-      trackBetaSignupGranted(source, referralLabel)
+      identifyBetaVisitor(
+        normalized,
+        source,
+        referral,
+        referralDetail,
+        landingRef,
+      )
+      trackBetaSignupGranted(source, referralLabel, landingRef)
       onGranted(normalized)
       setGrantedEmail(normalized)
       setPhase("granting")
@@ -195,13 +203,15 @@ export function BetaAccessModal({
     const referralDetail =
       referralSource === "other" ? referralSourceOther.trim() : ""
     const referralLabel = formatReferralForSheet(referralSource, referralDetail)
-    trackBetaSignupSubmitted(source, referralLabel)
+    const { landingReferrer } = readLandingAttribution()
+    trackBetaSignupSubmitted(source, referralLabel, landingReferrer)
 
     const result = await submitBetaSignup({
       email: normalized,
       source,
       referralSource,
       referralSourceDetail: referralDetail || undefined,
+      landingReferrer,
       turnstileToken: turnstileToken || undefined,
     })
 
@@ -212,7 +222,7 @@ export function BetaAccessModal({
       return
     }
 
-    runGrantFlow(normalized, referralSource, referralDetail)
+    runGrantFlow(normalized, referralSource, referralDetail, landingReferrer)
   }
 
   const openBeta = () => {

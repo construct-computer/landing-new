@@ -1,5 +1,10 @@
 import { appendBetaSignupToSheet } from "../lib/google-sheet"
-import { parseReferralSource, parseReferralSourceDetail, formatReferralForSheet } from "../lib/referral-source"
+import { parseLandingReferrer } from "../lib/landing-referrer"
+import {
+  formatReferralForSheet,
+  parseReferralSource,
+  parseReferralSourceDetail,
+} from "../lib/referral-source"
 import {
   isSignupRateLimited,
   recordSignupAttempt,
@@ -17,16 +22,8 @@ type SignupBody = {
   source?: string
   referralSource?: string
   referralSourceDetail?: string
+  landingReferrer?: string
   turnstileToken?: string
-}
-
-export async function hashIp(ip: string): Promise<string> {
-  const data = new TextEncoder().encode(ip)
-  const buf = await crypto.subtle.digest("SHA-256", data)
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("")
-    .slice(0, 32)
 }
 
 async function verifyTurnstile(
@@ -62,7 +59,7 @@ function clientIp(request: Request): string {
   return (
     request.headers.get("CF-Connecting-IP") ??
     request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim() ??
-    "0.0.0.0"
+    ""
   )
 }
 
@@ -85,6 +82,7 @@ export async function handleBetaSignup(
   const source =
     typeof body.source === "string" ? body.source.slice(0, 64) : null
   const referralSource = parseReferralSource(body.referralSource)
+  const landingReferrer = parseLandingReferrer(body.landingReferrer)
   const turnstileToken =
     typeof body.turnstileToken === "string" ? body.turnstileToken : ""
 
@@ -116,9 +114,8 @@ export async function handleBetaSignup(
   }
 
   const ip = clientIp(request)
-  const ipHash = await hashIp(ip)
 
-  if (await isSignupRateLimited(ipHash)) {
+  if (ip && (await isSignupRateLimited(ip))) {
     return json({ error: "rate_limited" }, 400)
   }
 
@@ -129,12 +126,13 @@ export async function handleBetaSignup(
     {
       email: validated.email,
       source,
+      createdAt,
+      ip,
       referralSource: formatReferralForSheet(
         referralSource,
         referralDetail.detail,
       ),
-      createdAt,
-      ipHash,
+      landingReferrer,
       userAgent: ua,
     },
     env,
@@ -144,7 +142,7 @@ export async function handleBetaSignup(
     return json({ error: sheet.error }, 503)
   }
 
-  await recordSignupAttempt(ipHash)
+  if (ip) await recordSignupAttempt(ip)
 
   return json({ ok: true, duplicate: sheet.duplicate === true })
 }

@@ -1,9 +1,10 @@
 export type SheetSignupRow = {
   email: string
   source: string | null
-  referralSource: string
   createdAt: string
-  ipHash: string
+  ip: string
+  referralSource: string
+  landingReferrer: string
   userAgent: string | null
 }
 
@@ -28,9 +29,10 @@ export async function appendBetaSignupToSheet(
       secret,
       email: row.email,
       source: row.source,
-      referral_source: row.referralSource,
       created_at: row.createdAt,
-      ip_hash: row.ipHash,
+      ip: row.ip,
+      referral_source: row.referralSource,
+      landing_referrer: row.landingReferrer,
       user_agent: row.userAgent,
     }),
   })

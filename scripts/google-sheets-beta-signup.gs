@@ -3,6 +3,8 @@
  *
  * Sheet: https://docs.google.com/spreadsheets/d/SHEET_ID
  *
+ * Column order: email | source | created_at | ip | referral_source | landing_referrer | user_agent
+ *
  * Setup:
  * 1. Extensions → Apps Script → paste this file
  * 2. Project Settings → Script properties → add WEBHOOK_SECRET (random string)
@@ -43,9 +45,10 @@ function doPost(e) {
       email,
       body.source || "",
       parseSheetDateTime(body.created_at),
-      body.ip_hash || "",
-      body.user_agent || "",
+      body.ip || "",
       body.referral_source || "",
+      body.landing_referrer || "",
+      body.user_agent || "",
     ])
 
     return json({ ok: true, duplicate: false })
@@ -60,9 +63,10 @@ function ensureHeaderRow(sheet) {
     "email",
     "source",
     "created_at",
-    "ip_hash",
-    "user_agent",
+    "ip",
     "referral_source",
+    "landing_referrer",
+    "user_agent",
   ])
 }
 
@@ -87,7 +91,6 @@ function json(payload, status) {
   const out = ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(
     ContentService.MimeType.JSON,
   )
-  // Apps Script web apps can't set HTTP status codes; encode in body instead.
   if (status && status >= 400) {
     return ContentService.createTextOutput(
       JSON.stringify({ ok: false, error: payload.error || "error" }),

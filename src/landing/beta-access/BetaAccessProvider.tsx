@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react"
 import { openBetaInNewTab } from "@/landing/constants"
+import { captureLandingAttribution } from "./attribution"
 import { BetaAccessModal } from "./BetaAccessModal"
 import { identifyBetaVisitor } from "./identify"
 import { readBetaAccessGrant } from "./storage"
@@ -32,6 +33,10 @@ export function BetaAccessProvider({ children }: { children: ReactNode }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalSource, setModalSource] = useState("unknown")
   const [grant, setGrant] = useState(() => readBetaAccessGrant())
+
+  useEffect(() => {
+    captureLandingAttribution()
+  }, [])
 
   useEffect(() => {
     if (grant?.email) {

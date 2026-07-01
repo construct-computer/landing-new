@@ -36,6 +36,7 @@ export async function submitBetaSignup(params: {
   source?: string
   referralSource: string
   referralSourceDetail?: string
+  landingReferrer?: string
   turnstileToken?: string
 }): Promise<{ ok: true } | { ok: false; error: BetaSignupError }> {
   try {
@@ -47,6 +48,7 @@ export async function submitBetaSignup(params: {
         source: params.source ?? "unknown",
         referralSource: params.referralSource,
         referralSourceDetail: params.referralSourceDetail ?? "",
+        landingReferrer: params.landingReferrer ?? "",
         turnstileToken: params.turnstileToken ?? "",
       }),
     })
