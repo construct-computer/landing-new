@@ -1,3 +1,4 @@
+import { clientIp } from "../lib/client-ip"
 import { appendBetaSignupToSheet } from "../lib/google-sheet"
 import { parseLandingReferrer } from "../lib/landing-referrer"
 import {
@@ -15,6 +16,7 @@ export type BetaSignupEnv = {
   TURNSTILE_SECRET_KEY?: string
   GOOGLE_SHEETS_WEBHOOK_URL?: string
   GOOGLE_SHEETS_WEBHOOK_SECRET?: string
+  EMAILABLE_API_KEY?: string
 }
 
 type SignupBody = {
@@ -55,14 +57,6 @@ function json(data: unknown, status = 200): Response {
   })
 }
 
-function clientIp(request: Request): string {
-  return (
-    request.headers.get("CF-Connecting-IP") ??
-    request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim() ??
-    ""
-  )
-}
-
 export async function handleBetaSignup(
   request: Request,
   env: BetaSignupEnv,
@@ -96,7 +90,7 @@ export async function handleBetaSignup(
     if (!ok) return json({ error: "bot_check_failed" }, 403)
   }
 
-  const validated = await validateEmailFull(emailRaw)
+  const validated = await validateEmailFull(emailRaw, env)
   if (!validated.ok) {
     return json({ error: validated.error }, 400)
   }

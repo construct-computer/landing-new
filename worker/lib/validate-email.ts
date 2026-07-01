@@ -1,4 +1,5 @@
 import disposableDomains from "../data/disposable-domains.txt" with { type: "text" }
+import { verifyMailboxEmailable } from "./mailbox-verify"
 
 const DISPOSABLE = new Set(
   disposableDomains
@@ -15,6 +16,12 @@ export type EmailValidationError =
   | "invalid_email"
   | "disposable_email"
   | "no_mx"
+  | "mailbox_not_found"
+  | "verification_unavailable"
+
+export type EmailValidationEnv = {
+  EMAILABLE_API_KEY?: string
+}
 
 export function normalizeEmail(raw: string): string {
   return raw.trim().toLowerCase()
@@ -49,7 +56,18 @@ export function validateEmailLocally(
 
 type DnsAnswer = { type?: number; data?: string }
 
-/** MX (15) or A (1) on apex — reject domains with no mail routing signal. */
+/** True when Answer contains at least one non-null MX (RFC 7505 `.` = no mail). */
+export function hasValidMxAnswers(answers: DnsAnswer[] | undefined): boolean {
+  const mx = answers?.filter((a) => a.type === 15) ?? []
+  if (mx.length === 0) return false
+  return mx.some((a) => {
+    const parts = (a.data ?? "").trim().split(/\s+/)
+    const exchange = (parts[parts.length - 1] ?? "").replace(/\.$/, "").toLowerCase()
+    return exchange.length > 0 && exchange !== "."
+  })
+}
+
+/** Require MX records — A-only domains are not valid mail hosts. */
 export async function domainHasMailCapability(domain: string): Promise<boolean> {
   const url = new URL("https://cloudflare-dns.com/dns-query")
   url.searchParams.set("name", domain)
@@ -62,19 +80,12 @@ export async function domainHasMailCapability(domain: string): Promise<boolean> 
 
   const body = (await res.json()) as { Answer?: DnsAnswer[]; Status?: number }
   if (body.Status !== 0) return false
-  if (body.Answer?.some((a) => a.type === 15 || a.type === 1)) return true
-
-  url.searchParams.set("type", "A")
-  const aRes = await fetch(url.toString(), {
-    headers: { Accept: "application/dns-json" },
-  })
-  if (!aRes.ok) return false
-  const aBody = (await aRes.json()) as { Answer?: DnsAnswer[]; Status?: number }
-  return aBody.Status === 0 && (aBody.Answer?.length ?? 0) > 0
+  return hasValidMxAnswers(body.Answer)
 }
 
 export async function validateEmailFull(
   raw: string,
+  env?: EmailValidationEnv,
 ): Promise<{ ok: true; email: string } | { ok: false; error: EmailValidationError }> {
   const local = validateEmailLocally(raw)
   if (!local.ok) return local
@@ -82,5 +93,14 @@ export async function validateEmailFull(
   const domain = local.email.split("@")[1]!
   const hasMx = await domainHasMailCapability(domain)
   if (!hasMx) return { ok: false, error: "no_mx" }
+
+  const apiKey = env?.EMAILABLE_API_KEY?.trim()
+  if (!apiKey) {
+    // ponytail: MX-only without provider key (local dev); prod needs EMAILABLE_API_KEY
+    return local
+  }
+
+  const mailbox = await verifyMailboxEmailable(local.email, apiKey)
+  if (!mailbox.ok) return mailbox
   return local
 }

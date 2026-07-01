@@ -4,6 +4,7 @@ import {
   isValidEmailSyntax,
   normalizeEmail,
   validateEmailLocally,
+  hasValidMxAnswers,
 } from "./validate-email"
 
 describe("normalizeEmail", () => {
@@ -53,5 +54,23 @@ describe("validateEmailLocally", () => {
     const r = validateEmailLocally("bad")
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error).toBe("invalid_email")
+  })
+})
+
+describe("hasValidMxAnswers", () => {
+  test("accepts real MX", () => {
+    expect(
+      hasValidMxAnswers([{ type: 15, data: "10 aspmx.l.google.com." }]),
+    ).toBe(true)
+  })
+
+  test("rejects empty and null MX", () => {
+    expect(hasValidMxAnswers([])).toBe(false)
+    expect(hasValidMxAnswers(undefined)).toBe(false)
+    expect(hasValidMxAnswers([{ type: 15, data: "0 ." }])).toBe(false)
+  })
+
+  test("ignores non-MX answers", () => {
+    expect(hasValidMxAnswers([{ type: 1, data: "13.223.25.84" }])).toBe(false)
   })
 })
