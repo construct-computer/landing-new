@@ -7,7 +7,7 @@ import {
   type FormEvent,
 } from "react"
 import { Input } from "@/components/ui/input"
-import { BETA_URL } from "@/landing/constants"
+import { openBetaInNewTab } from "@/landing/constants"
 import {
   betaSignupErrorMessage,
   submitBetaSignup,
@@ -25,6 +25,12 @@ import {
   trackBetaSignupGranted,
   trackBetaSignupSubmitted,
 } from "./identify"
+import {
+  REFERRAL_SOURCES,
+  formatReferralForSheet,
+  isReferralSourceOtherValid,
+  type ReferralSourceId,
+} from "./referral-sources"
 import {
   isPlausibleEmail,
   normalizeEmailInput,
@@ -75,6 +81,10 @@ export function BetaAccessModal({
 
   const [phase, setPhase] = useState<BetaModalPhase>("form")
   const [email, setEmail] = useState("")
+  const [referralSource, setReferralSource] = useState<ReferralSourceId | null>(
+    null,
+  )
+  const [referralSourceOther, setReferralSourceOther] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState("")
@@ -84,6 +94,8 @@ export function BetaAccessModal({
   const reset = useCallback(() => {
     setPhase("form")
     setEmail("")
+    setReferralSource(null)
+    setReferralSourceOther("")
     setError(null)
     setSubmitting(false)
     setTurnstileToken("")
@@ -135,10 +147,15 @@ export function BetaAccessModal({
   }, [phase, reducedMotion])
 
   const runGrantFlow = useCallback(
-    (normalized: string) => {
+    (
+      normalized: string,
+      referral: ReferralSourceId,
+      referralDetail: string,
+    ) => {
+      const referralLabel = formatReferralForSheet(referral, referralDetail)
       writeBetaAccessGrant(normalized)
-      identifyBetaVisitor(normalized, source)
-      trackBetaSignupGranted(source)
+      identifyBetaVisitor(normalized, source, referral, referralDetail)
+      trackBetaSignupGranted(source, referralLabel)
       onGranted(normalized)
       setGrantedEmail(normalized)
       setPhase("granting")
@@ -146,11 +163,26 @@ export function BetaAccessModal({
     [onGranted, source],
   )
 
+  const referralReady =
+    referralSource !== null &&
+    (referralSource !== "other" || isReferralSourceOtherValid(referralSourceOther))
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     const normalized = normalizeEmailInput(email)
     if (!isPlausibleEmail(normalized)) {
       setError(betaSignupErrorMessage("invalid_email"))
+      return
+    }
+    if (!referralSource) {
+      setError(betaSignupErrorMessage("invalid_referral_source"))
+      return
+    }
+    if (
+      referralSource === "other" &&
+      !isReferralSourceOtherValid(referralSourceOther)
+    ) {
+      setError("Please tell us where you heard about us.")
       return
     }
     if (turnstileRequired && !turnstileToken) {
@@ -160,11 +192,16 @@ export function BetaAccessModal({
 
     setSubmitting(true)
     setError(null)
-    trackBetaSignupSubmitted(source)
+    const referralDetail =
+      referralSource === "other" ? referralSourceOther.trim() : ""
+    const referralLabel = formatReferralForSheet(referralSource, referralDetail)
+    trackBetaSignupSubmitted(source, referralLabel)
 
     const result = await submitBetaSignup({
       email: normalized,
       source,
+      referralSource,
+      referralSourceDetail: referralDetail || undefined,
       turnstileToken: turnstileToken || undefined,
     })
 
@@ -175,13 +212,12 @@ export function BetaAccessModal({
       return
     }
 
-    runGrantFlow(normalized)
+    runGrantFlow(normalized, referralSource, referralDetail)
   }
 
   const openBeta = () => {
     trackBetaOpened()
-    const opened = window.open(BETA_URL, "_blank", "noopener,noreferrer")
-    if (!opened) window.location.assign(BETA_URL)
+    openBetaInNewTab()
     onClose()
   }
 
@@ -215,7 +251,7 @@ export function BetaAccessModal({
               <span className="font-display italic text-[#01b4c8]">beta access</span>
             </h2>
             <p className="mt-3 text-center text-[15px] leading-[21px] text-[#627c86]">
-              Enter your work email to continue.
+              Enter your email to continue.
             </p>
 
             <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
@@ -231,6 +267,53 @@ export function BetaAccessModal({
                 aria-invalid={error ? true : undefined}
                 className="h-11 rounded-xl border-[#c5e8ef] bg-[#f8feff] text-[15px]"
               />
+
+              <fieldset className="space-y-2.5">
+                <legend className="text-[14px] leading-[20px] text-[#627c86]">
+                  Where did you learn about Construct?
+                </legend>
+                <div className="flex flex-wrap gap-1.5">
+                  {REFERRAL_SOURCES.map((option) => {
+                    const selected = referralSource === option.id
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        aria-pressed={selected}
+                        disabled={submitting}
+                        onClick={() => {
+                          setReferralSource(option.id)
+                          if (option.id !== "other") setReferralSourceOther("")
+                          if (error) setError(null)
+                        }}
+                        className={
+                          "rounded-full border px-3 py-1.5 text-[12px] font-medium leading-tight transition-colors " +
+                          (selected
+                            ? "border-[#4cd8ff] bg-[#4cd8ff] text-white"
+                            : "border-[#c5e8ef] bg-[#f8feff] text-[#4e4646] hover:border-[#8adcdf]")
+                        }
+                      >
+                        {option.label}
+                      </button>
+                    )
+                  })}
+                </div>
+                {referralSource === "other" ? (
+                  <Input
+                    type="text"
+                    name="referral_other"
+                    placeholder="Where did you hear about us?"
+                    value={referralSourceOther}
+                    onChange={(e) => {
+                      setReferralSourceOther(e.target.value)
+                      if (error) setError(null)
+                    }}
+                    disabled={submitting}
+                    className="h-11 rounded-xl border-[#c5e8ef] bg-[#f8feff] text-[15px]"
+                  />
+                ) : null}
+              </fieldset>
+
               {error ? (
                 <p className="text-[13px] leading-[18px] text-[#c44]" role="alert">
                   {error}
@@ -244,7 +327,7 @@ export function BetaAccessModal({
 
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !referralReady}
                 className="font-cta flex h-[52px] w-full items-center justify-center rounded-[54px] border border-[#d9f8ff] bg-[#4cd8ff] text-[18px] text-white shadow-[inset_0_-5px_14px_rgba(255,255,255,0.92),inset_0_4px_14px_rgba(255,255,255,0.91)] transition-opacity disabled:opacity-60"
               >
                 {submitting ? "Submitting…" : "Continue"}

@@ -1,4 +1,5 @@
 import { appendBetaSignupToSheet } from "../lib/google-sheet"
+import { parseReferralSource, parseReferralSourceDetail, formatReferralForSheet } from "../lib/referral-source"
 import {
   isSignupRateLimited,
   recordSignupAttempt,
@@ -14,6 +15,8 @@ export type BetaSignupEnv = {
 type SignupBody = {
   email?: string
   source?: string
+  referralSource?: string
+  referralSourceDetail?: string
   turnstileToken?: string
 }
 
@@ -81,6 +84,7 @@ export async function handleBetaSignup(
   const emailRaw = typeof body.email === "string" ? body.email : ""
   const source =
     typeof body.source === "string" ? body.source.slice(0, 64) : null
+  const referralSource = parseReferralSource(body.referralSource)
   const turnstileToken =
     typeof body.turnstileToken === "string" ? body.turnstileToken : ""
 
@@ -99,6 +103,18 @@ export async function handleBetaSignup(
     return json({ error: validated.error }, 400)
   }
 
+  if (!referralSource) {
+    return json({ error: "invalid_referral_source" }, 400)
+  }
+
+  const referralDetail = parseReferralSourceDetail(
+    referralSource,
+    body.referralSourceDetail,
+  )
+  if (!referralDetail.ok) {
+    return json({ error: "invalid_referral_source" }, 400)
+  }
+
   const ip = clientIp(request)
   const ipHash = await hashIp(ip)
 
@@ -113,6 +129,10 @@ export async function handleBetaSignup(
     {
       email: validated.email,
       source,
+      referralSource: formatReferralForSheet(
+        referralSource,
+        referralDetail.detail,
+      ),
       createdAt,
       ipHash,
       userAgent: ua,

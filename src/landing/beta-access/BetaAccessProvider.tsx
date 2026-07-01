@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react"
-import { BETA_URL } from "@/landing/constants"
+import { openBetaInNewTab } from "@/landing/constants"
 import { BetaAccessModal } from "./BetaAccessModal"
 import { identifyBetaVisitor } from "./identify"
 import { readBetaAccessGrant } from "./storage"
@@ -40,8 +40,7 @@ export function BetaAccessProvider({ children }: { children: ReactNode }) {
   }, [grant?.email])
 
   const openBetaApp = useCallback(() => {
-    const opened = window.open(BETA_URL, "_blank", "noopener,noreferrer")
-    if (!opened) window.location.assign(BETA_URL)
+    openBetaInNewTab()
   }, [])
 
   const requestBetaAccess = useCallback(

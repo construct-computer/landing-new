@@ -42,9 +42,10 @@ function doPost(e) {
     sheet.appendRow([
       email,
       body.source || "",
-      body.created_at || new Date().toISOString(),
+      parseSheetDateTime(body.created_at),
       body.ip_hash || "",
       body.user_agent || "",
+      body.referral_source || "",
     ])
 
     return json({ ok: true, duplicate: false })
@@ -55,7 +56,23 @@ function doPost(e) {
 
 function ensureHeaderRow(sheet) {
   if (sheet.getLastRow() > 0) return
-  sheet.appendRow(["email", "source", "created_at", "ip_hash", "user_agent"])
+  sheet.appendRow([
+    "email",
+    "source",
+    "created_at",
+    "ip_hash",
+    "user_agent",
+    "referral_source",
+  ])
+}
+
+/** Google Sheets datetime columns reject ISO strings — pass a Date instead. */
+function parseSheetDateTime(raw) {
+  if (raw) {
+    const d = new Date(raw)
+    if (!isNaN(d.getTime())) return d
+  }
+  return new Date()
 }
 
 function emailExists(sheet, email) {

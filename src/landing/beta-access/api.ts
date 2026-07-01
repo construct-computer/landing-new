@@ -2,6 +2,7 @@ export type BetaSignupError =
   | "invalid_email"
   | "disposable_email"
   | "no_mx"
+  | "invalid_referral_source"
   | "rate_limited"
   | "bot_check_failed"
   | "sheet_not_configured"
@@ -16,6 +17,8 @@ export function betaSignupErrorMessage(error: BetaSignupError): string {
       return "Please use a non-disposable email address."
     case "no_mx":
       return "That email domain doesn't look valid."
+    case "invalid_referral_source":
+      return "Please tell us where you heard about Construct."
     case "rate_limited":
       return "Too many attempts. Please try again in a little while."
     case "bot_check_failed":
@@ -31,6 +34,8 @@ export function betaSignupErrorMessage(error: BetaSignupError): string {
 export async function submitBetaSignup(params: {
   email: string
   source?: string
+  referralSource: string
+  referralSourceDetail?: string
   turnstileToken?: string
 }): Promise<{ ok: true } | { ok: false; error: BetaSignupError }> {
   try {
@@ -40,6 +45,8 @@ export async function submitBetaSignup(params: {
       body: JSON.stringify({
         email: params.email,
         source: params.source ?? "unknown",
+        referralSource: params.referralSource,
+        referralSourceDetail: params.referralSourceDetail ?? "",
         turnstileToken: params.turnstileToken ?? "",
       }),
     })
@@ -57,6 +64,9 @@ export async function submitBetaSignup(params: {
     if (code === "invalid_email") return { ok: false, error: "invalid_email" }
     if (code === "disposable_email") return { ok: false, error: "disposable_email" }
     if (code === "no_mx") return { ok: false, error: "no_mx" }
+    if (code === "invalid_referral_source") {
+      return { ok: false, error: "invalid_referral_source" }
+    }
     if (code === "rate_limited") return { ok: false, error: "rate_limited" }
     if (code === "bot_check_failed") return { ok: false, error: "bot_check_failed" }
     if (code === "sheet_not_configured") {

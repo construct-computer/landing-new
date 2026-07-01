@@ -7,6 +7,7 @@ describe("appendBetaSignupToSheet", () => {
       {
         email: "user@example.com",
         source: "hero",
+        referralSource: "twitter",
         createdAt: "2026-01-01T00:00:00.000Z",
         ipHash: "abc",
         userAgent: "test",
