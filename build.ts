@@ -276,7 +276,7 @@ const ssgStart = performance.now();
 const { renderToString } = await import("react-dom/server");
 const { createElement } = await import("react");
 const { App } = await import("./src/App");
-const { ROUTES, NOT_FOUND_META } = await import("./src/seo/routes");
+const { NOT_FOUND_META, getAllRenderableRoutes } = await import("./src/seo/routes");
 const { renderHeadForRoute } = await import("./src/seo/head");
 const {
   robotsTxt,
@@ -343,7 +343,7 @@ function rewriteAssets(html: string): string {
 
 const renderedRoutes: { path: string; file: string; bytes: number }[] = [];
 
-for (const route of ROUTES) {
+for (const route of getAllRenderableRoutes()) {
   const rawBody = renderToString(
     createElement(App as any, { initialPath: route.path }),
   );

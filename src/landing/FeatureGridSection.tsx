@@ -100,7 +100,7 @@ export function MobileFeatureGridSection({ className }: { className?: string }) 
   return (
     <section
       aria-label="Construct capabilities"
-      className={className ?? "pt-12 pb-4"}
+      className={className ?? "relative z-30 pt-12 pb-4"}
     >
       <div className="mx-auto flex w-full max-w-[400px] flex-col gap-4 px-5">
         {cards.map((card) => (

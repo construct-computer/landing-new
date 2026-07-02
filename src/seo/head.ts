@@ -53,7 +53,7 @@ export function renderHeadForRoute(route: RouteMeta): string {
 
   // --- Open Graph (Facebook, LinkedIn, Discord, WhatsApp, iMessage,
   //     Telegram, Slack fallback, Pinterest, etc.) -------------------
-  parts.push(propMeta("og:type", "website"))
+  parts.push(propMeta("og:type", route.ogType ?? "website"))
   parts.push(propMeta("og:site_name", "Construct Computer"))
   parts.push(propMeta("og:locale", OG_LOCALE))
   parts.push(propMeta("og:title", route.title))
@@ -104,6 +104,7 @@ function applyRouteMeta(route: RouteMeta) {
   }
   setLink("canonical", route.canonical)
 
+  setMeta("property", "og:type", route.ogType ?? "website")
   setMeta("property", "og:title", route.title)
   setMeta("property", "og:description", route.description)
   setMeta("property", "og:url", route.canonical)

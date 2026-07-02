@@ -40,7 +40,7 @@ export function isPostHogEnabled(): boolean {
 function buildOptions(): Partial<PostHogConfig> {
   return {
     api_host: getPostHogApiHost(),
-    cookie_domain: ".construct.computer",
+    cross_subdomain_cookie: true,
     person_profiles: "identified_only",
     defaults: "2026-01-30",
     // RouterProvider emits $pageview on every pathname change (incl. first paint).

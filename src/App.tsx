@@ -3,11 +3,15 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { DesktopLanding } from "@/landing/Desktop"
 import { MobileLanding } from "@/landing/Mobile"
 import { AboutPage } from "@/pages/About"
+import { BlogIndexPage } from "@/pages/blog/BlogIndex"
+import { BlogPostPage } from "@/pages/blog/BlogPost"
 import { CareersPage } from "@/pages/Careers"
 import { PrivacyPolicyPage } from "@/pages/PrivacyPolicy"
 import { SupportPage } from "@/pages/Support"
 import { NotFoundPage } from "@/pages/NotFound"
 import { TermsPage } from "@/pages/Terms"
+import { VsIndexPage } from "@/pages/vs/VsIndex"
+import { VsPageView } from "@/pages/vs/VsPage"
 import { isKnownRoute } from "@/seo/routes"
 import { RouterProvider, useRoute } from "@/router"
 import { BetaAccessProvider } from "@/landing/beta-access/BetaAccessProvider"
@@ -66,9 +70,14 @@ function Routes() {
   if (!isKnownRoute(pathname)) {
     return <NotFoundPage />
   }
+  if (pathname.startsWith("/blog/")) return <BlogPostPage />
+  if (pathname.startsWith("/vs/")) return <VsPageView />
+
   switch (pathname) {
     case "/about":
       return <AboutPage />
+    case "/blog":
+      return <BlogIndexPage />
     case "/careers":
       return <CareersPage />
     case "/privacy":
@@ -77,6 +86,8 @@ function Routes() {
       return <TermsPage />
     case "/support":
       return <SupportPage />
+    case "/vs":
+      return <VsIndexPage />
     default:
       return <Landing />
   }

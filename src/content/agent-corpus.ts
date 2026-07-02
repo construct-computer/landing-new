@@ -1,6 +1,6 @@
 import { LANDING_FAQ } from "@/content/faq"
 import { PRICING_PLANS } from "@/content/pricing"
-import { ROUTES } from "@/seo/routes"
+import { getAllRenderableRoutes } from "@/seo/routes"
 import { SITE_URL } from "@/seo/jsonLd"
 
 /**
@@ -87,11 +87,11 @@ export function formatFaqBlock(): string {
 }
 
 export function formatPagesList(): string {
-  return ROUTES.map((r) => `- [${r.title}](${r.canonical})`).join("\n")
+  return getAllRenderableRoutes().map((r) => `- [${r.title}](${r.canonical})`).join("\n")
 }
 
 export function formatPagesWithDescriptions(): string {
-  return ROUTES.map(
+  return getAllRenderableRoutes().map(
     (r) => `- [${r.title}](${r.canonical}): ${r.description}`,
   ).join("\n")
 }

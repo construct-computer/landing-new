@@ -1,5 +1,14 @@
 import { LANDING_FAQ } from "@/content/faq"
 import {
+  blogKeywords,
+  getBlogSlugs,
+  getPostBySlug,
+  getPublishedPosts,
+} from "@/content/blog/load"
+import { getVsPage, getVsSlugs } from "@/content/vs"
+import {
+  articleJsonLd,
+  blogIndexJsonLd,
   breadcrumbListJsonLd,
   faqPageJsonLd,
   OG_IMAGE_ALT,
@@ -43,6 +52,10 @@ export type RouteMeta = {
    * `summary_large_image` only when `ogImage` is landscape (≥ 2:1).
    */
   readonly twitterCard: "summary" | "summary_large_image"
+  /** Open Graph type — `article` for blog posts. */
+  readonly ogType?: "website" | "article"
+  /** ISO date for blog post lastmod in sitemap. */
+  readonly lastmod?: string
   /** JSON-LD objects to emit on this page (in order). */
   readonly jsonLd: readonly Record<string, unknown>[]
   /** Optional `<meta name="robots">` override. */
@@ -59,8 +72,6 @@ const DEFAULT_OG = {
   ogImageHeight: OG_IMAGE_HEIGHT,
   ogImageType: OG_IMAGE_TYPE,
   ogImageAlt: OG_IMAGE_ALT,
-  // 1200×630 landscape card → `summary_large_image` renders the full
-  // 1.91:1 card on X instead of the small 1:1 thumbnail.
   twitterCard: "summary_large_image",
 } as const satisfies Partial<RouteMeta>
 
@@ -139,11 +150,99 @@ export const ROUTES: readonly RouteMeta[] = [
   },
 ]
 
+const BLOG_INDEX_META: RouteMeta = {
+  ...DEFAULT_OG,
+  path: "/blog",
+  title: "Blog - Construct Computer",
+  description:
+    "Guides, product updates, and resources about AI employees, autonomous agents, and how Construct compares to chat assistants and automation tools.",
+  keywords: `${KEYWORDS_COMMON}, Construct blog, AI employee guides, AI agent SEO`,
+  canonical: canonical("/blog"),
+  jsonLd: [
+    organizationJsonLd(),
+    homeBreadcrumbs({ name: "Blog", path: "/blog" }),
+    blogIndexJsonLd(
+      getPublishedPosts().map((p) => ({ title: p.title, path: `/blog/${p.slug}` })),
+    ),
+  ],
+}
+
+const VS_INDEX_META: RouteMeta = {
+  ...DEFAULT_OG,
+  path: "/vs",
+  title: "Compare - Construct Computer",
+  description:
+    "See how Construct compares to ChatGPT, Microsoft Copilot, Zapier, coding agents, and DIY agent stacks.",
+  keywords: `${KEYWORDS_COMMON}, Construct vs ChatGPT, AI agent comparison, Construct vs Zapier`,
+  canonical: canonical("/vs"),
+  jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "Compare", path: "/vs" })],
+}
+
+function blogPostMeta(slug: string): RouteMeta | undefined {
+  const post = getPostBySlug(slug)
+  if (!post) return undefined
+  const path = `/blog/${slug}`
+  return {
+    ...DEFAULT_OG,
+    path,
+    title: `${post.title} - Construct Computer Blog`,
+    description: post.description,
+    keywords: blogKeywords(post),
+    canonical: canonical(path),
+    ogType: "article",
+    lastmod: post.date,
+    jsonLd: [
+      organizationJsonLd(),
+      breadcrumbListJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: post.title, path },
+      ]),
+      articleJsonLd({
+        title: post.title,
+        description: post.description,
+        datePublished: post.date,
+        url: canonical(path),
+        author: post.author,
+      }),
+    ],
+  }
+}
+
+function vsPageMeta(slug: string): RouteMeta | undefined {
+  const page = getVsPage(slug)
+  if (!page) return undefined
+  const path = `/vs/${slug}`
+  return {
+    ...DEFAULT_OG,
+    path,
+    title: `${page.title} - Construct Computer`,
+    description: page.description,
+    keywords: `${KEYWORDS_COMMON}, ${page.title}, Construct comparison`,
+    canonical: canonical(path),
+    jsonLd: [
+      organizationJsonLd(),
+      breadcrumbListJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Compare", path: "/vs" },
+        { name: page.title, path },
+      ]),
+    ],
+  }
+}
+
 const ROUTE_MAP: Record<string, RouteMeta> = Object.fromEntries(
   ROUTES.map((r) => [r.path, r]),
 )
 
-const KNOWN_PATHS = new Set(ROUTES.map((r) => r.path))
+/** All routes pre-rendered at build time and listed in sitemap/agents.md. */
+export function getAllRenderableRoutes(): readonly RouteMeta[] {
+  const blogPosts = getBlogSlugs().map((slug) => blogPostMeta(slug)).filter(Boolean) as RouteMeta[]
+  const vsPages = getVsSlugs().map((slug) => vsPageMeta(slug)).filter(Boolean) as RouteMeta[]
+  return [...ROUTES, BLOG_INDEX_META, ...blogPosts, VS_INDEX_META, ...vsPages]
+}
+
+const KNOWN_PATHS = new Set(getAllRenderableRoutes().map((r) => r.path))
 
 /** SEO metadata for `dist/404.html` and client-side unknown routes. */
 export const NOT_FOUND_META: RouteMeta = {
@@ -174,6 +273,18 @@ export function normalizePathname(pathname: string): string {
 /** Route SEO metadata; unknown paths get `NOT_FOUND_META` (noindex). */
 export function getRouteMeta(pathname: string): RouteMeta {
   const normalized = normalizePathname(pathname)
-  if (!isKnownRoute(normalized)) return NOT_FOUND_META
-  return ROUTE_MAP[normalized]!
+  if (ROUTE_MAP[normalized]) return ROUTE_MAP[normalized]!
+  if (normalized === "/blog") return BLOG_INDEX_META
+  if (normalized === "/vs") return VS_INDEX_META
+  if (normalized.startsWith("/blog/")) {
+    const slug = normalized.slice("/blog/".length)
+    const meta = blogPostMeta(slug)
+    if (meta) return meta
+  }
+  if (normalized.startsWith("/vs/")) {
+    const slug = normalized.slice("/vs/".length)
+    const meta = vsPageMeta(slug)
+    if (meta) return meta
+  }
+  return NOT_FOUND_META
 }

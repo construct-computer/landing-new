@@ -169,3 +169,37 @@ export function breadcrumbListJsonLd(items: readonly Breadcrumb[]) {
     })),
   } as const
 }
+
+export function articleJsonLd(opts: {
+  readonly title: string
+  readonly description: string
+  readonly datePublished: string
+  readonly url: string
+  readonly author: string
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: opts.title,
+    description: opts.description,
+    datePublished: opts.datePublished,
+    author: { "@type": "Organization", name: opts.author },
+    publisher: { "@type": "Organization", name: ORG_NAME, logo: { "@type": "ImageObject", url: ORG_LOGO } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
+  } as const
+}
+
+export function blogIndexJsonLd(posts: readonly { title: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Construct Computer Blog",
+    url: `${SITE_URL}/blog/`,
+    publisher: { "@type": "Organization", name: ORG_NAME },
+    blogPost: posts.map((p) => ({
+      "@type": "BlogPosting",
+      headline: p.title,
+      url: `${SITE_URL}${p.path === "/" ? "/" : `${p.path}/`}`,
+    })),
+  } as const
+}
