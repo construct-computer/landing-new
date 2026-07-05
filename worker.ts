@@ -7,6 +7,7 @@ interface Env extends BetaSignupEnv {
 const SECURITY_HEADERS: Record<string, string> = {
   "X-Frame-Options": "DENY",
   "Content-Security-Policy": "frame-ancestors 'none'",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
 }
@@ -40,6 +41,11 @@ export default {
 
     if (url.hostname === "www.construct.computer") {
       url.hostname = "construct.computer"
+      return Response.redirect(url.toString(), 301)
+    }
+
+    if (url.pathname === "/security.txt") {
+      url.pathname = "/.well-known/security.txt"
       return Response.redirect(url.toString(), 301)
     }
 
