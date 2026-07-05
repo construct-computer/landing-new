@@ -4,6 +4,25 @@ interface Env extends BetaSignupEnv {
   ASSETS: Fetcher
 }
 
+const SECURITY_HEADERS: Record<string, string> = {
+  "X-Frame-Options": "DENY",
+  "Content-Security-Policy": "frame-ancestors 'none'",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+}
+
+function withSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers)
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    headers.set(key, value)
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 /**
  * Thin edge wrapper around static assets: force HTTPS (and www → apex) before
  * delegating to the pre-rendered `dist/` bundle. Asset routing (trailing
@@ -25,9 +44,9 @@ export default {
     }
 
     if (url.pathname === "/api/beta-signup") {
-      return handleBetaSignup(request, env)
+      return withSecurityHeaders(await handleBetaSignup(request, env))
     }
 
-    return env.ASSETS.fetch(request)
+    return withSecurityHeaders(await env.ASSETS.fetch(request))
   },
 } satisfies ExportedHandler<Env>
