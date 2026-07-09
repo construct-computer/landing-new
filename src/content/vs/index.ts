@@ -171,7 +171,7 @@ export const VS_PAGES: readonly VsPage[] = [
       },
       {
         title: "Still flexible",
-        body: "Bring your own model key on every plan. Install apps from the public registry. The agent runs real shell and browser sessions when off-the-shelf integrations are not enough.",
+        body: "Bring your own model key on Pro. Install apps from the public registry. The agent runs real shell and browser sessions when off-the-shelf integrations are not enough.",
       },
     ],
     whenToChoose: {

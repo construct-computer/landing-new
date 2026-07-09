@@ -120,7 +120,7 @@ export function TermsPage() {
 
       <LegalSection title="5. Subscription Plans & Usage Limits">
         <p>
-          Construct offers Free, Starter, and Pro plans. Pricing is metered by
+          Construct offers Lite, Starter, and Pro plans. Pricing is metered by
           real model cost via Cloudflare AI Gateway, not per-message. Plan
           limits are set in code and may change; current values are listed in
           your in-app Billing settings. You agree that:
@@ -162,7 +162,7 @@ export function TermsPage() {
 
       <LegalSection title="6. Bring Your Own Key (BYOK)">
         <p>
-          Construct supports Bring Your Own Key on every tier. BYOK is
+          Construct supports Bring Your Own Key on the Pro plan. BYOK is
           optional and supplements (or replaces) the bundled metered usage.
           You are responsible for:
         </p>

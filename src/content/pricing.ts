@@ -1,4 +1,4 @@
-import imgPricingFree from "@/assets/pricing-free.jpg"
+import imgPricingLite from "@/assets/pricing-lite.jpg"
 import imgPricingPro from "@/assets/pricing-pro.jpg"
 import imgPricingStarter from "@/assets/pricing-starter.jpg"
 
@@ -20,17 +20,16 @@ export type PricingFeature = {
 
 export const PRICING_PLANS = [
   {
-    name: "Free",
-    price: "$0",
-    image: imgPricingFree,
+    name: "Lite",
+    price: "$9",
+    image: imgPricingLite,
     imageAlt: "Dark night sky with bright cumulus clouds illuminated by moonlight",
     features: [
       { label: "50 Steps Per Task", icon: "footprint" },
       { label: "5 min Task Execution Time", icon: "timer" },
       { label: "2 Concurrent Subagents", icon: "tree" },
-      { label: "100 Mb Cloud Storage", icon: "cloud" },
+      { label: "100 MB Cloud Storage", icon: "cloud" },
       { label: "Full Platform Integrations", icon: "integration" },
-      { label: "Bring Your Own Keys Available", icon: "key" },
     ],
   },
   {
@@ -39,14 +38,14 @@ export const PRICING_PLANS = [
     image: imgPricingStarter,
     imageAlt: "Mystical cloud-shrouded golden temple gateway opening into bright light",
     features: [
-      { label: "4x More Usage Than Free", icon: "bolt" },
+      { label: "6× the usage of Lite", icon: "bolt" },
       { label: "150 Steps Per Task", icon: "footprint" },
       { label: "30 min Task Execution Time", icon: "timer" },
       { label: "5 Concurrent Subagents", icon: "tree" },
-      { label: "1 Gb Cloud Storage", icon: "cloud" },
+      { label: "1 GB Cloud Storage", icon: "cloud" },
       { label: "Full Platform Integrations", icon: "integration" },
-      { label: "Bring Your Own Keys Available", icon: "key" },
       { label: "Agent Email Address", icon: "email" },
+      { label: "Background & Scheduled Tasks", icon: "tabs" },
     ],
   },
   {
@@ -55,11 +54,11 @@ export const PRICING_PLANS = [
     image: imgPricingPro,
     imageAlt: "Vivid orange and red sunburst with radiant light rays",
     features: [
-      { label: "24x More Usage Than Free", icon: "bolt" },
+      { label: "32× the usage of Lite", icon: "bolt" },
       { label: "1,000 Steps Per Task", icon: "footprint" },
       { label: "1 hr Task Execution Time", icon: "timer" },
       { label: "Unlimited Concurrent Subagents", icon: "tree" },
-      { label: "3 Gb Cloud Storage", icon: "cloud" },
+      { label: "3 GB Cloud Storage", icon: "cloud" },
       { label: "Full Platform Integrations", icon: "integration" },
       { label: "Bring Your Own Keys Available", icon: "key" },
       { label: "Agent Email Address", icon: "email" },

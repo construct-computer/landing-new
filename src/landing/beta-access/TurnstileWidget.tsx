@@ -24,6 +24,9 @@ const SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
 
 function readTurnstileSiteKey(): string {
+  if (typeof process === "undefined" || typeof process.env === "undefined") {
+    return ""
+  }
   return (process.env.BUN_PUBLIC_TURNSTILE_SITE_KEY ?? "").trim()
 }
 

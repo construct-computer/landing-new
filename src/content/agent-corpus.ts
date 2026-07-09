@@ -38,7 +38,7 @@ export const CORE_CAPABILITIES = [
   "1,000+ SaaS integrations (Gmail, Google Drive, Slack, Notion, Linear, Jira, GitHub, HubSpot, Airtable, Stripe, and more)",
   "Extra apps from the public Construct App Registry (installable MCP apps)",
   "Queryable audit log of tool calls, commands, and sub-agent actions",
-  "Bring your own model API key (BYOK) on every plan",
+  "Bring your own model API key (BYOK) on Pro",
 ] as const
 
 export const BUILT_IN_WORK = [
@@ -53,13 +53,13 @@ export const BUILT_IN_WORK = [
   "Payments — list charges, invoices, and customers (when connected)",
 ] as const
 
-export const PRICING_SUMMARY = `Free (${PRICING_PLANS[0].price}), Starter (${PRICING_PLANS[1].price}/mo), Pro (${PRICING_PLANS[2].price}/mo). Same model experience on every plan — paid tiers add more steps per task, runtime, parallel sub-agents, storage, and usage budget.
+export const PRICING_SUMMARY = `Lite (${PRICING_PLANS[0].price}/mo), Starter (${PRICING_PLANS[1].price}/mo), Pro (${PRICING_PLANS[2].price}/mo). Same model experience on every plan — paid tiers add more steps per task, runtime, parallel sub-agents, storage, and usage budget.
 
-- **Free:** 50 steps/task, 5 min runtime, 2 concurrent sub-agents, 100 MB storage, 3 scheduled tasks, full integrations, BYOK
-- **Starter:** 150 steps/task, 30 min runtime, 5 sub-agents, 1 GB storage, agent email, background work, 10 scheduled tasks, BYOK
+- **Lite:** 50 steps/task, 5 min runtime, 2 concurrent sub-agents, 100 MB storage, 3 scheduled tasks, full integrations
+- **Starter:** 150 steps/task, 30 min runtime, 5 sub-agents, 1 GB storage, agent email, background work, 10 scheduled tasks
 - **Pro:** 1,000 steps/task, 1 hr runtime, unlimited sub-agents, 3 GB storage, agent email, background work, unlimited scheduled tasks, BYOK
 
-Usage is metered by a weekly compute budget with a 4-hour burst cap — not per message. BYOK usage does not count against the bundled budget.`
+Usage is metered by a weekly compute budget with a 4-hour burst cap — not per message. BYOK usage on Pro does not count against the bundled budget.`
 
 export const SECURITY_SUMMARY = [
   "Per-user isolated workspace and sandbox",

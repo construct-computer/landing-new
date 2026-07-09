@@ -377,7 +377,7 @@ export function PrivacyPolicyPage() {
             hard-stops at 100%
           </li>
           <li>
-            <Emph>BYOK</Emph> - you may provide your own API keys (e.g.
+            <Emph>BYOK</Emph> - on Pro, you may provide your own API keys (e.g.
             OpenRouter). BYOK traffic is billed directly by the provider, does
             not count against your bundled budget, and is used solely to make
             requests on your behalf. We do not monitor, log, or retain the

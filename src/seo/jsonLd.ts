@@ -118,10 +118,10 @@ export function softwareApplicationJsonLd() {
     offers: [
       {
         "@type": "Offer",
-        name: "Free",
-        price: "0",
+        name: "Lite",
+        price: "9",
         priceCurrency: "USD",
-        category: "free",
+        category: "subscription",
       },
       {
         "@type": "Offer",

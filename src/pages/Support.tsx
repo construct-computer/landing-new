@@ -125,7 +125,7 @@ export function SupportPage() {
 
       <LegalSection title="Account &amp; billing">
         <p>
-          Subscriptions (Free, Starter, Pro) are managed through Dodo Payments
+          Subscriptions (Lite, Starter, Pro) are managed through Dodo Payments
           and can be viewed and modified from your account{" "}
           <Emph>Billing</Emph> settings. Plans are metered by real model-cost
           via Cloudflare AI Gateway, with a rolling 4-hour burst cap and a
@@ -147,7 +147,7 @@ export function SupportPage() {
             applied automatically.
           </li>
           <li>
-            <Emph>Bring your own key</Emph> - available on every tier. BYOK
+            <Emph>Bring your own key</Emph> - available on Pro. BYOK
             traffic does not count against your bundled budget and is billed
             directly by the provider.
           </li>

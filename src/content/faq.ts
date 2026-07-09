@@ -31,6 +31,6 @@ export const LANDING_FAQ: readonly FaqItem[] = [
   {
     question: "How is Construct priced?",
     answer:
-      "Free ($0), Starter ($59/mo), and Pro ($299/mo). Usage is metered by a weekly compute budget with a 4-hour burst cap, not per message. Agent email and background work start on Starter. Bring-your-own-key is available on every tier and does not count against the bundled budget.",
+      "Lite ($9/mo), Starter ($59/mo), and Pro ($299/mo). Usage is metered by a weekly compute budget with a 4-hour burst cap, not per message. Agent email and background work start on Starter. Bring-your-own-key is available on Pro and does not count against the bundled budget.",
   },
 ]
