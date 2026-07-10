@@ -129,7 +129,6 @@ console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? 
 // downstream effect down with it (including the responsive layout swap).
 const SITE_URL = process.env.SITE_URL ?? "https://construct.computer";
 const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION ?? "";
-const TURNSTILE_SITE_KEY = process.env.BUN_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 const result = await Bun.build({
   entrypoints,
@@ -148,8 +147,6 @@ const result = await Bun.build({
     "process.env.GOOGLE_SITE_VERIFICATION": JSON.stringify(
       GOOGLE_SITE_VERIFICATION,
     ),
-    "process.env.BUN_PUBLIC_TURNSTILE_SITE_KEY":
-      JSON.stringify(TURNSTILE_SITE_KEY),
   },
   ...cliConfig,
 });

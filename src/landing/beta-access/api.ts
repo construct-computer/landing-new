@@ -6,7 +6,6 @@ export type BetaSignupError =
   | "verification_unavailable"
   | "invalid_referral_source"
   | "rate_limited"
-  | "bot_check_failed"
   | "sheet_not_configured"
   | "sheet_request_failed"
   | "network"
@@ -27,8 +26,6 @@ export function betaSignupErrorMessage(error: BetaSignupError): string {
       return "Please tell us where you heard about Construct."
     case "rate_limited":
       return "Too many attempts. Please try again in a little while."
-    case "bot_check_failed":
-      return "Verification failed. Please refresh and try again."
     case "sheet_not_configured":
     case "sheet_request_failed":
       return "Signup is temporarily unavailable. Please try again soon."
@@ -43,7 +40,6 @@ export async function submitBetaSignup(params: {
   referralSource: string
   referralSourceDetail?: string
   landingReferrer?: string
-  turnstileToken?: string
 }): Promise<{ ok: true } | { ok: false; error: BetaSignupError }> {
   try {
     const res = await fetch("/api/beta-signup", {
@@ -55,7 +51,6 @@ export async function submitBetaSignup(params: {
         referralSource: params.referralSource,
         referralSourceDetail: params.referralSourceDetail ?? "",
         landingReferrer: params.landingReferrer ?? "",
-        turnstileToken: params.turnstileToken ?? "",
       }),
     })
 
@@ -82,7 +77,6 @@ export async function submitBetaSignup(params: {
       return { ok: false, error: "invalid_referral_source" }
     }
     if (code === "rate_limited") return { ok: false, error: "rate_limited" }
-    if (code === "bot_check_failed") return { ok: false, error: "bot_check_failed" }
     if (code === "sheet_not_configured") {
       return { ok: false, error: "sheet_not_configured" }
     }

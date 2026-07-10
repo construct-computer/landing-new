@@ -37,7 +37,6 @@ import {
   writeBetaAccessGrant,
 } from "./storage"
 import { readLandingAttribution } from "./attribution"
-import { getTurnstileSiteKey, TurnstileWidget } from "./TurnstileWidget"
 
 export type BetaModalPhase = "form" | "granting" | "success"
 
@@ -78,7 +77,6 @@ export function BetaAccessModal({
   const titleId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const reducedMotion = usePrefersReducedMotion()
-  const turnstileRequired = getTurnstileSiteKey().length > 0
 
   const [phase, setPhase] = useState<BetaModalPhase>("form")
   const [email, setEmail] = useState("")
@@ -88,7 +86,6 @@ export function BetaAccessModal({
   const [referralSourceOther, setReferralSourceOther] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [turnstileToken, setTurnstileToken] = useState("")
   const [completedSteps, setCompletedSteps] = useState(0)
   const [grantedEmail, setGrantedEmail] = useState("")
 
@@ -99,7 +96,6 @@ export function BetaAccessModal({
     setReferralSourceOther("")
     setError(null)
     setSubmitting(false)
-    setTurnstileToken("")
     setCompletedSteps(0)
     setGrantedEmail("")
   }, [])
@@ -193,11 +189,6 @@ export function BetaAccessModal({
       setError("Please tell us where you heard about us.")
       return
     }
-    if (turnstileRequired && !turnstileToken) {
-      setError("Complete the verification check below.")
-      return
-    }
-
     setSubmitting(true)
     setError(null)
     const referralDetail =
@@ -212,7 +203,6 @@ export function BetaAccessModal({
       referralSource,
       referralSourceDetail: referralDetail || undefined,
       landingReferrer,
-      turnstileToken: turnstileToken || undefined,
     })
 
     setSubmitting(false)
@@ -329,11 +319,6 @@ export function BetaAccessModal({
                   {error}
                 </p>
               ) : null}
-
-              <TurnstileWidget
-                onToken={setTurnstileToken}
-                onExpire={() => setTurnstileToken("")}
-              />
 
               <button
                 type="submit"

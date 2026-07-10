@@ -13,7 +13,6 @@ import {
 import { validateEmailFull } from "../lib/validate-email"
 
 export type BetaSignupEnv = {
-  TURNSTILE_SECRET_KEY?: string
   GOOGLE_SHEETS_WEBHOOK_URL?: string
   GOOGLE_SHEETS_WEBHOOK_SECRET?: string
 }
@@ -24,26 +23,6 @@ type SignupBody = {
   referralSource?: string
   referralSourceDetail?: string
   landingReferrer?: string
-  turnstileToken?: string
-}
-
-async function verifyTurnstile(
-  token: string,
-  secret: string,
-  ip: string,
-): Promise<boolean> {
-  const body = new URLSearchParams({
-    secret,
-    response: token,
-    remoteip: ip,
-  })
-  const res = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    { method: "POST", body },
-  )
-  if (!res.ok) return false
-  const json = (await res.json()) as { success?: boolean }
-  return json.success === true
 }
 
 function json(data: unknown, status = 200): Response {
@@ -76,18 +55,6 @@ export async function handleBetaSignup(
     typeof body.source === "string" ? body.source.slice(0, 64) : null
   const referralSource = parseReferralSource(body.referralSource)
   const landingReferrer = parseLandingReferrer(body.landingReferrer)
-  const turnstileToken =
-    typeof body.turnstileToken === "string" ? body.turnstileToken : ""
-
-  const secret = env.TURNSTILE_SECRET_KEY?.trim()
-  if (secret) {
-    if (!turnstileToken) {
-      return json({ error: "bot_check_failed" }, 403)
-    }
-    const ip = clientIp(request)
-    const ok = await verifyTurnstile(turnstileToken, secret, ip)
-    if (!ok) return json({ error: "bot_check_failed" }, 403)
-  }
 
   const validated = await validateEmailFull(emailRaw)
   if (!validated.ok) {
