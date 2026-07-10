@@ -16,7 +16,6 @@ export type BetaSignupEnv = {
   TURNSTILE_SECRET_KEY?: string
   GOOGLE_SHEETS_WEBHOOK_URL?: string
   GOOGLE_SHEETS_WEBHOOK_SECRET?: string
-  EMAILABLE_API_KEY?: string
 }
 
 type SignupBody = {
@@ -90,7 +89,7 @@ export async function handleBetaSignup(
     if (!ok) return json({ error: "bot_check_failed" }, 403)
   }
 
-  const validated = await validateEmailFull(emailRaw, env)
+  const validated = await validateEmailFull(emailRaw)
   if (!validated.ok) {
     return json({ error: validated.error }, 400)
   }

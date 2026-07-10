@@ -1,5 +1,4 @@
 import disposableDomains from "../data/disposable-domains.txt" with { type: "text" }
-import { verifyMailboxEmailable } from "./mailbox-verify"
 
 const DISPOSABLE = new Set(
   disposableDomains
@@ -85,22 +84,11 @@ export async function domainHasMailCapability(domain: string): Promise<boolean> 
 
 export async function validateEmailFull(
   raw: string,
-  env?: EmailValidationEnv,
+  _env?: EmailValidationEnv,
 ): Promise<{ ok: true; email: string } | { ok: false; error: EmailValidationError }> {
-  const local = validateEmailLocally(raw)
-  if (!local.ok) return local
-
-  const domain = local.email.split("@")[1]!
-  const hasMx = await domainHasMailCapability(domain)
-  if (!hasMx) return { ok: false, error: "no_mx" }
-
-  const apiKey = env?.EMAILABLE_API_KEY?.trim()
-  if (!apiKey) {
-    // ponytail: MX-only without provider key (local dev); prod needs EMAILABLE_API_KEY
-    return local
+  const normalized = normalizeEmail(raw)
+  if (!isValidEmailSyntax(normalized)) {
+    return { ok: false, error: "invalid_email" }
   }
-
-  const mailbox = await verifyMailboxEmailable(local.email, apiKey)
-  if (!mailbox.ok) return mailbox
-  return local
+  return { ok: true, email: normalized }
 }

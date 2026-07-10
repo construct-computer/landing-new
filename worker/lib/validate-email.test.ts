@@ -4,6 +4,7 @@ import {
   isValidEmailSyntax,
   normalizeEmail,
   validateEmailLocally,
+  validateEmailFull,
   hasValidMxAnswers,
 } from "./validate-email"
 
@@ -52,6 +53,19 @@ describe("validateEmailLocally", () => {
 
   test("rejects invalid syntax", () => {
     const r = validateEmailLocally("bad")
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error).toBe("invalid_email")
+  })
+})
+
+describe("validateEmailFull", () => {
+  test("accepts any syntactically valid address", async () => {
+    const r = await validateEmailFull("user@thisdomaindoesnotexist99999.invalid")
+    expect(r).toEqual({ ok: true, email: "user@thisdomaindoesnotexist99999.invalid" })
+  })
+
+  test("rejects invalid syntax", async () => {
+    const r = await validateEmailFull("not-an-email")
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error).toBe("invalid_email")
   })
