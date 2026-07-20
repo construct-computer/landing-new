@@ -321,7 +321,7 @@ function HeroHeadline() {
 
 function HeroStage() {
   return (
-    <section className="relative mx-auto w-full max-w-[1500px] px-6 lg:px-16">
+    <section className="relative mx-auto w-full max-w-[1500px] overflow-hidden px-6 lg:px-16">
       <div className="relative isolate mx-auto h-[900px] w-full max-w-[1400px]">
         <div
           aria-hidden
