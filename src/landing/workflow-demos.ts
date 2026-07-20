@@ -1,8 +1,6 @@
 import researchVideoMp4 from "@/assets/research.mp4"
-import researchVideo from "@/assets/research.webm"
 import researchPoster from "@/assets/research-poster.jpg"
 import slackVideoMp4 from "@/assets/slack.mp4"
-import slackVideo from "@/assets/slack.webm"
 import slackPoster from "@/assets/slack-poster.jpg"
 
 export const WORKFLOW_DEMOS = [
@@ -15,7 +13,6 @@ export const WORKFLOW_DEMOS = [
     cta: "Research a Topic",
     nextLabel: "Work Together Across Channels",
     mutedAction: "See Report Samples Generated",
-    video: researchVideo,
     videoMp4: researchVideoMp4,
     poster: researchPoster,
     ariaLabel: "Construct researching a topic in the product interface",
@@ -29,7 +26,6 @@ export const WORKFLOW_DEMOS = [
     cta: "Collaborate",
     nextLabel: "Research About Any Topic",
     mutedAction: "See Shared Threads",
-    video: slackVideo,
     videoMp4: slackVideoMp4,
     poster: slackPoster,
     ariaLabel:

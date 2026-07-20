@@ -154,7 +154,7 @@ function WorkflowVideoPanel({
   )
 
   return (
-    <div className="relative aspect-964/694 overflow-hidden rounded-[53px] bg-white/20">
+    <div className="relative aspect-964/694 overflow-hidden rounded-[53px] bg-white">
       {WORKFLOW_DEMOS.map((demo, index) => {
         const distance = index - workflowPosition
         const isDominant = index === dominantIndex

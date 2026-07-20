@@ -7,7 +7,6 @@ import type {
   SVGProps,
 } from "react"
 import buttonBg from "@/assets/button-bg.svg"
-import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
 import heroPoster from "@/assets/hero-poster.jpg"
 import imgDocs from "@/assets/docs.png"
@@ -281,7 +280,6 @@ export function PortalVideo({
       aria-hidden
       className={className ?? "h-full w-full object-cover"}
     >
-      <source src={bgVideoWebm} type="video/webm" media={media} />
       <source src={bgVideoMp4} type="video/mp4" media={media} />
     </video>
   )

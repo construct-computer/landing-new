@@ -212,7 +212,7 @@ function MobileWorkflowVideoPanel({
 
   return (
     <div
-      className="relative mx-auto aspect-964/694 w-full overflow-hidden rounded-[32px] bg-white/20"
+      className="relative mx-auto aspect-964/694 w-full overflow-hidden rounded-[32px] bg-white"
       style={{
         maxWidth:
           viewportMode === "short"
