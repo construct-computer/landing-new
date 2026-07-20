@@ -145,10 +145,8 @@ function CloudsTransition() {
 
 function WorkflowVideoPanel({
   workflowPosition,
-  isVisible,
 }: {
   workflowPosition: number
-  isVisible: boolean
 }) {
   const dominantIndex = Math.min(
     Math.round(workflowPosition),
@@ -169,7 +167,6 @@ function WorkflowVideoPanel({
             demo={demo}
             distance={distance}
             isDominant={isDominant}
-            isVisible={isVisible}
             media="(min-width: 1024px)"
             travel={12}
           />
@@ -380,7 +377,6 @@ function WorkflowDemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const reducedMotion = usePrefersReducedMotion()
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
 
   useEffect(() => {
     if (reducedMotion) return
@@ -408,11 +404,6 @@ function WorkflowDemoSection() {
         scrub: 0.15,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onEnter: () => setIsWorkflowVisible(true),
-        onEnterBack: () => setIsWorkflowVisible(true),
-        onLeave: () => setIsWorkflowVisible(false),
-        onLeaveBack: () => setIsWorkflowVisible(false),
-        onToggle: (self) => setIsWorkflowVisible(self.isActive),
         onUpdate: (self) => setScrollProgress(self.progress),
       })
 
@@ -453,10 +444,7 @@ function WorkflowDemoSection() {
             </div>
           </aside>
 
-          <WorkflowVideoPanel
-            workflowPosition={workflowPosition}
-            isVisible={isWorkflowVisible}
-          />
+          <WorkflowVideoPanel workflowPosition={workflowPosition} />
         </div>
       </div>
     </section>

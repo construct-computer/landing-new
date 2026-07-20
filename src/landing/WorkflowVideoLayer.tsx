@@ -6,14 +6,12 @@ export function WorkflowVideoLayer({
   demo,
   distance,
   isDominant,
-  isVisible,
   media,
   travel = 10,
 }: {
   demo: WorkflowDemo
   distance: number
   isDominant: boolean
-  isVisible: boolean
   media: string
   travel?: number
 }) {
@@ -27,12 +25,20 @@ export function WorkflowVideoLayer({
     if (isDominant && !wasDominantRef.current) video.currentTime = 0
     wasDominantRef.current = isDominant
 
-    if (isVisible && isDominant) {
-      void video.play().catch(() => {})
-    } else {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting && isDominant) {
+        void video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    })
+
+    observer.observe(video)
+    return () => {
+      observer.disconnect()
       video.pause()
     }
-  }, [isDominant, isVisible])
+  }, [isDominant])
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))

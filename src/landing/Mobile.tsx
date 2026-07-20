@@ -200,11 +200,9 @@ function MobileCloudsTransition() {
 /* ------------------------------------------------------------------ */
 function MobileWorkflowVideoPanel({
   workflowPosition,
-  isVisible,
   viewportMode,
 }: {
   workflowPosition: number
-  isVisible: boolean
   viewportMode: MobileWorkflowViewportMode
 }) {
   const dominantIndex = Math.min(
@@ -236,7 +234,6 @@ function MobileWorkflowVideoPanel({
             demo={demo}
             distance={distance}
             isDominant={isDominant}
-            isVisible={isVisible}
             media="(max-width: 1023px)"
             travel={8}
           />
@@ -478,7 +475,6 @@ function MobileWorkflowShowcase() {
   const reducedMotion = usePrefersReducedMotion()
   const viewportMode = useMobileWorkflowViewportMode()
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [isVideoPlaybackVisible, setIsVideoPlaybackVisible] = useState(false)
 
   useEffect(() => {
     if (reducedMotion) return
@@ -506,11 +502,6 @@ function MobileWorkflowShowcase() {
         scrub: 0.12,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onEnter: () => setIsVideoPlaybackVisible(true),
-        onEnterBack: () => setIsVideoPlaybackVisible(true),
-        onLeave: () => setIsVideoPlaybackVisible(false),
-        onLeaveBack: () => setIsVideoPlaybackVisible(false),
-        onToggle: (self) => setIsVideoPlaybackVisible(self.isActive),
         onUpdate: (self) => setScrollProgress(self.progress),
       })
 
@@ -568,7 +559,6 @@ function MobileWorkflowShowcase() {
         <div className="w-full">
           <MobileWorkflowVideoPanel
             workflowPosition={workflowPosition}
-            isVisible={isVideoPlaybackVisible}
             viewportMode={viewportMode}
           />
         </div>
