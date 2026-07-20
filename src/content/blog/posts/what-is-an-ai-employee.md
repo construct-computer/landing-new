@@ -1,6 +1,6 @@
 ---
 title: "What is an AI employee?"
-description: "An AI employee is a persistent autonomous agent with its own computer — not a chatbot. Learn how Construct executes work end-to-end across email, Slack, and your apps."
+description: "Learn what an AI employee is, how it differs from a chatbot, and how Construct completes work across email, Slack, browser, and connected apps."
 date: "2026-07-02"
 author: "Construct Team"
 tags: ["ai-agent", "product", "ai-employee"]

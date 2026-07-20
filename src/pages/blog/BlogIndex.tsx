@@ -14,8 +14,31 @@ export function BlogIndexPage() {
   const posts = getPublishedPosts()
 
   return (
-    <LegalShell title="Blog" subtitle="Product updates, guides, and SEO resources">
+    <LegalShell
+      title="AI Employee Guides"
+      subtitle="Practical guides to AI employees, autonomous agents, and software that completes work—not just chat."
+    >
       <div className="space-y-8">
+        <section aria-labelledby="blog-introduction" className="space-y-3">
+          <h2
+            id="blog-introduction"
+            className="font-display text-[24px] italic leading-[1.2] text-[#4e4646]"
+          >
+            From chat answers to finished work
+          </h2>
+          <p>
+            An AI employee is a persistent autonomous agent that can use a
+            browser, terminal, files, email, calendar, and connected apps from
+            its own computer. These guides explain how that model differs from
+            chat assistants, coding agents, copilots, and fixed automations.
+          </p>
+          <p>
+            Start with the definition of an AI employee, then use the
+            comparisons to decide when you need conversation, a specialist
+            coding tool, or an agent that can execute an entire cross-app
+            workflow and leave proof of the result.
+          </p>
+        </section>
         {posts.length === 0 ? (
           <p>No posts yet.</p>
         ) : (

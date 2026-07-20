@@ -300,11 +300,14 @@ function usePrefersReducedMotion() {
 function HeroHeadline() {
   return (
     <div className="pointer-events-auto max-w-[560px]">
-      <h1 className="font-display text-balance text-5xl capitalize italic leading-[1.1] text-[#4e4646] lg:text-[51.8px] lg:leading-[58px]">
+      <div
+        aria-hidden="true"
+        className="font-display text-balance text-5xl capitalize italic leading-[1.1] text-[#4e4646] lg:text-[51.8px] lg:leading-[58px]"
+      >
         <span className="text-[#01b4c8]">Autonomous </span>
         <span>Computer that </span>
         <span className="text-[#01b4c8]">Works For You</span>
-      </h1>
+      </div>
       <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-[#627c86]">
         Construct is an AI agent with its own cloud computer - it runs code,
         sends email, and works across Slack, Telegram, and your inbox.

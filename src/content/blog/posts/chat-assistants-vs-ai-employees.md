@@ -1,5 +1,5 @@
 ---
-title: "Why chat assistants are not enough for real work"
+title: "Chat Assistants vs AI Employees"
 description: "ChatGPT and Claude are great at drafting — but autonomous ops need execution, persistence, and proof. See how Construct compares to chat assistants."
 date: "2026-06-15"
 author: "Construct Team"

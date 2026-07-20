@@ -80,6 +80,7 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     name: ORG_NAME,
     alternateName: "Construct",
     url: SITE_URL,
@@ -99,9 +100,10 @@ export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
     name: ORG_NAME,
     url: SITE_URL,
-    publisher: { "@type": "Organization", name: ORG_NAME },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   } as const
 }
 
@@ -109,6 +111,7 @@ export function softwareApplicationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": `${SITE_URL}/#software`,
     name: ORG_NAME,
     applicationCategory: "ProductivityApplication",
     operatingSystem: "Web, Cloud, iOS, Android, macOS",
@@ -126,17 +129,19 @@ export function softwareApplicationJsonLd() {
       {
         "@type": "Offer",
         name: "Starter",
+        price: "59",
         priceCurrency: "USD",
         category: "subscription",
       },
       {
         "@type": "Offer",
         name: "Pro",
+        price: "299",
         priceCurrency: "USD",
         category: "subscription",
       },
     ],
-    publisher: { "@type": "Organization", name: ORG_NAME },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   } as const
 }
 
@@ -184,7 +189,7 @@ export function articleJsonLd(opts: {
     description: opts.description,
     datePublished: opts.datePublished,
     author: { "@type": "Organization", name: opts.author },
-    publisher: { "@type": "Organization", name: ORG_NAME, logo: { "@type": "ImageObject", url: ORG_LOGO } },
+    publisher: { "@id": `${SITE_URL}/#organization` },
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
   } as const
 }
@@ -195,7 +200,7 @@ export function blogIndexJsonLd(posts: readonly { title: string; path: string }[
     "@type": "Blog",
     name: "Construct Computer Blog",
     url: `${SITE_URL}/blog/`,
-    publisher: { "@type": "Organization", name: ORG_NAME },
+    publisher: { "@id": `${SITE_URL}/#organization` },
     blogPost: posts.map((p) => ({
       "@type": "BlogPosting",
       headline: p.title,

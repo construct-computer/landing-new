@@ -26,7 +26,7 @@ export const VS_PAGES: readonly VsPage[] = [
     competitor: "ChatGPT, Claude, and Gemini",
     footerLabel: "vs ChatGPT",
     description:
-      "Compare Construct Computer to ChatGPT, Claude, and Gemini. Chat assistants draft replies; Construct is an AI employee with its own cloud computer that executes work end-to-end.",
+      "Compare Construct with ChatGPT, Claude, and Gemini. See how an AI employee moves beyond chat to execute work across apps on its own computer.",
     summary:
       "Chat assistants excel at conversation and one-shot answers. Construct is an autonomous agent with a workstation — it runs browser sessions, terminal commands, and connected apps while you are away.",
     sections: [
@@ -67,7 +67,7 @@ export const VS_PAGES: readonly VsPage[] = [
     competitor: "Microsoft Copilot and Google Workspace AI",
     footerLabel: "vs Copilot",
     description:
-      "Suite copilots stay inside one vendor. Construct is vendor-neutral — one AI employee across Gmail, Slack, Linear, GitHub, Notion, and more, plus a full cloud computer.",
+      "Compare Construct with Microsoft Copilot and Google Workspace AI. See how one vendor-neutral AI employee works across apps from its own cloud computer.",
     summary:
       "Microsoft Copilot and Google Workspace AI are built for their own ecosystems. Construct connects across vendors and gives the agent a real computer for scripts and multi-site browser work.",
     sections: [
@@ -130,7 +130,7 @@ export const VS_PAGES: readonly VsPage[] = [
     competitor: "Coding-only AI agents",
     footerLabel: "vs Coding agents",
     description:
-      "Coding agents optimize for engineers. Construct targets operators and knowledge workers — email, research, calendar, and CRM are first-class; coding is one tool among many.",
+      "Compare Construct with coding agents. See when a generalist AI employee for email, research, calendar, CRM, and code is the better fit.",
     summary:
       "Tools like Devin-style coding agents focus on repositories and terminals. Construct is a generalist AI employee for the whole business stack.",
     sections: [
@@ -141,6 +141,10 @@ export const VS_PAGES: readonly VsPage[] = [
       {
         title: "Watchable desktop",
         body: "Construct exposes a macOS-style virtual desktop so non-engineers can see what the agent did, take over any window, and audit every tool call.",
+      },
+      {
+        title: "Where the boundary matters",
+        body: "A coding agent is the specialist when success means a tested pull request. Construct is the generalist when the same job also requires reading customer email, researching the market, updating a CRM, scheduling a follow-up, and sharing the result. It can still use a terminal and repository, but code is one step in a broader business workflow.",
       },
     ],
     whenToChoose: {
@@ -172,6 +176,10 @@ export const VS_PAGES: readonly VsPage[] = [
       {
         title: "Still flexible",
         body: "Bring your own model key on Pro. Install apps from the public registry. The agent runs real shell and browser sessions when off-the-shelf integrations are not enough.",
+      },
+      {
+        title: "What you would otherwise operate",
+        body: "A production agent needs more than a prompt and model API. You must isolate compute, store credentials, manage browser sessions, connect business apps, schedule background jobs, retain memory, expose approvals, and record an audit trail. Construct provides those operating layers as one hosted product while leaving shell, browser, model key, and installable apps available when you need control.",
       },
     ],
     whenToChoose: {

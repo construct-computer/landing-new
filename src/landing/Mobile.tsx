@@ -317,11 +317,14 @@ const PORTAL_REVEAL = "min(42vw, 28dvh, 240px)"
 function HeroHeadline() {
   return (
     <div className="mx-auto max-w-[420px] text-center">
-      <h1 className="font-display text-balance text-[38px] capitalize italic leading-[1.1] text-[#4e4646]">
+      <div
+        aria-hidden="true"
+        className="font-display text-balance text-[38px] capitalize italic leading-[1.1] text-[#4e4646]"
+      >
         <span className="text-[#01b4c8]">Autonomous </span>
         <span>Computer that </span>
         <span className="text-[#01b4c8]">Works For You</span>
-      </h1>
+      </div>
       <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
         An AI agent with its own cloud computer — works across Slack,
         Telegram, and email, on any device.

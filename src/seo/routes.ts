@@ -92,7 +92,7 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/",
     title: "Construct Computer - the AI employee with their own computer",
     description:
-      "Construct is an AI agent with its own cloud computer. It logs into a full virtual desktop, runs code, sends email, and works across Slack, Telegram, and your inbox - scheduled, persistent, on any device.",
+      "Construct is an AI employee with its own cloud computer that uses a browser, terminal, email, and connected apps to finish work while you are away.",
     keywords:
       "AI agent, AI employee, autonomous AI, virtual desktop, cloud desktop, AI assistant, Construct Computer, AI for Slack, AI for Telegram, AI for email, Cloudflare agent",
     canonical: canonical("/"),
@@ -103,7 +103,7 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/about",
     title: "About - Construct Computer",
     description:
-      "Construct is building the AI employee - a persistent agent with its own Linux sandbox, browser, inbox, memory, and calendar. Learn about the team, the architecture, and what we believe.",
+      "Meet Construct Computer, the team building a persistent AI employee with its own cloud computer, browser, inbox, memory, and calendar.",
     keywords: `${KEYWORDS_COMMON}, about Construct, AI employee company, Cloudflare Durable Objects, Composio`,
     canonical: canonical("/about"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "About", path: "/about" })],
@@ -153,7 +153,7 @@ export const ROUTES: readonly RouteMeta[] = [
 const BLOG_INDEX_META: RouteMeta = {
   ...DEFAULT_OG,
   path: "/blog",
-  title: "Blog - Construct Computer",
+  title: "AI Employee Guides - Construct Computer",
   description:
     "Guides, product updates, and resources about AI employees, autonomous agents, and how Construct compares to chat assistants and automation tools.",
   keywords: `${KEYWORDS_COMMON}, Construct blog, AI employee guides, AI agent SEO`,
@@ -170,7 +170,7 @@ const BLOG_INDEX_META: RouteMeta = {
 const VS_INDEX_META: RouteMeta = {
   ...DEFAULT_OG,
   path: "/vs",
-  title: "Compare - Construct Computer",
+  title: "AI Agent Comparisons - Construct Computer",
   description:
     "See how Construct compares to ChatGPT, Microsoft Copilot, Zapier, coding agents, and DIY agent stacks.",
   keywords: `${KEYWORDS_COMMON}, Construct vs ChatGPT, AI agent comparison, Construct vs Zapier`,

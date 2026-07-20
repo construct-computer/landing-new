@@ -45,18 +45,23 @@ function Landing() {
     setHydrated(true)
   }, [])
 
-  if (hydrated) {
-    return isDesktop ? <DesktopLanding /> : <MobileLanding />
-  }
-
   return (
     <>
-      <div className="lg:hidden">
-        <MobileLanding />
-      </div>
-      <div className="hidden lg:block">
-        <DesktopLanding />
-      </div>
+      <h1 className="sr-only">
+        Construct Computer: the AI employee with its own cloud computer
+      </h1>
+      {hydrated ? (
+        isDesktop ? <DesktopLanding /> : <MobileLanding />
+      ) : (
+        <>
+          <div className="lg:hidden">
+            <MobileLanding />
+          </div>
+          <div className="hidden lg:block">
+            <DesktopLanding />
+          </div>
+        </>
+      )}
     </>
   )
 }
