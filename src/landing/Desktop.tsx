@@ -476,7 +476,7 @@ function WorkVideoSection() {
   return (
     <section
       aria-labelledby="work-video-heading"
-      className="relative z-20 overflow-visible bg-transparent px-6 pb-28 pt-[260px] lg:px-16 lg:pb-36 lg:pt-[320px]"
+      className="relative z-0 overflow-visible bg-transparent px-6 pb-28 pt-[260px] lg:px-16 lg:pb-36 lg:pt-[320px]"
     >
       <div
         aria-hidden
