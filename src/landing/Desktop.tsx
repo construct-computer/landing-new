@@ -33,6 +33,7 @@ import { WorkflowVideoLayer } from "./WorkflowVideoLayer"
 import {
   clamp,
   getHeldWorkflowPosition,
+  getSoftPinOffset,
   lerp,
   smoothStep,
 } from "./workflow-motion"
@@ -375,6 +376,7 @@ function StaticWorkflowDemos() {
 
 function WorkflowDemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const reducedMotion = usePrefersReducedMotion()
   const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -396,18 +398,30 @@ function WorkflowDemoSection() {
 
       gsap.registerPlugin(ScrollTrigger)
 
+      const pinOffset = 56
+
       const trigger = ScrollTrigger.create({
         trigger: section,
-        start: "top top",
+        start: `top ${pinOffset}px`,
         end: () => `+=${window.innerHeight * 1.2}`,
         pin: true,
-        scrub: 0.15,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onUpdate: (self) => setScrollProgress(self.progress),
+        onUpdate: self => {
+          setScrollProgress(self.progress)
+          if (contentRef.current) {
+            const y = getSoftPinOffset(
+              self.progress,
+              self.end - self.start,
+              pinOffset,
+            )
+            contentRef.current.style.transform = `translate3d(0, ${y}px, 0)`
+          }
+        },
       })
 
       cleanup = () => {
+        if (contentRef.current) contentRef.current.style.transform = ""
         trigger.kill()
       }
     }
@@ -432,7 +446,10 @@ function WorkflowDemoSection() {
       <h2 id="workflow-demo-heading" className="sr-only">
         Research workflow demo
       </h2>
-      <div className="mx-auto w-full max-w-[1500px] px-6 lg:px-10 xl:px-16">
+      <div
+        ref={contentRef}
+        className="mx-auto w-full max-w-[1500px] px-6 lg:px-10 xl:px-16"
+      >
         <div className="grid grid-cols-[minmax(300px,0.95fr)_minmax(0,2.6fr)] items-center gap-6 lg:gap-7 xl:grid-cols-[minmax(320px,1fr)_minmax(0,3fr)] xl:gap-10">
           <aside className="font-ui relative pl-7 lg:pl-8 xl:pl-10">
             <WorkflowProgressRail workflowPosition={workflowPosition} />

@@ -31,6 +31,7 @@ import { WorkflowVideoLayer } from "./WorkflowVideoLayer"
 import {
   clamp,
   getHeldWorkflowPosition,
+  getSoftPinOffset,
   lerp,
   smoothStep,
 } from "./workflow-motion"
@@ -472,6 +473,7 @@ function StaticMobileWorkflowDemos() {
 
 function MobileWorkflowShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const reducedMotion = usePrefersReducedMotion()
   const viewportMode = useMobileWorkflowViewportMode()
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -494,18 +496,30 @@ function MobileWorkflowShowcase() {
 
       gsap.registerPlugin(ScrollTrigger)
 
+      const pinOffset = NAV_HEIGHT_PX
+
       const trigger = ScrollTrigger.create({
         trigger: section,
-        start: "top top",
+        start: `top ${pinOffset}px`,
         end: () => `+=${window.innerHeight * 1.1}`,
         pin: true,
-        scrub: 0.12,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onUpdate: (self) => setScrollProgress(self.progress),
+        onUpdate: self => {
+          setScrollProgress(self.progress)
+          if (contentRef.current) {
+            const y = getSoftPinOffset(
+              self.progress,
+              self.end - self.start,
+              pinOffset,
+            )
+            contentRef.current.style.transform = `translate3d(0, ${y}px, 0)`
+          }
+        },
       })
 
       cleanup = () => {
+        if (contentRef.current) contentRef.current.style.transform = ""
         trigger.kill()
       }
     }
@@ -555,7 +569,7 @@ function MobileWorkflowShowcase() {
       <h2 id="mobile-workflow-heading" className="sr-only">
         Workflow demos
       </h2>
-      <div className={contentClass}>
+      <div ref={contentRef} className={contentClass}>
         <div className="w-full">
           <MobileWorkflowVideoPanel
             workflowPosition={workflowPosition}

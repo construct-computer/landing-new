@@ -22,3 +22,22 @@ export function getHeldWorkflowPosition(progress: number, demoCount: number) {
   const local = scaled - segment
   return segment + smoothStep((local - 0.18) / 0.64)
 }
+
+/** Continue the section's travel briefly at each pin edge instead of snapping. */
+export function getSoftPinOffset(
+  progress: number,
+  scrollDistance: number,
+  pinOffset: number,
+  edgeDistance = pinOffset * 2,
+) {
+  if (progress <= 0 || scrollDistance <= 0) return 0
+
+  const edge = Math.min(edgeDistance, scrollDistance / 2)
+  const scrolled = clamp(progress) * scrollDistance
+  const entering = clamp(scrolled / edge)
+  const leaving = clamp((scrolled - (scrollDistance - edge)) / edge)
+  const easeOut = 1 - (1 - entering) ** 2
+  const easeIn = leaving ** 2
+
+  return -pinOffset * (easeOut + easeIn)
+}
