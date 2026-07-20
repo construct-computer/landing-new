@@ -54,7 +54,7 @@ function FeatureCardImage({ card }: { card: FeatureCardAsset }) {
       draggable={false}
       loading="lazy"
       decoding="async"
-      className="block h-auto w-full rounded-[18px] shadow-[0_8px_32px_rgba(71,156,223,0.12)]"
+      className="block h-auto w-full rounded-[18px] bg-white shadow-[0_8px_32px_rgba(71,156,223,0.12)]"
     />
   )
 }
