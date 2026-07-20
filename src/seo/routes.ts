@@ -3,9 +3,10 @@ import {
   blogKeywords,
   getBlogSlugs,
   getPostBySlug,
-  getPublishedPosts,
 } from "@/content/blog/load"
 import { getVsPage, getVsSlugs } from "@/content/vs"
+import { getGuidePage, getGuideSlugs } from "@/content/guides"
+import { getResourceEntries } from "@/content/resources"
 import {
   articleJsonLd,
   blogIndexJsonLd,
@@ -63,7 +64,7 @@ export type RouteMeta = {
 }
 
 const KEYWORDS_COMMON =
-  "AI agent, AI employee, virtual desktop, cloud computer, autonomous agent, Cloudflare agent, Construct Computer, Composio, Slack AI, Telegram AI"
+  "AI agent, AI employee, AI coworker, work OS, autonomous agent, Construct Computer, AI workflow automation, AI agent memory"
 
 /** Default OG image block shared by every route. */
 const DEFAULT_OG = {
@@ -90,11 +91,11 @@ export const ROUTES: readonly RouteMeta[] = [
   {
     ...DEFAULT_OG,
     path: "/",
-    title: "Construct Computer - the AI employee with their own computer",
+    title: "AI Employee with a Persistent Work OS | Construct",
     description:
-      "Construct is an AI employee with its own cloud computer that uses a browser, terminal, email, and connected apps to finish work while you are away.",
+      "Construct is an AI employee with memory, files, browser, terminal, schedules, workflows, and 1,000+ connected apps in one supervised workspace.",
     keywords:
-      "AI agent, AI employee, autonomous AI, virtual desktop, cloud desktop, AI assistant, Construct Computer, AI for Slack, AI for Telegram, AI for email, Cloudflare agent",
+      "AI employee, AI agent, AI coworker, AI work OS, autonomous AI, AI workflow automation, AI agent memory, Construct Computer",
     canonical: canonical("/"),
     jsonLd: [organizationJsonLd(), websiteJsonLd(), softwareApplicationJsonLd(), faqPageJsonLd(LANDING_FAQ)],
   },
@@ -103,7 +104,7 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/about",
     title: "About - Construct Computer",
     description:
-      "Meet Construct Computer, the team building a persistent AI employee with its own cloud computer, browser, inbox, memory, and calendar.",
+      "Meet the team building a persistent work OS for an AI employee with files, browser and terminal tools, memory, schedules, workflows, and connected apps.",
     keywords: `${KEYWORDS_COMMON}, about Construct, AI employee company, Cloudflare Durable Objects, Composio`,
     canonical: canonical("/about"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "About", path: "/about" })],
@@ -113,7 +114,7 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/careers",
     title: "Careers - Construct Computer",
     description:
-      "Construct isn't actively hiring right now, but we'd love to hear from people who want to build AI agents, virtual desktops, and autonomous systems with us.",
+      "Construct isn't actively hiring, but we'd love to hear from people who want to build AI agents, work interfaces, memory systems, and reliable execution tools.",
     keywords: `${KEYWORDS_COMMON}, AI startup jobs, AI agent jobs, careers at Construct`,
     canonical: canonical("/careers"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "Careers", path: "/careers" })],
@@ -123,8 +124,8 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/support",
     title: "Support - Construct Computer",
     description:
-      "Get help with your Construct Computer account, billing, integrations, and data requests. Report issues, review audit logs, or contact the team.",
-    keywords: `${KEYWORDS_COMMON}, Construct support, AI agent help, AI agent debugging, audit log`,
+      "Get help with your Construct Computer account, billing, integrations, and data requests. Report issues, review Activity history, or contact the team.",
+    keywords: `${KEYWORDS_COMMON}, Construct support, AI agent help, AI agent debugging, AI activity history`,
     canonical: canonical("/support"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "Support", path: "/support" })],
   },
@@ -133,7 +134,7 @@ export const ROUTES: readonly RouteMeta[] = [
     path: "/privacy",
     title: "Privacy Policy - Construct Computer",
     description:
-      "How Construct Computer collects, stores, encrypts, and shares data across the agent backend, virtual desktop, integrations, and billing provider.",
+      "How Construct Computer collects, stores, encrypts, and shares data across the agent workspace, memory system, integrations, and billing provider.",
     keywords: `${KEYWORDS_COMMON}, privacy policy, AI agent privacy, AES-256-GCM, Cloudflare privacy`,
     canonical: canonical("/privacy"),
     jsonLd: [organizationJsonLd(), homeBreadcrumbs({ name: "Privacy Policy", path: "/privacy" })],
@@ -153,17 +154,15 @@ export const ROUTES: readonly RouteMeta[] = [
 const BLOG_INDEX_META: RouteMeta = {
   ...DEFAULT_OG,
   path: "/blog",
-  title: "AI Employee Guides - Construct Computer",
+  title: "AI Employee Resources - Construct Computer",
   description:
-    "Guides, product updates, and resources about AI employees, autonomous agents, and how Construct compares to chat assistants and automation tools.",
-  keywords: `${KEYWORDS_COMMON}, Construct blog, AI employee guides, AI agent SEO`,
+    "Explore AI employee guides, practical articles, and comparisons with chat assistants, copilots, automation tools, coding agents, and DIY stacks.",
+  keywords: `${KEYWORDS_COMMON}, Construct blog, AI employee guides, AI agent comparisons`,
   canonical: canonical("/blog"),
   jsonLd: [
     organizationJsonLd(),
     homeBreadcrumbs({ name: "Blog", path: "/blog" }),
-    blogIndexJsonLd(
-      getPublishedPosts().map((p) => ({ title: p.title, path: `/blog/${p.slug}` })),
-    ),
+    blogIndexJsonLd(getResourceEntries()),
   ],
 }
 
@@ -202,8 +201,41 @@ function blogPostMeta(slug: string): RouteMeta | undefined {
         title: post.title,
         description: post.description,
         datePublished: post.date,
+        dateModified: post.date,
         url: canonical(path),
         author: post.author,
+      }),
+    ],
+  }
+}
+
+function guidePageMeta(slug: string): RouteMeta | undefined {
+  const page = getGuidePage(slug)
+  if (!page) return undefined
+  const path = `/${slug}`
+  return {
+    ...DEFAULT_OG,
+    path,
+    title: `${page.title} - Construct Computer`,
+    description: page.description,
+    keywords: `${KEYWORDS_COMMON}, ${page.title}`,
+    canonical: canonical(path),
+    ogType: "article",
+    lastmod: page.updated,
+    jsonLd: [
+      organizationJsonLd(),
+      breadcrumbListJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: page.title, path },
+      ]),
+      articleJsonLd({
+        title: page.title,
+        description: page.description,
+        datePublished: page.published,
+        dateModified: page.updated,
+        url: canonical(path),
+        author: "Construct Team",
       }),
     ],
   }
@@ -227,7 +259,16 @@ function vsPageMeta(slug: string): RouteMeta | undefined {
         { name: "Compare", path: "/vs" },
         { name: page.title, path },
       ]),
+      articleJsonLd({
+        title: page.title,
+        description: page.description,
+        dateModified: page.updated,
+        url: canonical(path),
+        author: "Construct Team",
+      }),
     ],
+    lastmod: page.updated,
+    ogType: "article",
   }
 }
 
@@ -238,8 +279,9 @@ const ROUTE_MAP: Record<string, RouteMeta> = Object.fromEntries(
 /** All routes pre-rendered at build time and listed in sitemap/agents.md. */
 export function getAllRenderableRoutes(): readonly RouteMeta[] {
   const blogPosts = getBlogSlugs().map((slug) => blogPostMeta(slug)).filter(Boolean) as RouteMeta[]
+  const guides = getGuideSlugs().map((slug) => guidePageMeta(slug)).filter(Boolean) as RouteMeta[]
   const vsPages = getVsSlugs().map((slug) => vsPageMeta(slug)).filter(Boolean) as RouteMeta[]
-  return [...ROUTES, BLOG_INDEX_META, ...blogPosts, VS_INDEX_META, ...vsPages]
+  return [...ROUTES, BLOG_INDEX_META, ...blogPosts, ...guides, VS_INDEX_META, ...vsPages]
 }
 
 const KNOWN_PATHS = new Set(getAllRenderableRoutes().map((r) => r.path))
@@ -267,7 +309,10 @@ export function isKnownRoute(pathname: string): boolean {
  */
 export function normalizePathname(pathname: string): string {
   const trimmed = pathname.replace(/\/+$/, "")
-  return trimmed === "" ? "/" : trimmed
+  if (trimmed === "") return "/"
+  if (trimmed === "/blogs") return "/blog"
+  if (trimmed.startsWith("/blogs/")) return `/blog/${trimmed.slice("/blogs/".length)}`
+  return trimmed
 }
 
 /** Route SEO metadata; unknown paths get `NOT_FOUND_META` (noindex). */
@@ -276,6 +321,8 @@ export function getRouteMeta(pathname: string): RouteMeta {
   if (ROUTE_MAP[normalized]) return ROUTE_MAP[normalized]!
   if (normalized === "/blog") return BLOG_INDEX_META
   if (normalized === "/vs") return VS_INDEX_META
+  const guide = guidePageMeta(normalized.slice(1))
+  if (guide) return guide
   if (normalized.startsWith("/blog/")) {
     const slug = normalized.slice("/blog/".length)
     const meta = blogPostMeta(slug)

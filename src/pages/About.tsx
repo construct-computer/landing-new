@@ -11,22 +11,20 @@ export function AboutPage() {
   return (
     <LegalShell
       title="About"
-      subtitle="The AI employee with their own computer"
+      subtitle="The personal work OS for an AI employee"
     >
       <LegalSection title="What we're building">
         <p>
-          Construct Computer is an AI agent with its own computer in the
-          cloud. Not another chat window - a persistent colleague who logs into
-          a full virtual desktop, uses a browser, writes files, runs terminal
-          commands, sends email, updates calendars, posts in Slack, and closes
-          tickets. You can watch them work, take over any window, and reach
-          them from any device.
+          Construct Computer is a personal work OS for an AI employee. It gives
+          the agent a persistent workspace for files, memory, browser sessions,
+          terminal work, schedules, workflows, email, and connected apps. The
+          same workspace remains available after one conversation ends.
         </p>
         <p>
-          Think of a junior-to-mid-level generalist employee who never sleeps,
-          works in parallel, remembers you across sessions, and costs a
-          fraction of a salary - with the catch that their work is metered by
-          weekly compute budget rather than by hours.
+          You assign an outcome and Construct decides which available tools are
+          needed. It can research, create artifacts, update business systems,
+          and delegate bounded subtasks in parallel. You can inspect its
+          outputs, interrupt a running turn, and correct what it remembers.
         </p>
       </LegalSection>
 
@@ -37,31 +35,28 @@ export function AboutPage() {
         </p>
         <LegalList>
           <li>
-            A browser-based, macOS-style desktop - dock, Spotlight, Mission
-            Control, windows, notifications - where all of the agent&rsquo;s
-            work happens in view
+            A browser-based work desktop with Chat, Files, Browser, Terminal,
+            Email, Calendar, Workflows, Memories, Activity, and connected apps
           </li>
           <li>
-            An isolated Linux sandbox with Python, Node.js, LibreOffice,
-            pandoc, ffmpeg, ImageMagick, tesseract OCR, the{" "}
-            <Emph>gh</Emph> CLI, and the full document-generation stack
+            An isolated sandbox terminal for scripts, code, and file
+            processing, with a durable <Emph>/workspace</Emph> mount
           </li>
           <li>
-            A persistent cloud workspace (Cloudflare R2) that survives across
-            sessions - up to 3 GB, searchable, drag-and-drop uploadable
+            A persistent cloud workspace that survives across sessions, is
+            searchable, and supports uploaded or agent-created files
           </li>
           <li>
-            A dedicated email inbox at{" "}
-            <Emph>&lt;agentname&gt;@agents.construct.computer</Emph>
+            A native agent inbox on Starter and Pro for reading threads,
+            drafting replies, and sending updates
           </li>
           <li>
-            A live remote browser that handles JavaScript, cookie banners, and
-            bot protection - with country-proxied egress and streamed frames
-            you can grab at any time
+            Web search, public-page fetching, and a live browser for
+            interactive websites and signed-in sessions
           </li>
           <li>
-            A per-agent calendar, a structured task tracker with dependencies,
-            and long-term semantic memory that compounds over time
+            A native Calendar for scheduled work, versioned reusable Workflows,
+            and long-term memory you can inspect, correct, forget, or restore
           </li>
         </LegalList>
       </LegalSection>
@@ -88,14 +83,12 @@ export function AboutPage() {
             where anyone can publish custom apps via a GitHub pull request
           </li>
           <li>
-            One agent, one memory, one workspace - accessible from five
-            surfaces: the browser desktop, Slack, Telegram, a Telegram Mini
-            App, email, and a macOS menubar companion (Notch)
+            One workspace accessible from the web, Slack, Telegram, and
+            Discord, with a native inbox for agent email
           </li>
           <li>
-            Multi-agent orchestration lets your primary agent spawn explore,
-            plan, implement, and QA sub-agents in parallel, with long-running
-            work continued by background agents
+            Parallel delegation lets the primary agent assign bounded research,
+            implementation, and review subtasks to temporary agents
           </li>
         </LegalList>
       </LegalSection>
@@ -103,9 +96,9 @@ export function AboutPage() {
       <LegalSection title="What we believe">
         <LegalList>
           <li>
-            <Emph>Transparency over magic.</Emph> Every tool call, command, and
-            sub-agent shows up live in the UI, and everything is written to a
-            queryable audit log. No hidden work.
+            <Emph>Transparency over magic.</Emph> Activity records show agent,
+            tool, command, and delegated work, including the reason for an
+            action when one is available.
           </li>
           <li>
             <Emph>Isolation by default.</Emph> Per-user Durable Objects,
@@ -113,10 +106,8 @@ export function AboutPage() {
             credential, and strict resource limits.
           </li>
           <li>
-            <Emph>Your keys, your choice.</Emph> Bring your own model key if
-            you want to - or use the bundled tiers metered by real provider
-            cost, capped per-week and per-burst so you never get surprise
-            bills.
+            <Emph>Your keys, your choice.</Emph> Use the bundled model access,
+            or bring your own model key on Pro.
           </li>
           <li>
             <Emph>Open where we can.</Emph> The core platform backend stays

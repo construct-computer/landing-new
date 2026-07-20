@@ -321,13 +321,14 @@ function HeroHeadline() {
         aria-hidden="true"
         className="font-display text-balance text-[38px] capitalize italic leading-[1.1] text-[#4e4646]"
       >
-        <span className="text-[#01b4c8]">Autonomous </span>
-        <span>Computer that </span>
-        <span className="text-[#01b4c8]">Works For You</span>
+        <span>An </span>
+        <span className="text-[#01b4c8]">AI Employee </span>
+        <span>You Can Actually </span>
+        <span className="text-[#01b4c8]">Work With</span>
       </div>
       <p className="font-ui mx-auto mt-5 max-w-[360px] text-[15px] leading-[21px] text-[#627c86]">
-        An AI agent with its own cloud computer — works across Slack,
-        Telegram, and email, on any device.
+        Assign the outcome. Construct researches, operates tools, creates
+        files, and runs recurring work from a workspace you control.
       </p>
       <EnterExperienceButton className="mt-7" />
     </div>

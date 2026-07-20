@@ -8,14 +8,14 @@ import {
 
 export function TermsPage() {
   return (
-    <LegalShell title="Terms & Conditions" updated="April 23, 2026">
+    <LegalShell title="Terms & Conditions" updated="July 20, 2026">
       <LegalSection title="1. Acceptance of Terms">
         <p>
           By accessing or using the Construct Computer website at
           construct.computer, the Construct platform at
           beta.construct.computer, interacting with your agent through Slack,
-          Telegram, the Telegram Mini App, email, or our macOS companion app
-          (Notch), or using any related services (collectively, the
+          Telegram, Discord, or the native agent inbox, or using any related
+          services (collectively, the
           &ldquo;Services&rdquo;), you agree to be bound by these Terms &amp;
           Conditions (&ldquo;Terms&rdquo;). If you do not agree to these
           Terms, you must not access or use the Services.
@@ -34,14 +34,15 @@ export function TermsPage() {
 
       <LegalSection title="3. Description of Services">
         <p>
-          Construct Computer provides a cloud-based virtual desktop platform
-          where each user receives an isolated personal computer operated by
-          an AI agent. The Services include, but are not limited to:
+          Construct Computer provides a cloud-based work platform where each
+          user receives an isolated workspace operated by an AI agent. The
+          Services include, but are not limited to:
         </p>
         <LegalList>
           <li>
-            A browser-based, macOS-style virtual desktop with a live browser,
-            terminal, file system, code editor, and activity view
+            A browser-based work desktop with chat, files, live browser,
+            terminal output, editor, inbox, Calendar, Workflows, Memories,
+            connected apps, and Activity history
           </li>
           <li>
             An AI agent that can operate the desktop on your behalf -
@@ -55,13 +56,12 @@ export function TermsPage() {
             full send/read/reply/forward support
           </li>
           <li>
-            A per-agent calendar, scheduled one-shot tasks, a structured task
-            tracker with dependencies, and persistent long-term memory
+            A native Calendar for one-time and recurring agent jobs, reusable
+            versioned Workflows, and persistent long-term memory
           </li>
           <li>
-            Multi-agent orchestration - the ability for the primary agent to
-            spawn explore, plan, implement, and QA sub-agents, plus background
-            agents that continue work after the parent turn ends
+            Parallel delegation - the ability for the primary agent to assign
+            bounded work to temporary agents and combine their results
           </li>
           <li>
             Integrations via <Emph>Composio</Emph> (1,000+ SaaS apps), direct
@@ -76,13 +76,12 @@ export function TermsPage() {
             </InlineLink>
           </li>
           <li>
-            A full audit log, per-platform access-control policies, and an
+            Activity history, per-platform access-control policies, and an
             approval queue for inbound messages from non-trusted senders
           </li>
           <li>
-            Availability across five surfaces that share one agent, one
-            memory, and one workspace: web desktop, Slack, Telegram, Telegram
-            Mini App, email, and the macOS Notch companion app
+            Availability across the web desktop, Slack, Telegram, Discord, and
+            the native agent inbox, sharing the same workspace and memory
           </li>
         </LegalList>
         <p>
@@ -127,20 +126,14 @@ export function TermsPage() {
         </p>
         <LegalList>
           <li>
-            Each plan has a <Emph>weekly USD budget</Emph> and a{" "}
-            <Emph>rolling 4-hour burst cap</Emph>, both denominated in real
-            provider cost. The weekly cap resets every Monday at 00:00 UTC
+            Each plan has usage limits, including monthly and per-session
+            budgets, task iterations, parallel jobs, scheduled jobs, and
+            workspace storage
           </li>
           <li>
-            Features such as agent email sending, background agents, sandbox
-            timeout, maximum loop iterations, concurrent sub-agents, scheduled
-            tasks, and workspace storage vary by plan
-          </li>
-          <li>
-            On Pro, when you reach 80% of the weekly budget, the agent may
-            automatically downgrade to a lighter model to stretch remaining
-            budget; at 100% the agent is paused until the weekly window
-            resets. Usage notifications are sent at 50/75/90/100%
+            Features such as agent email sending, sandbox limits, maximum loop
+            iterations, concurrent agent jobs, scheduled jobs, and workspace
+            storage vary by plan
           </li>
           <li>
             Subscriptions are processed through <Emph>Dodo Payments</Emph>.
@@ -149,12 +142,7 @@ export function TermsPage() {
             unless otherwise stated
           </li>
           <li>
-            Bonus weekly budget may be earned via product-related actions
-            (such as tweeting about the product) and is granted at our
-            discretion
-          </li>
-          <li>
-            Attempting to circumvent or abuse budget caps, bonus credits, or
+            Attempting to circumvent or abuse budget caps, usage credits, or
             resource limits may result in suspension or termination
           </li>
         </LegalList>
@@ -185,7 +173,7 @@ export function TermsPage() {
           </li>
         </LegalList>
         <p>
-          BYOK traffic does not count against your bundled weekly budget.
+          BYOK traffic is billed according to the connected provider&rsquo;s terms.
           Construct Computer is not liable for any charges, data processing,
           or other consequences arising from your use of third-party services
           via your own API keys.
@@ -194,7 +182,7 @@ export function TermsPage() {
 
       <LegalSection title="7. AI Agent & Autonomous Actions">
         <p>
-          The AI agent operates within your virtual desktop and can perform
+          The AI agent operates within your workspace and can perform
           actions autonomously on your behalf across every connected surface.
           You acknowledge and agree that:
         </p>
@@ -213,9 +201,9 @@ export function TermsPage() {
             before relying on it or sharing it externally
           </li>
           <li>
-            You retain the ability to intervene, take over, or stop the agent
-            at any time. You are ultimately responsible for the consequences
-            of actions taken by the agent in your environment
+            You retain the ability to inspect outputs, interrupt a running
+            turn, answer agent questions, or stop the agent. You are ultimately
+            responsible for actions taken in your environment
           </li>
           <li>
             Agent memory, task state, and context are based on your prior
@@ -266,9 +254,9 @@ export function TermsPage() {
           </li>
           <li>
             Use the Services to violate the terms of service of any
-            third-party service (Google, Slack, Telegram, Composio apps, App
-            Registry apps, model providers) accessed through your virtual
-            desktop
+            third-party service (Google, Slack, Telegram, Discord, Composio
+            apps, custom MCP servers, or model providers) accessed through
+            your workspace
           </li>
           <li>
             Upload deliverables produced for you to unauthorized external hosts
@@ -282,7 +270,7 @@ export function TermsPage() {
           &ldquo;User Content&rdquo; includes all files, code, text, chat
           messages, emails, memories, calendar events, and other content that
           you create or that the AI agent creates on your behalf within your
-          virtual desktop environment. Regarding User Content:
+          workspace environment. Regarding User Content:
         </p>
         <LegalList>
           <li>You retain ownership of your User Content</li>
@@ -344,22 +332,21 @@ export function TermsPage() {
             Airtable, Dropbox, and more)
           </li>
           <li>
-            <Emph>Direct OAuth</Emph> to Google, Slack, and Telegram
+            <Emph>Direct messaging connectors</Emph> for Slack, Telegram, and
+            Discord
           </li>
           <li>
-            <Emph>Model providers</Emph> - Cloudflare Workers AI, Cloudflare
-            AI Gateway, Google Gemini, and OpenRouter (via BYOK)
+            <Emph>Model providers</Emph> selected for bundled usage or
+            connected by you through BYOK
           </li>
           <li>
-            <Emph>Infrastructure &amp; tooling</Emph> - TinyFish (remote
-            browser), AgentMail (agent email), ElevenLabs Scribe Realtime and
-            Cloudflare Whisper (voice), Mem0 (long-term memory), PostHog
-            (product analytics), Resend (transactional email), and Dodo
-            Payments (billing)
+            <Emph>Infrastructure &amp; tooling</Emph> - Cloudflare services,
+            Composio, PostHog (product analytics), Resend (transactional
+            email), and Dodo Payments (billing)
           </li>
           <li>
-            <Emph>App Registry apps</Emph> - custom Cloudflare Worker apps
-            published by third parties
+            <Emph>Custom MCP and workspace apps</Emph> configured or created
+            for your workspace
           </li>
         </LegalList>
         <p>You acknowledge that:</p>
@@ -437,7 +424,7 @@ export function TermsPage() {
           <li>Your right to use the Services will immediately cease</li>
           <li>
             Your sandbox container, workspace files, agent memory, chat
-            history, calendar, email inbox, and audit log may be deleted
+            history, Calendar, email inbox, and Activity history may be deleted
           </li>
           <li>
             Stored integration credentials (Composio, direct OAuth, App

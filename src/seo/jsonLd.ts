@@ -63,7 +63,7 @@ export const OG_IMAGE_WIDTH = 1200
 export const OG_IMAGE_HEIGHT = 630
 export const OG_IMAGE_TYPE = "image/jpeg"
 export const OG_IMAGE_ALT =
-  "Construct Computer - autonomous computer that works for you"
+  "Construct Computer - an AI employee you can actually work with"
 export const OG_LOCALE = "en_US"
 
 /** Serialize a JSON-LD object into a `<script>`-safe string. */
@@ -86,7 +86,7 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: ORG_LOGO,
     description:
-      "Construct Computer is an AI agent with its own cloud computer - a persistent AI employee that logs into a virtual desktop and works across Slack, Telegram, and email.",
+      "Construct Computer is the personal work OS for an AI employee, combining persistent memory, files, browser and terminal tools, schedules, workflows, and connected apps.",
     sameAs: [
       "https://x.com/use_construct",
       "https://github.com/construct-computer",
@@ -114,10 +114,10 @@ export function softwareApplicationJsonLd() {
     "@id": `${SITE_URL}/#software`,
     name: ORG_NAME,
     applicationCategory: "ProductivityApplication",
-    operatingSystem: "Web, Cloud, iOS, Android, macOS",
+    operatingSystem: "Web",
     url: SITE_URL,
     description:
-      "An AI agent with its own cloud computer. Connects to Slack, Telegram, email, and 1,000+ SaaS apps; runs a persistent virtual desktop with browser, terminal, files, memory, and calendar.",
+      "A supervised workspace for an AI employee with persistent memory, files, browser and terminal tools, schedules, workflows, and 1,000+ connected apps.",
     offers: [
       {
         "@type": "Offer",
@@ -178,7 +178,8 @@ export function breadcrumbListJsonLd(items: readonly Breadcrumb[]) {
 export function articleJsonLd(opts: {
   readonly title: string
   readonly description: string
-  readonly datePublished: string
+  readonly datePublished?: string
+  readonly dateModified?: string
   readonly url: string
   readonly author: string
 }) {
@@ -187,10 +188,12 @@ export function articleJsonLd(opts: {
     "@type": "Article",
     headline: opts.title,
     description: opts.description,
-    datePublished: opts.datePublished,
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
     author: { "@type": "Organization", name: opts.author },
     publisher: { "@id": `${SITE_URL}/#organization` },
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
+    isPartOf: { "@id": `${SITE_URL}/blog/#blog` },
   } as const
 }
 
@@ -198,6 +201,7 @@ export function blogIndexJsonLd(posts: readonly { title: string; path: string }[
   return {
     "@context": "https://schema.org",
     "@type": "Blog",
+    "@id": `${SITE_URL}/blog/#blog`,
     name: "Construct Computer Blog",
     url: `${SITE_URL}/blog/`,
     publisher: { "@id": `${SITE_URL}/#organization` },

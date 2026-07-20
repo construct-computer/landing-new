@@ -244,21 +244,20 @@ export function useSoftPinTransform(
 /* Shared data                                                        */
 /* ------------------------------------------------------------------ */
 export const SECTION_BLURB =
-  "Construct adapts to any task — it handles the full workflow end to end and automates most of it without monitoring."
+  "Keep the context, tools, procedures, and proof behind the work in one persistent workspace."
 
 /**
  * Per-feature copy. Each card has a distinct 2-line paragraph so the page
  * has unique indexable text for every capability while staying scannable:
  * the aim is for a visitor to absorb all four in one sweep without having
- * to slow down and read. Every removed phrase (e.g. "handled by TinyFish",
- * "straight into your R2 workspace") is infrastructure detail that wasn't
- * part of any meta description or JSON-LD — no SEO signal lost.
+ * to slow down and read. Vendor-specific implementation details stay out of
+ * this user-facing copy.
  */
 export const FEATURES: readonly { title: string; description: string }[] = [
   {
     title: "Construct Browsing",
     description:
-      "A real browser inside your sandbox — sessions persist across tasks while the agent navigates pages and fills forms.",
+      "Search the web, read public pages, or use a live browser for interactive sites and signed-in work.",
   },
   {
     title: "Research and Reports",
@@ -268,12 +267,12 @@ export const FEATURES: readonly { title: string; description: string }[] = [
   {
     title: "Live Terminal",
     description:
-      "A dedicated Linux sandbox. The agent runs shell, Python, and the GitHub CLI, shipping code live as you watch.",
+      "A sandbox terminal for scripts, code, and file processing, with outputs saved back to the workspace.",
   },
   {
     title: "Manages Emails",
     description:
-      "Construct has its own inbox — triages mail, drafts replies, schedules meetings, and pings you when a decision is needed.",
+      "Construct has its own inbox for reading threads, drafting replies, sending updates, and following up on work.",
   },
 ]
 
@@ -457,45 +456,40 @@ export function LandingNav() {
 /* "What Construct is" - keyword-weighted intro shown after hero       */
 /* ------------------------------------------------------------------ */
 export function WhatConstructIsSection({ className }: { className?: string }) {
-  return <></>
-  // not needed
-  // return (
-  //   <section
-  //     id="what"
-  //     aria-labelledby="what-heading"
-  //     className={
-  //       "mx-auto w-full max-w-3xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
-  //     }
-  //   >
-  //     <h2
-  //       id="what-heading"
-  //       className="text-balance text-3xl capitalize sm:text-4xl lg:text-[40px] lg:leading-[48px]"
-  //     >
-  //       <span className="font-ui text-[#4e4646]">The AI employee with their own</span>{" "}
-  //       <span className="font-display italic text-[#01b4c8]">computer</span>
-  //     </h2>
-  //     <div className="font-ui mx-auto mt-6 max-w-[620px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
-  //       <p>
-  //         Construct is an <strong className="text-[#4e4646]">AI agent</strong> with
-  //         its own cloud computer. Every user gets a dedicated Linux sandbox, a
-  //         real web browser, an email inbox, long-term memory, a calendar, and a
-  //         live terminal - all wrapped in a virtual desktop you can watch in real
-  //         time.
-  //       </p>
-  //       <p>
-  //         Reach it from the web, Slack, Telegram, or email. It connects to
-  //         Gmail, Notion, Linear, Jira, GitHub, HubSpot, and 1,000+ other apps
-  //         through Composio, and it leaves a full audit log of every action so
-  //         you stay in control.
-  //       </p>
-  //       <p>
-  //         Built on Cloudflare Durable Objects, D1, R2, and the Sandbox SDK for
-  //         per-user isolation - with models served through the Cloudflare AI
-  //         Gateway and BYOK available on every tier.
-  //       </p>
-  //     </div>
-  //   </section>
-  // )
+  return (
+    <section
+      id="what"
+      aria-labelledby="what-heading"
+      className={
+        "mx-auto w-full max-w-4xl px-6 py-12 text-center lg:py-16 " + (className ?? "")
+      }
+    >
+      <h2
+        id="what-heading"
+        className="text-balance text-3xl sm:text-4xl lg:text-[40px] lg:leading-[48px]"
+      >
+        <span className="font-ui text-[#4e4646]">What is </span>
+        <span className="font-display italic text-[#01b4c8]">Construct Computer?</span>
+      </h2>
+      <div className="font-ui mx-auto mt-6 max-w-[720px] space-y-4 text-[16px] leading-[24px] text-[#627c86]">
+        <p>
+          Construct is a personal work OS for an AI employee. It gives an AI
+          agent persistent memory, files, a browser, a terminal, schedules,
+          reusable workflows, and connected business apps—along with a desktop
+          where people can inspect and steer its work.
+        </p>
+        <p>
+          The agent can research, create artifacts, operate connected tools,
+          and return with finished work instead of another list of instructions.
+        </p>
+      </div>
+      <nav aria-label="Learn about Construct" className="font-ui mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[14px]">
+        <Link to="/ai-employee" className="text-[#01b4c8] hover:underline">AI employees →</Link>
+        <Link to="/ai-workflow-automation" className="text-[#01b4c8] hover:underline">Workflow automation →</Link>
+        <Link to="/ai-agent-memory" className="text-[#01b4c8] hover:underline">Agent memory →</Link>
+      </nav>
+    </section>
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -505,8 +499,8 @@ export function AdaptsSection({ className }: { className?: string }) {
   return (
     <section className={"mx-auto max-w-3xl px-6 text-center " + (className ?? "pb-10 pt-8")}>
       <h2 className="text-balance text-3xl capitalize sm:text-4xl lg:text-[51.8px] lg:leading-[58px]">
-        <span className="font-ui text-[#4e4646]">It Adapts, Learns and</span>{" "}
-        <span className="font-display italic text-[#01b4c8]">Automates Your Workflow</span>
+        <span className="font-ui text-[#4e4646]">Work That Remembers, Runs,</span>{" "}
+        <span className="font-display italic text-[#01b4c8]">and Repeats</span>
       </h2>
       <p className="font-ui mx-auto mt-6 max-w-[495px] text-[16px] leading-[21px] text-[#627c86]">
         {SECTION_BLURB}
@@ -663,7 +657,7 @@ export function LandingFooter() {
               <span className="text-[#01b4c8]">Computer</span>
             </Link>
             <p className="font-ui max-w-xs text-[14px] leading-[1.6] text-[#627c86]">
-              The AI employee with their own computer.
+              The personal work OS for an AI employee.
             </p>
             <div className="flex items-center gap-3">
               <SocialIconLink href="https://x.com/use_construct" label="X (Twitter)">

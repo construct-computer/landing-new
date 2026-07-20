@@ -20,7 +20,7 @@ const FEATURE_CARDS = {
   },
   integrations: {
     src: imgFeatureIntegrations,
-    alt: "200 plus integrations including Slack, Google Meet, Telegram, Discord, Drive, Gmail, and GitHub",
+    alt: "More than 1,000 connected apps including Slack, Telegram, Discord, Drive, Gmail, and GitHub",
     width: 712,
     height: 346,
   },

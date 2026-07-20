@@ -13,7 +13,7 @@ export type BlogPost = {
 }
 
 const KEYWORDS_COMMON =
-  "AI agent, AI employee, Construct Computer, autonomous agent, virtual desktop"
+  "AI agent, AI employee, Construct Computer, autonomous agent, work OS"
 
 type Frontmatter = {
   title?: string

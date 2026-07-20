@@ -11,39 +11,38 @@ import { SITE_URL } from "@/seo/jsonLd"
 export const PRODUCT_NAME = "Construct Computer"
 
 export const PRODUCT_TAGLINE =
-  "An AI employee with its own cloud computer — not a chat assistant. Construct logs into a full virtual desktop, runs a browser and terminal, manages email and calendar, remembers context across sessions, and executes multi-step work across connected apps."
+  "The personal work OS for an AI employee. Construct combines persistent memory, files, browser and terminal tools, an inbox, schedules, workflows, and connected apps in one supervised workspace."
 
 export const PRODUCT_ONE_LINER =
-  "Construct Computer is an AI agent with its own cloud computer — a persistent AI employee that uses a virtual desktop, browser, terminal, inbox, memory, and 1,000+ app integrations. Reach it from the web, Slack, Telegram, email, and a macOS companion."
+  "Construct Computer is a supervised workspace for an AI employee that researches, operates tools, creates files, and runs recurring work across more than 1,000 connected apps."
 
 export const REACH_CHANNELS = [
-  "Web virtual desktop (watch, pause, or take over any window)",
+  "Web work desktop",
   "Slack",
-  "Telegram (including the Telegram Mini App)",
-  "Email",
-  "macOS companion app",
+  "Telegram",
+  "Discord",
+  "Native agent inbox",
 ] as const
 
 export const CORE_CAPABILITIES = [
-  "Virtual desktop with Browser, Terminal, Chat, Calendar, Tasks, Memory, Files, and Audit Log apps",
+  "Purpose-built work desktop with Chat, Files, Browser, Terminal, Email, Calendar, Workflows, Memories, Activity, and connected apps",
   "Web research: search the web, read pages, and use an interactive browser for logins and forms",
-  "Linux sandbox: shell commands, Python, and GitHub CLI",
-  "Documents and reports: PDF, Word, Excel, PowerPoint, Markdown, CSV, HTML, and diagrams saved to your workspace",
+  "Sandbox terminal for code, scripts, and file processing with outputs saved to the persistent workspace",
+  "Files and reports: create, edit, search, import, organize, and attach artifacts from the workspace",
   "Agent email address on paid plans (`<name>@agents.construct.computer`) — triage mail, draft replies, send updates",
-  "Google Calendar and scheduling: one-off and recurring tasks that run while you are away (paid plans)",
-  "Task tracker with dependencies for multi-step work",
-  "Long-term memory you can inspect, edit, or delete",
-  "Knowledge wiki: interlinked markdown pages in your workspace",
-  "Sub-agents for parallel work on large jobs",
+  "Native Calendar for one-time and recurring agent jobs and workflow runs",
+  "Versioned, reusable workflows with agent steps, connected-app actions, notifications, retries, and run history",
+  "Long-term memory with provenance and controls to inspect, correct, forget, or restore information",
+  "Temporary agents for parallel work on bounded subtasks",
   "1,000+ SaaS integrations (Gmail, Google Drive, Slack, Notion, Linear, Jira, GitHub, HubSpot, Airtable, Stripe, and more)",
-  "Extra apps from the public Construct App Registry (installable MCP apps)",
-  "Queryable audit log of tool calls, commands, and sub-agent actions",
+  "App Store, custom MCP connections, and agent-created workspace applications",
+  "Activity history for agent, tool, command, and delegated work, including reasons when available",
   "Bring your own model API key (BYOK) on Pro",
 ] as const
 
 export const BUILT_IN_WORK = [
   "Cloud drive — list, search, and organize files",
-  "Calendar — list and create events",
+  "Calendar — schedule one-time and recurring agent jobs or workflows",
   "Mail — search and send from the agent inbox",
   "Notes — list and create pages in connected workspaces",
   "Spreadsheets & docs — read, create, and update sheets and documents",
@@ -53,18 +52,16 @@ export const BUILT_IN_WORK = [
   "Payments — list charges, invoices, and customers (when connected)",
 ] as const
 
-export const PRICING_SUMMARY = `Lite (${PRICING_PLANS[0].price}/mo), Starter (${PRICING_PLANS[1].price}/mo), Pro (${PRICING_PLANS[2].price}/mo). Same model experience on every plan — paid tiers add more steps per task, runtime, parallel sub-agents, storage, and usage budget.
+export const PRICING_SUMMARY = `Lite (${PRICING_PLANS[0].price}/mo), Starter (${PRICING_PLANS[1].price}/mo), Pro (${PRICING_PLANS[2].price}/mo). Paid tiers add more steps per task, parallel agent jobs, storage, scheduled jobs, and product capabilities.
 
-- **Lite:** 50 steps/task, 5 min runtime, 2 concurrent sub-agents, 100 MB storage, 3 scheduled tasks, full integrations
-- **Starter:** 150 steps/task, 30 min runtime, 5 sub-agents, 1 GB storage, agent email, background work, 10 scheduled tasks
-- **Pro:** 1,000 steps/task, 1 hr runtime, unlimited sub-agents, 3 GB storage, agent email, background work, unlimited scheduled tasks, BYOK
-
-Usage is metered by a weekly compute budget with a 4-hour burst cap — not per message. BYOK usage on Pro does not count against the bundled budget.`
+- **Lite:** 50 steps/task, 2 concurrent agent jobs, 100 MB storage, 3 scheduled jobs, full integrations
+- **Starter:** 150 steps/task, 4 concurrent agent jobs, 1 GB storage, agent email, background work, 10 scheduled jobs
+- **Pro:** 1,000 steps/task, 8 concurrent agent jobs, 3 GB storage, agent email, background work, 50 scheduled jobs, BYOK`
 
 export const SECURITY_SUMMARY = [
   "Per-user isolated workspace and sandbox",
   "Encrypted stored credentials and API keys",
-  "Full audit log of agent actions",
+  "Activity history for agent and tool actions",
   "Approval queues for inbound messages when you want them",
   "Memory controls: view, edit, or bulk-delete anytime",
 ] as const

@@ -9,18 +9,18 @@ import {
 
 export function PrivacyPolicyPage() {
   return (
-    <LegalShell title="Privacy Policy" updated="April 23, 2026">
+    <LegalShell title="Privacy Policy" updated="July 20, 2026">
       <LegalSection title="1. Introduction">
         <p>
           Construct Computer (&ldquo;Construct,&rdquo; &ldquo;we,&rdquo;
           &ldquo;us,&rdquo; or &ldquo;our&rdquo;) operates a cloud-based
-          virtual desktop platform where each user receives an isolated
-          personal computer powered by an AI agent. This Privacy Policy
+          work platform where each user receives an isolated workspace powered
+          by an AI agent. This Privacy Policy
           explains how we collect, use, disclose, and safeguard your
           information when you visit our website at construct.computer, use
           our platform at beta.construct.computer, interact with your agent
-          through Slack, Telegram, the Telegram Mini App, email, or our macOS
-          companion app, or use any of our related services (collectively, the
+          through Slack, Telegram, Discord, or the native agent inbox, or use
+          any of our related services (collectively, the
           &ldquo;Services&rdquo;). By using the Services, you consent to the
           practices described in this policy.
         </p>
@@ -44,7 +44,7 @@ export function PrivacyPolicyPage() {
           </li>
         </LegalList>
 
-        <LegalSubheading>2.2 Virtual Desktop &amp; Agent Data</LegalSubheading>
+        <LegalSubheading>2.2 Workspace &amp; Agent Data</LegalSubheading>
         <p>
           When you use the Construct platform, the following data is created
           and stored within your isolated virtual environment:
@@ -57,30 +57,27 @@ export function PrivacyPolicyPage() {
           </li>
           <li>
             <Emph>Chat &amp; session history</Emph> - conversations between
-            you and your agent across every surface (web desktop, Slack,
-            Telegram, Mini App, email), stored in your per-user Cloudflare
+            you and your agent across supported surfaces (web desktop, Slack,
+            Telegram, Discord, and agent inbox), stored in your per-user Cloudflare
             Durable Object
           </li>
           <li>
-            <Emph>Agent memory</Emph> - semantic long-term memory via Mem0:
-            after each turn, durable facts are automatically extracted and
-            relevance-ranked memories are injected on new tasks. You can view,
-            search, forget, or bulk-delete memories at any time from the
-            Memory app
+            <Emph>Agent memory</Emph> - long-term memory containing source
+            episodes, versioned assertions, temporal context, and related
+            entities. You can inspect, search, correct, forget, or restore
+            memories from the Memories app
           </li>
           <li>
-            <Emph>Knowledge wiki</Emph> - a persistent <code>wiki/</code>{" "}
-            directory inside your workspace that the agent maintains as
-            long-form reference notes
+            <Emph>Workflows</Emph> - reusable procedures, published versions,
+            run state, step results, and retry information
           </li>
           <li>
-            <Emph>Task tracker &amp; scheduled tasks</Emph> - structured tasks
-            with dependencies and one-shot future actions, stored in your
-            agent&rsquo;s SQLite state
+            <Emph>Scheduled jobs</Emph> - one-time and recurring agent tasks or
+            workflow runs stored with their schedule and execution state
           </li>
           <li>
-            <Emph>Calendar</Emph> - per-agent events and reminders, stored in
-            Cloudflare D1
+            <Emph>Calendar</Emph> - scheduled jobs, recurring rules, and run
+            status used to coordinate background work
           </li>
           <li>
             <Emph>Agent email inbox</Emph> - each agent gets its own address at{" "}
@@ -89,18 +86,13 @@ export function PrivacyPolicyPage() {
             state
           </li>
           <li>
-            <Emph>Audit log</Emph> - every tool call, system event, and error
-            is written to a queryable activity log with timestamp, category,
-            platform source, duration, and result
+            <Emph>Activity history</Emph> - agent, tool, system, delegated-work,
+            and error events with timestamp, source, status, and reasons when
+            available
           </li>
           <li>
             <Emph>Access-control records</Emph> - per-platform inbound policy,
             trusted-user list, and the approval queue for non-trusted senders
-          </li>
-          <li>
-            <Emph>Voice audio</Emph> - when you use voice input, audio is
-            streamed to a speech-to-text provider for transcription and is
-            not retained after the transcript is returned
           </li>
         </LegalList>
 
@@ -118,9 +110,8 @@ export function PrivacyPolicyPage() {
             handled through Composio.
           </li>
           <li>
-            <Emph>Direct integrations</Emph> - Slack workspace tokens,
-            Telegram bot tokens, and any OAuth tokens issued directly to
-            Construct
+            <Emph>Direct integrations</Emph> - Slack, Telegram, and Discord
+            credentials and any OAuth tokens issued directly to Construct
           </li>
           <li>
             <Emph>App Registry credentials</Emph> - per-app auth (OAuth2, API
@@ -151,8 +142,8 @@ export function PrivacyPolicyPage() {
           never stored by Construct - they are handled entirely by our
           processor, Dodo Payments. We also record per-call usage (service,
           model, token counts, latency, and real dollar cost via Cloudflare AI
-          Gateway) so you can view usage history and we can enforce weekly and
-          burst caps.
+          Gateway) so you can view usage history and we can enforce plan and
+          per-session limits.
         </p>
 
         <LegalSubheading>2.5 Technical &amp; Usage Data</LegalSubheading>
@@ -236,45 +227,31 @@ export function PrivacyPolicyPage() {
             on your behalf
           </li>
           <li>
-            <Emph>Slack &amp; Telegram</Emph> - if you connect these services,
+            <Emph>Slack, Telegram &amp; Discord</Emph> - if you connect these services,
             messages, files, and metadata are processed to enable
             communication with your agent
           </li>
           <li>
             <Emph>Model providers</Emph> - prompts and conversations are sent
-            to the LLM provider serving your plan. By default, bundled tiers
-            run on Cloudflare Workers AI and AI Gateway. Pro traffic can
-            downgrade to Google Gemini when budget is tight. If you provide a
-            BYOK OpenRouter key, your traffic is routed directly through
-            OpenRouter - see{" "}
+            to the model provider serving your plan. If you provide a BYOK
+            OpenRouter key, model traffic is routed through OpenRouter - see{" "}
             <InlineLink href="https://openrouter.ai/privacy">
               OpenRouter&rsquo;s privacy policy
             </InlineLink>
           </li>
           <li>
-            <Emph>TinyFish</Emph> - powers the remote browser for the agent.
-            Target URLs and form data relevant to a browsing task are sent to
-            TinyFish; rendered frames are streamed back for you to view
+            <Emph>Composio Browser</Emph> - powers interactive browser tasks.
+            Target URLs and task inputs relevant to browsing are processed by
+            Composio and streamed back to the work desktop
           </li>
           <li>
-            <Emph>AgentMail</Emph> - provides the{" "}
-            <Emph>@agents.construct.computer</Emph> inbox. Inbound and
-            outbound email content is handled by AgentMail
+            <Emph>Construct inbox</Emph> - inbound messages, drafts, sent mail,
+            and thread metadata are stored to provide native agent email
           </li>
           <li>
-            <Emph>ElevenLabs (Scribe Realtime)</Emph> &amp;{" "}
-            <Emph>Cloudflare Whisper</Emph> - voice input audio is transcribed
-            via these providers. Audio is not retained after transcription
-          </li>
-          <li>
-            <Emph>Mem0</Emph> - hosts your agent&rsquo;s long-term semantic
-            memory. Extracted facts are stored and queried via Mem0
-          </li>
-          <li>
-            <Emph>Custom apps from the App Registry</Emph> - when you invoke
-            an app tool, parameters are routed through our registry worker to
-            the app&rsquo;s Cloudflare Worker endpoint, with your injected
-            credentials for that app
+            <Emph>Custom MCP and workspace apps</Emph> - tool parameters and
+            permitted network requests are processed according to each app's
+            manifest and configured connection
           </li>
         </LegalList>
 
@@ -326,15 +303,14 @@ export function PrivacyPolicyPage() {
           </li>
           <li>
             <Emph>Encryption at rest</Emph> - OAuth tokens, BYOK API keys, and
-            App Registry credentials are encrypted with AES-256-GCM (Web
+            app credentials are encrypted with AES-256-GCM (Web
             Crypto) before being written to D1, and decrypted only at
             call-time
           </li>
           <li>
             <Emph>Resource &amp; budget limits</Emph> - each container has CPU,
-            memory, and timeout limits; each user has a rolling 4-hour burst
-            cap and a weekly spending cap, both denominated in real provider
-            cost via Cloudflare AI Gateway
+            memory, timeout, monthly, and per-session limits based on the
+            active plan
           </li>
           <li>
             <Emph>Rate limiting</Emph> - authentication endpoints, app calls,
@@ -352,7 +328,7 @@ export function PrivacyPolicyPage() {
           </li>
           <li>
             <Emph>Role &amp; access control</Emph> - inbound senders on Slack,
-            Telegram, and email are tagged OWNER, TRUSTED, GUEST, or BLOCKED
+            Telegram, and Discord are tagged OWNER, TRUSTED, GUEST, or BLOCKED
             before the agent ever sees the message, and non-trusted senders
             go to an approval queue
           </li>
@@ -369,12 +345,9 @@ export function PrivacyPolicyPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Bundled (default)</Emph> - your plan includes a weekly
-            budget in USD at real model cost via Cloudflare AI Gateway, with a
-            rolling 4-hour burst cap. Usage is metered per-generation and is
-            visible in your account&rsquo;s usage history. Pro automatically
-            downgrades to a lighter model at 80% of weekly budget and
-            hard-stops at 100%
+            <Emph>Bundled (default)</Emph> - your plan includes model usage
+            subject to monthly and per-session limits. Usage is metered and is
+            visible in your account&rsquo;s usage history
           </li>
           <li>
             <Emph>BYOK</Emph> - on Pro, you may provide your own API keys (e.g.
@@ -396,7 +369,7 @@ export function PrivacyPolicyPage() {
           </li>
           <li>
             <Emph>Virtual desktop data</Emph> - workspace files, agent memory,
-            chat history, audit logs, calendar, and agent email persist for
+            chat history, Activity history, Calendar, and agent email persist for
             as long as your account is active and are deleted when your
             account is closed
           </li>
@@ -466,7 +439,7 @@ export function PrivacyPolicyPage() {
 
       <LegalSection title="11. Autonomous Browsing &amp; Third-Party Links">
         <p>
-          Our website and your virtual desktop environment may contain links
+          Our website and your workspace may contain links
           to third-party websites. The AI agent may also navigate to
           third-party websites on your behalf via the remote browser, extract
           content, or submit forms. We are not responsible for the privacy

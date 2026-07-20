@@ -80,7 +80,7 @@ export function renderHeadForRoute(route: RouteMeta): string {
 
   for (const obj of route.jsonLd) {
     parts.push(
-      `<script type="application/ld+json">${serializeJsonLd(obj)}</script>`,
+      `<script type="application/ld+json" data-route-jsonld="1">${serializeJsonLd(obj)}</script>`,
     )
   }
   return parts.join("\n    ")
@@ -98,7 +98,7 @@ function applyRouteMeta(route: RouteMeta) {
   document.title = route.title
   setMeta("name", "description", route.description)
   setMeta("name", "keywords", route.keywords)
-  if (route.robots) setMeta("name", "robots", route.robots)
+  setMeta("name", "robots", route.robots ?? "index, follow, max-image-preview:large")
   if (googleSiteVerification) {
     setMeta("name", "google-site-verification", googleSiteVerification)
   }

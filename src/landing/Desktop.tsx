@@ -304,13 +304,15 @@ function HeroHeadline() {
         aria-hidden="true"
         className="font-display text-balance text-5xl capitalize italic leading-[1.1] text-[#4e4646] lg:text-[51.8px] lg:leading-[58px]"
       >
-        <span className="text-[#01b4c8]">Autonomous </span>
-        <span>Computer that </span>
-        <span className="text-[#01b4c8]">Works For You</span>
+        <span>An </span>
+        <span className="text-[#01b4c8]">AI Employee </span>
+        <span>You Can Actually </span>
+        <span className="text-[#01b4c8]">Work With</span>
       </div>
       <p className="font-ui mt-6 max-w-[520px] text-[16px] leading-[22px] text-[#627c86]">
-        Construct is an AI agent with its own cloud computer - it runs code,
-        sends email, and works across Slack, Telegram, and your inbox.
+        Assign the outcome. Construct researches, operates tools, creates
+        files, and runs recurring work from a persistent workspace you can
+        inspect and control.
       </p>
       <EnterExperienceButton className="mt-8" />
     </div>
@@ -357,7 +359,7 @@ function HeroStage() {
 
         <img
           src={imgSearchbar}
-          alt="macOS-style Spotlight search inside the Construct virtual desktop"
+          alt="Search inside the Construct AI work desktop"
           className="pointer-events-none absolute bottom-[10%] right-0 z-20 w-[455px] drop-shadow-[0_14px_30px_rgba(71,156,223,0.15)]"
         />
       </div>

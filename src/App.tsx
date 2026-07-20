@@ -12,6 +12,8 @@ import { NotFoundPage } from "@/pages/NotFound"
 import { TermsPage } from "@/pages/Terms"
 import { VsIndexPage } from "@/pages/vs/VsIndex"
 import { VsPageView } from "@/pages/vs/VsPage"
+import { GuidePageView } from "@/pages/guides/GuidePage"
+import { getGuidePage } from "@/content/guides"
 import { isKnownRoute } from "@/seo/routes"
 import { RouterProvider, useRoute } from "@/router"
 import { BetaAccessProvider } from "@/landing/beta-access/BetaAccessProvider"
@@ -48,7 +50,7 @@ function Landing() {
   return (
     <>
       <h1 className="sr-only">
-        Construct Computer: the AI employee with its own cloud computer
+        An AI employee you can actually work with
       </h1>
       {hydrated ? (
         isDesktop ? <DesktopLanding /> : <MobileLanding />
@@ -77,6 +79,7 @@ function Routes() {
   }
   if (pathname.startsWith("/blog/")) return <BlogPostPage />
   if (pathname.startsWith("/vs/")) return <VsPageView />
+  if (getGuidePage(pathname.slice(1))) return <GuidePageView />
 
   switch (pathname) {
     case "/about":

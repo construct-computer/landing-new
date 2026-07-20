@@ -1,4 +1,5 @@
 import { handleBetaSignup, type BetaSignupEnv } from "./worker/routes/beta-signup"
+import { canonicalPageUrl } from "./worker/lib/canonical-page-url"
 
 interface Env extends BetaSignupEnv {
   ASSETS: Fetcher
@@ -33,8 +34,10 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
     const forwardedProto = request.headers.get("X-Forwarded-Proto")
+    const isProductionHost =
+      url.hostname === "construct.computer" || url.hostname === "www.construct.computer"
 
-    if (url.protocol === "http:" || forwardedProto === "http") {
+    if (isProductionHost && (url.protocol === "http:" || forwardedProto === "http")) {
       url.protocol = "https:"
       return Response.redirect(url.toString(), 301)
     }
@@ -52,6 +55,9 @@ export default {
     if (url.pathname === "/api/beta-signup") {
       return withSecurityHeaders(await handleBetaSignup(request, env))
     }
+
+    const canonicalUrl = canonicalPageUrl(url.toString(), request.method)
+    if (canonicalUrl) return Response.redirect(canonicalUrl, 308)
 
     return withSecurityHeaders(await env.ASSETS.fetch(request))
   },

@@ -5,10 +5,18 @@ import { LegalShell } from "@/pages/LegalShell"
 export function VsIndexPage() {
   return (
     <LegalShell
-      title="Compare"
-      subtitle="How Construct differs from chat assistants, copilots, automation tools, and DIY agent stacks"
+      title="AI Agent Comparisons"
+      subtitle="Compare Construct with chat assistants, copilots, automation tools, coding agents, and DIY stacks."
     >
       <div className="space-y-6">
+        <p>
+          These comparisons are part of the{" "}
+          <Link to="/blog" className="text-[#01b4c8] hover:underline">
+            Construct resource library
+          </Link>
+          , alongside practical guides to AI employees, workflow automation,
+          and long-term agent memory.
+        </p>
         {VS_PAGES.map((page) => (
           <article
             key={page.slug}

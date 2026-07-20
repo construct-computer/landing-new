@@ -170,10 +170,10 @@ ${security}
 ✅ **Good fit**
 
 - Autonomous email, research, or ops work
-- Slack/Telegram/email assignments that must actually complete
+- Web, Slack, Telegram, or Discord assignments that must actually complete
 - Scheduled or recurring reports without building automations
 - Cross-app workflows (e.g. inbox → Notion → Linear)
-- Need to watch the agent and audit every action
+- Need to inspect outputs and review Activity history
 
 ❌ **Poor fit**
 
@@ -214,7 +214,7 @@ ${PRODUCT_TAGLINE}
 ## What it is
 
 - An AI employee, not a chatbot. You assign tasks; it executes them end-to-end.
-- A virtual desktop you can watch or take over, with a browser, terminal, files, calendar, tasks, memory, and audit log.
+- A purpose-built work desktop with files, browser and terminal tools, inbox, Calendar, workflows, memories, connected apps, and Activity history.
 - Reachable from: ${REACH_CHANNELS.join("; ")}.
 - Frontend, app SDK, sample apps, and app registry are source-available (BSL 1.1). Core agent backend is proprietary.
 
@@ -272,7 +272,7 @@ export function manifestJson(): string {
     name: PRODUCT_NAME,
     short_name: "Construct",
     description:
-      "The AI employee with their own computer. A persistent AI agent that works from a virtual desktop across Slack, Telegram, and email.",
+      "The personal work OS for an AI employee with persistent memory, files, schedules, workflows, and connected apps.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

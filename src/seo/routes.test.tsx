@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test"
 import { renderToStaticMarkup } from "react-dom/server"
 import { App } from "@/App"
-import { getAllRenderableRoutes } from "./routes"
+import { getAllRenderableRoutes, getRouteMeta, normalizePathname } from "./routes"
+import { getResourceEntries } from "@/content/resources"
 
 test("route metadata stays within audit limits", () => {
   for (const route of getAllRenderableRoutes()) {
@@ -11,7 +12,28 @@ test("route metadata stays within audit limits", () => {
   }
 })
 
-test("the pre-rendered homepage has one h1", () => {
-  const html = renderToStaticMarkup(<App initialPath="/" />)
-  expect(html.match(/<h1\b/g)?.length).toBe(1)
+test("every pre-rendered page has one h1", () => {
+  for (const route of getAllRenderableRoutes()) {
+    const html = renderToStaticMarkup(<App initialPath={route.path} />)
+    expect(html.match(/<h1\b/g)?.length, route.path).toBe(1)
+  }
+})
+
+test("blog aliases resolve to one canonical content tree", () => {
+  expect(normalizePathname("/blogs")).toBe("/blog")
+  expect(normalizePathname("/blogs/what-is-an-ai-employee/")).toBe(
+    "/blog/what-is-an-ai-employee",
+  )
+  expect(getRouteMeta("/blogs").canonical).toBe("https://construct.computer/blog/")
+  expect(renderToStaticMarkup(<App initialPath="/blogs" />)).toBe(
+    renderToStaticMarkup(<App initialPath="/blog" />),
+  )
+})
+
+test("the blog resource catalog includes comparisons and guides", () => {
+  const paths = getResourceEntries().map((entry) => entry.path)
+  expect(paths).toContain("/vs/chatgpt")
+  expect(paths).toContain("/ai-employee")
+  expect(paths).toContain("/ai-workflow-automation")
+  expect(paths).toContain("/ai-agent-memory")
 })

@@ -16,19 +16,17 @@ export function SupportPage() {
         </p>
         <LegalList>
           <li>
-            <Emph>Audit Logs window</Emph> - inside the desktop, every tool
-            call, sub-agent, command, and error is recorded with a timestamp,
-            platform source, and result. If something went wrong, the entry is
-            almost always there.
+            <Emph>Activity app</Emph> - review agent, tool, command, and
+            delegated work with timestamps, status, source, and reasons when
+            available.
           </li>
           <li>
             <Emph>Activity cards in chat</Emph> - each card is expandable and
             shows the exact inputs and outputs of the tool call the agent ran.
           </li>
           <li>
-            <Emph>Usage panel in Settings</Emph> - shows your current weekly
-            and 4-hour burst usage, and which model the agent is on. Many
-            &ldquo;the agent stopped mid-task&rdquo; reports are budget-caps.
+            <Emph>Usage panel in Settings</Emph> - review plan limits, storage,
+            current usage, and bring-your-own-key settings where available.
           </li>
         </LegalList>
       </LegalSection>
@@ -85,12 +83,12 @@ export function SupportPage() {
         <LegalList>
           <li>A description of what happened and what you expected</li>
           <li>Steps to reproduce the issue, if possible</li>
-          <li>Your browser, operating system, and the surface you hit it on
-            (web desktop, Slack, Telegram, email, Mini App, macOS Notch)</li>
+          <li>Your browser, operating system, and the surface you used
+            (web desktop, Slack, Telegram, Discord, or agent inbox)</li>
           <li>Screenshots or screen recordings, if applicable</li>
           <li>
-            Any relevant entries from the <Emph>Audit Logs</Emph> window in the
-            desktop interface - these contain the exact tool call trace
+            Any relevant entries from the <Emph>Activity</Emph> app in the
+            desktop interface
           </li>
           <li>
             Your approximate timestamp in UTC and your account email, so we
@@ -127,24 +125,13 @@ export function SupportPage() {
         <p>
           Subscriptions (Lite, Starter, Pro) are managed through Dodo Payments
           and can be viewed and modified from your account{" "}
-          <Emph>Billing</Emph> settings. Plans are metered by real model-cost
-          via Cloudflare AI Gateway, with a rolling 4-hour burst cap and a
-          weekly cap that resets every Monday at 00:00 UTC.
+          <Emph>Billing</Emph> settings. Plan limits and current usage are shown
+          in the product and may change as the beta evolves.
         </p>
         <LegalList>
           <li>
             <Emph>Upgrade / downgrade / cancel</Emph> - available directly
             in-app; changes take effect at the next billing cycle.
-          </li>
-          <li>
-            <Emph>Pro auto-downgrade</Emph> - at 80% of the weekly budget, the
-            agent automatically switches to a lighter model to stretch the
-            remaining budget. It hard-stops at 100% until the week rolls over.
-          </li>
-          <li>
-            <Emph>Bonus credits</Emph> - Pro users can earn additional weekly
-            budget by tweeting about the product; the bonus is verified and
-            applied automatically.
           </li>
           <li>
             <Emph>Bring your own key</Emph> - available on Pro. BYOK
@@ -165,7 +152,7 @@ export function SupportPage() {
 
       <LegalSection title="Access control &amp; inbound messages">
         <p>
-          Your agent can receive messages from Slack, Telegram, and email. To
+          Your agent can receive messages from Slack, Telegram, and Discord. To
           prevent misuse, each platform has a configurable policy:{" "}
           <Emph>open</Emph>, <Emph>approval required</Emph>, or{" "}
           <Emph>blocked</Emph>. By default, non-trusted senders land in an{" "}
@@ -196,13 +183,12 @@ export function SupportPage() {
           <li>
             Specify whether you are requesting data access, correction, export,
             or deletion - and whether the request applies to your agent
-            memory, workspace files, chat history, audit log, or all data
+            memory, workspace files, chat history, Activity history, or all data
           </li>
         </LegalList>
         <p>
-          You can also delete individual memories at any time from the{" "}
-          <Emph>Memory</Emph> app in the desktop, and bulk-delete or export
-          from the same screen. We will process formal data requests within 30
+          You can inspect, correct, forget, or restore memories from the{" "}
+          <Emph>Memories</Emph> app in the desktop. We will process formal data requests within 30
           days. For more details, see our{" "}
           <InlineLink href="/privacy">Privacy Policy</InlineLink>.
         </p>
