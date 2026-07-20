@@ -10,7 +10,7 @@
     "deploy": "bun run build && wrangler deploy",
     "preview": "bun run build && wrangler dev",
     "videos:optimize": "bun scripts/optimize-videos.ts",
-    "test": "bun test worker/"
+    "test": "bun test"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",

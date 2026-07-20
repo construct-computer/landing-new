@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useRef, useState } from "react"
 import imgChat from "@/assets/chat.png"
 import imgClouds from "@/assets/clouds.png"
 import imgEnterprise from "@/assets/enterprise.png"
@@ -13,11 +7,6 @@ import imgGrass from "@/assets/grass.png"
 import imgLightBeams from "@/assets/light-through-clouds.png"
 import imgReport from "@/assets/report.png"
 import imgSearchbar from "@/assets/searchbar.png"
-import researchVideoMp4 from "@/assets/research.mp4"
-import researchVideo from "@/assets/research.webm"
-import slackVideoMp4 from "@/assets/slack.mp4"
-import slackVideo from "@/assets/slack.webm"
-import workVideo from "@/assets/work.mp4"
 import { PRICING_PLANS, type PricingPlan } from "@/content/pricing"
 import {
   AdaptsSection,
@@ -31,267 +20,25 @@ import {
   WhatConstructIsSection,
   WORKFLOW_CHIPS,
   WorkflowChip,
+  WorkDemoVideo,
   preventLandingImageDrag,
-  useSoftPinTransform,
+  usePrefersReducedMotion,
 } from "./shared"
 import { isLayoutVisible } from "./scroll-utils"
 import { BetaAccessTrigger } from "./beta-access/BetaAccessTrigger"
 import { FeatureGridSection } from "./FeatureGridSection"
 import { LANDING_FAQ } from "@/content/faq"
-
-const WORKFLOW_DEMOS = [
-  {
-    id: "research",
-    title: "Research About",
-    accent: "Any Topic",
-    description:
-      "Construct gathers sources, compares details, and turns messy questions into cited research you can review or share.",
-    cta: "Research a Topic",
-    nextLabel: "Work Together Across Channels",
-    mutedAction: "See Report Samples Generated",
-    video: researchVideo,
-    videoMp4: researchVideoMp4,
-    ariaLabel: "Construct researching a topic in the product interface",
-  },
-  {
-    id: "channels",
-    title: "Work Together",
-    accent: "Across Channels",
-    description:
-      "Bring Construct into Slack, Telegram, Discord, email, and more so your team can share context, assign work, and move together.",
-    cta: "Collaborate",
-    nextLabel: "Research About Any Topic",
-    mutedAction: "See Shared Threads",
-    video: slackVideo,
-    videoMp4: slackVideoMp4,
-    ariaLabel:
-      "Construct available across Slack, Telegram, Discord, email, and team collaboration",
-  },
-] as const
-
-type WorkflowDemo = (typeof WORKFLOW_DEMOS)[number]
+import { WORKFLOW_DEMOS, type WorkflowDemo } from "./workflow-demos"
+import { WorkflowVideoLayer } from "./WorkflowVideoLayer"
+import {
+  clamp,
+  getHeldWorkflowPosition,
+  lerp,
+  smoothStep,
+} from "./workflow-motion"
 
 function getWorkflowDemo(index: number): WorkflowDemo {
   return WORKFLOW_DEMOS[index % WORKFLOW_DEMOS.length] ?? WORKFLOW_DEMOS[0]
-}
-
-function clamp(value: number, min = 0, max = 1) {
-  return Math.min(Math.max(value, min), max)
-}
-
-function smoothStep(value: number) {
-  const x = clamp(value)
-  return x * x * (3 - 2 * x)
-}
-
-function lerp(start: number, end: number, amount: number) {
-  return start + (end - start) * amount
-}
-
-function getHeldWorkflowPosition(progress: number) {
-  const transitionCount = WORKFLOW_DEMOS.length - 1
-  if (transitionCount <= 0) return 0
-  if (progress >= 1) return transitionCount
-
-  const scaled = clamp(progress) * transitionCount
-  const segment = Math.min(Math.floor(scaled), transitionCount - 1)
-  const local = scaled - segment
-  const transitionStart = 0.24
-  const transitionEnd = 0.76
-  const localTransition = smoothStep(
-    (local - transitionStart) / (transitionEnd - transitionStart)
-  )
-
-  return segment + localTransition
-}
-
-/** Raw ScrollTrigger scrub progress (0–1) that lands on the start of workflow demo `index`. */
-function workflowDemoIndexToScrollProgress(demoIndex: number, demoCount: number) {
-  if (demoCount <= 1 || demoIndex <= 0) return 0
-  const transitionCount = demoCount - 1
-  if (demoIndex >= demoCount) return 1
-  
-  // The transition to index `n` finishes when the local progress of segment `n-1` reaches 0.76.
-  // scaled = (segment) + local = (demoIndex - 1) + 0.76
-  const scaled = (demoIndex - 1) + 0.76
-  return clamp(scaled / transitionCount)
-}
-
-const WORKFLOW_VIDEO_ADVANCE_DELAY_MS = 2000
-
-/** Damped spring follows ScrollTrigger progress — elastic settle vs abrupt lerp snap. */
-const WORKFLOW_SCROLL_SPRING_STIFFNESS = 76
-/** ~Critical damping (2√k) so motion feels springy without oscillating past 0–1. */
-const WORKFLOW_SCROLL_SPRING_DAMPING = 17.6
-const WORKFLOW_SCROLL_SPRING_MAX_DT = 1 / 24
-
-function useSmoothedWorkflowScrollProgress(reducedMotion: boolean) {
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const targetRef = useRef(0)
-  const displayRef = useRef(0)
-  const velocityRef = useRef(0)
-  const lastTimeRef = useRef<number | null>(null)
-  const rafRef = useRef(0)
-  const reducedMotionRef = useRef(reducedMotion)
-  reducedMotionRef.current = reducedMotion
-
-  useEffect(() => {
-    if (!reducedMotion) return
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current)
-      rafRef.current = 0
-    }
-    lastTimeRef.current = null
-    velocityRef.current = 0
-    const t = targetRef.current
-    displayRef.current = t
-    setScrollProgress(t)
-  }, [reducedMotion])
-
-  useEffect(
-    () => () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    },
-    [],
-  )
-
-  const commitScrollProgress = useCallback((p: number) => {
-    targetRef.current = p
-    if (reducedMotionRef.current) {
-      displayRef.current = p
-      velocityRef.current = 0
-      lastTimeRef.current = null
-      setScrollProgress(p)
-      return
-    }
-
-    const springStep = (time: number) => {
-      if (reducedMotionRef.current) {
-        const t = targetRef.current
-        displayRef.current = t
-        velocityRef.current = 0
-        lastTimeRef.current = null
-        setScrollProgress(t)
-        rafRef.current = 0
-        return
-      }
-
-      const prevTime = lastTimeRef.current
-      lastTimeRef.current = time
-      const dt =
-        prevTime == null
-          ? 1 / 60
-          : Math.min((time - prevTime) / 1000, WORKFLOW_SCROLL_SPRING_MAX_DT)
-
-      const target = targetRef.current
-      let x = displayRef.current
-      let v = velocityRef.current
-
-      const displacement = target - x
-      const acceleration =
-        WORKFLOW_SCROLL_SPRING_STIFFNESS * displacement -
-        WORKFLOW_SCROLL_SPRING_DAMPING * v
-
-      v += acceleration * dt
-      x += v * dt
-
-      displayRef.current = x
-      velocityRef.current = v
-      setScrollProgress(clamp(x, 0, 1))
-
-      const settled =
-        Math.abs(target - x) < 0.00012 && Math.abs(v) < 0.004
-
-      if (settled) {
-        displayRef.current = target
-        velocityRef.current = 0
-        lastTimeRef.current = null
-        setScrollProgress(target)
-        rafRef.current = 0
-        return
-      }
-
-      rafRef.current = requestAnimationFrame(springStep)
-    }
-
-    if (!rafRef.current) {
-      rafRef.current = requestAnimationFrame(springStep)
-    }
-  }, [])
-
-  return [scrollProgress, commitScrollProgress] as const
-}
-
-/** Portion of section height visible in the viewport (0 = none, 1 = fully on screen). */
-function getSectionVisibilityFraction(el: HTMLElement | null): number {
-  if (!el) return 0
-  const rect = el.getBoundingClientRect()
-  const h = rect.height
-  if (h <= 0) return 0
-  const vh = window.innerHeight
-  const visibleTop = Math.max(0, rect.top)
-  const visibleBottom = Math.min(vh, rect.bottom)
-  const visibleHeight = Math.max(0, visibleBottom - visibleTop)
-  return clamp(visibleHeight / h)
-}
-
-/**
- * Edge fade/blur driven by viewport: first clip eases in once half the section
- * has entered; last clip fades out as soon as any part starts leaving (visibility below full).
- */
-function workflowViewportEdgeFade(
-  demoIndex: number,
-  demoCount: number,
-  visibilityFraction: number,
-  reducedMotion: boolean,
-): number {
-  if (reducedMotion) return 1
-  const v = clamp(visibilityFraction)
-  const fadeIn =
-    demoIndex === 0
-      ? v < 0.5
-        ? 0
-        : smoothStep((v - 0.5) / 0.5)
-      : 1
-  const fadeOut =
-    demoIndex === demoCount - 1 ? smoothStep(v) : 1
-  return fadeIn * fadeOut
-}
-
-function workflowViewportEdgeBlurPx(
-  demoIndex: number,
-  demoCount: number,
-  visibilityFraction: number,
-  reducedMotion: boolean,
-  maxBlur: number,
-): number {
-  if (reducedMotion) return 0
-  const v = clamp(visibilityFraction)
-  let edge = 0
-  if (demoIndex === 0) {
-    const fadeIn = v < 0.5 ? 0 : smoothStep((v - 0.5) / 0.5)
-    edge += maxBlur * (1 - fadeIn)
-  }
-  if (demoIndex === demoCount - 1) {
-    const fadeOut = smoothStep(v)
-    edge += maxBlur * (1 - fadeOut)
-  }
-  return edge
-}
-
-function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
-    setPrefersReducedMotion(media.matches)
-
-    const onChange = () => setPrefersReducedMotion(media.matches)
-    media.addEventListener("change", onChange)
-    return () => media.removeEventListener("change", onChange)
-  }, [])
-
-  return prefersReducedMotion
 }
 
 /* ------------------------------------------------------------------ */
@@ -322,12 +69,15 @@ function HeroHeadline() {
 function HeroStage() {
   return (
     <section className="relative mx-auto w-full max-w-[1500px] overflow-hidden px-6 lg:px-16">
-      <div className="relative isolate mx-auto h-[900px] w-full max-w-[1400px]">
+      <div
+        className="relative isolate mx-auto w-full max-w-[1400px]"
+        style={{ height: "clamp(620px, calc(100svh - 56px), 900px)" }}
+      >
         <div
           aria-hidden
-          className="pointer-events-none absolute left-3/4 top-1/2 z-0 aspect-square w-[min(120%,1100px)] -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute left-3/4 top-1/2 z-0 aspect-square w-[min(120%,1100px,100svh)] -translate-x-1/2 -translate-y-1/2"
         >
-          <PortalVideo />
+          <PortalVideo media="(min-width: 1024px)" />
         </div>
 
         <div className="absolute left-0 top-1/2 z-20 -translate-y-1/2 lg:left-2">
@@ -395,20 +145,14 @@ function CloudsTransition() {
 
 function WorkflowVideoPanel({
   workflowPosition,
-  sectionVisibilityFraction,
   isVisible,
-  reducedMotion,
-  onRequestAdvanceAfterVideoEnd,
 }: {
   workflowPosition: number
-  sectionVisibilityFraction: number
   isVisible: boolean
-  reducedMotion: boolean
-  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
 }) {
   const dominantIndex = Math.min(
-    Math.floor(workflowPosition + 0.1),
-    WORKFLOW_DEMOS.length - 1
+    Math.round(workflowPosition),
+    WORKFLOW_DEMOS.length - 1,
   )
 
   return (
@@ -417,21 +161,17 @@ function WorkflowVideoPanel({
         const distance = index - workflowPosition
         const isDominant = index === dominantIndex
 
-        if (reducedMotion && !isDominant) return null
-        if (!reducedMotion && (distance <= -1.05 || distance >= 1.05)) return null
+        if (distance <= -1.05 || distance >= 1.05) return null
 
         return (
           <WorkflowVideoLayer
             key={demo.id}
             demo={demo}
-            demoIndex={index}
             distance={distance}
             isDominant={isDominant}
             isVisible={isVisible}
-            sectionVisibilityFraction={sectionVisibilityFraction}
-            reducedMotion={reducedMotion}
-            workflowDemoCount={WORKFLOW_DEMOS.length}
-            onRequestAdvanceAfterVideoEnd={onRequestAdvanceAfterVideoEnd}
+            media="(min-width: 1024px)"
+            travel={12}
           />
         )
       })}
@@ -443,180 +183,10 @@ function WorkflowVideoPanel({
   )
 }
 
-function WorkflowVideoLayer({
-  demo,
-  demoIndex,
-  distance,
-  isDominant,
-  isVisible,
-  sectionVisibilityFraction,
-  reducedMotion,
-  workflowDemoCount,
-  onRequestAdvanceAfterVideoEnd,
-}: {
-  demo: WorkflowDemo
-  demoIndex: number
-  distance: number
-  isDominant: boolean
-  isVisible: boolean
-  sectionVisibilityFraction: number
-  reducedMotion: boolean
-  workflowDemoCount: number
-  onRequestAdvanceAfterVideoEnd?: (endedDemoIndex: number) => void
-}) {
-  const videoRef = useRef<HTMLVideoElement | null>(null)
-  const wasDominantRef = useRef(false)
-  const advanceTimerRef = useRef<number | null>(null)
-
-  const clearAdvanceTimer = useCallback(() => {
-    if (advanceTimerRef.current != null) {
-      clearTimeout(advanceTimerRef.current)
-      advanceTimerRef.current = null
-    }
-  }, [])
-
-  useEffect(() => {
-    return () => clearAdvanceTimer()
-  }, [clearAdvanceTimer])
-
-  useEffect(() => {
-    if (!isDominant || !isVisible) clearAdvanceTimer()
-  }, [isDominant, isVisible, clearAdvanceTimer])
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-
-    if (isDominant && !wasDominantRef.current) video.currentTime = 0
-    wasDominantRef.current = isDominant
-
-    if (isVisible && isDominant) {
-      if (demoIndex === workflowDemoCount - 1) {
-        const isAtEnd = video.currentTime > 0 && video.currentTime >= (video.duration || 0) - 0.5
-        if (!isAtEnd) {
-          void video.play().catch(() => {})
-        }
-      } else {
-        void video.play().catch(() => {})
-      }
-    } else {
-      video.pause()
-      if (demoIndex === workflowDemoCount - 1 && isDominant) {
-        video.currentTime = 999999
-      } else {
-        video.currentTime = 0
-      }
-    }
-  }, [demo.id, isDominant, isVisible, demoIndex, workflowDemoCount])
-
-  const exiting = smoothStep(clamp(-distance))
-  const entering = smoothStep(clamp(1 - distance))
-  const edgeFade = workflowViewportEdgeFade(
-    demoIndex,
-    WORKFLOW_DEMOS.length,
-    sectionVisibilityFraction,
-    reducedMotion,
-  )
-  const opacity = reducedMotion
-    ? isDominant
-      ? 1 * edgeFade
-      : 0
-    : (distance < 0 ? 1 - exiting : lerp(0, 1, entering)) * edgeFade
-  const translateY = reducedMotion
-    ? 0
-    : distance < 0
-      ? lerp(0, 28, exiting)
-      : lerp(-28, 0, entering)
-  const scale = reducedMotion
-    ? 1
-    : distance < 0
-      ? lerp(1, 0.985, exiting)
-      : lerp(1.018, 1, entering)
-  const crossfadeBlur =
-    distance < 0 ? 8 * exiting : 8 * (1 - entering)
-  const edgeBlurPx = workflowViewportEdgeBlurPx(
-    demoIndex,
-    WORKFLOW_DEMOS.length,
-    sectionVisibilityFraction,
-    reducedMotion,
-    8,
-  )
-  const blur = reducedMotion
-    ? 0
-    : Math.min(8, crossfadeBlur + edgeBlurPx)
-
-  const handleVideoEnded = useCallback(() => {
-    if (!isDominant || !isVisible || reducedMotion) return
-    if (demoIndex >= workflowDemoCount - 1) return
-    if (!onRequestAdvanceAfterVideoEnd) return
-    clearAdvanceTimer()
-    advanceTimerRef.current = window.setTimeout(() => {
-      advanceTimerRef.current = null
-      onRequestAdvanceAfterVideoEnd(demoIndex)
-    }, WORKFLOW_VIDEO_ADVANCE_DELAY_MS)
-  }, [
-    isDominant,
-    isVisible,
-    reducedMotion,
-    demoIndex,
-    workflowDemoCount,
-    onRequestAdvanceAfterVideoEnd,
-    clearAdvanceTimer,
-  ])
-
-  return (
-    <video
-      ref={videoRef}
-      muted
-      autoPlay
-      playsInline
-      preload="auto"
-      aria-label={isDominant ? demo.ariaLabel : undefined}
-      aria-hidden={!isDominant}
-      onEnded={handleVideoEnded}
-      onLoadedMetadata={(event) => {
-        const video = event.currentTarget
-        if (isVisible && isDominant) {
-          if (demoIndex === workflowDemoCount - 1) {
-            const isAtEnd = video.currentTime > 0 && video.currentTime >= (video.duration || 0) - 0.5
-            if (!isAtEnd) {
-              video.currentTime = 0
-              void video.play().catch(() => {})
-            }
-          } else {
-            video.currentTime = 0
-            void video.play().catch(() => {})
-          }
-        } else {
-          video.pause()
-          if (demoIndex === workflowDemoCount - 1 && isDominant) {
-            video.currentTime = 999999
-          } else {
-            video.currentTime = 0
-          }
-        }
-      }}
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px) scale(${scale})`,
-        filter: `blur(${blur}px)`,
-        zIndex: Math.round(20 - Math.abs(distance) * 10),
-        willChange: "opacity, transform, filter",
-      }}
-      className="absolute inset-0 h-full w-full object-cover"
-    >
-      <source src={demo.video} type="video/webm" />
-      <source src={demo.videoMp4} type="video/mp4" />
-    </video>
-  )
-}
-
 function WorkflowScrollCopy({
   workflowPosition,
-  reducedMotion,
 }: {
   workflowPosition: number
-  reducedMotion: boolean
 }) {
   return (
     <div className="absolute inset-0 overflow-visible">
@@ -625,7 +195,6 @@ function WorkflowScrollCopy({
           key={demo.id}
           demo={demo}
           distance={index - workflowPosition}
-          reducedMotion={reducedMotion}
         />
       ))}
     </div>
@@ -635,31 +204,14 @@ function WorkflowScrollCopy({
 function WorkflowTextLayer({
   demo,
   distance,
-  reducedMotion,
 }: {
   demo: WorkflowDemo
   distance: number
-  reducedMotion: boolean
 }) {
-  /*
-   * Y anchors are tuned to keep the upcoming demo's preview block (Up Next +
-   * 2-line wrapped headline) from colliding with the active demo's CTA
-   * support area at the narrow end of the desktop band (~1024px), where the
-   * aside collapses to its 300px min-width and headlines like
-   * "Work Together Across Channels" wrap to 2 lines.
-   *
-   * Container math (worst case at lg breakpoint):
-   *   container min-h:           720px
-   *   support `bottom-6` (24px) + content height (57+24+22 = 103px)
-   *     → support top:           720 - 24 - 103 = 593px
-   *   upcoming block at upNext (340) with 2-line headline (~71px tight leading)
-   *     → upcoming bottom:        340 + 22 (Up Next) + 12 (mb-3) + 71 = 445px
-   *   gap:                       148px ✓
-   */
   const titleAnchorY = 0
-  const exitTitleY = -58
-  const upNextAnchorY = 340
-  const belowAnchorY = 440
+  const exitTitleY = -36
+  const upNextAnchorY = 300
+  const belowAnchorY = 380
 
   const exiting = smoothStep(clamp(-distance))
   const entering = smoothStep(clamp(1 - distance))
@@ -668,68 +220,39 @@ function WorkflowTextLayer({
 
   if (!nearby) return null
 
-  const headlineY = reducedMotion
-    ? titleAnchorY
-    : distance < 0
-      ? lerp(titleAnchorY, exitTitleY, exiting)
-      : distance <= 1
-        ? lerp(upNextAnchorY, titleAnchorY, entering)
-        : lerp(belowAnchorY, upNextAnchorY, preEnter)
-  const headlineOpacity = reducedMotion
-    ? Math.round(distance) === 0
-      ? 1
-      : 0
-    : distance < 0
-      ? 1 - exiting
-      : distance <= 1
-        ? lerp(0.58, 1, entering)
-        : lerp(0, 0.58, preEnter)
-  const headlineScale = reducedMotion
-    ? 1
-    : distance < 0
-      ? 1
-      : distance <= 1
-        ? lerp(0.78, 1, entering)
-        : lerp(0.74, 0.78, preEnter)
-  const descriptionOpacity = reducedMotion
-    ? headlineOpacity
-    : distance < 0
-      ? 1 - exiting
-      : smoothStep((entering - 0.72) / 0.28)
-  const upNextOpacity = reducedMotion
-    ? 0
-    : distance > 0
-      ? distance <= 1
-        ? 1 - entering
-        : preEnter
-      : 0
-  const blur = reducedMotion
-    ? 0
-    : distance < 0
-      ? 5 * exiting
-      : 0
-  const supportAmount = reducedMotion
-    ? Math.round(distance) === 0
-      ? 1
-      : 0
-    : smoothStep(1 - Math.abs(distance) / 0.54)
+  const headlineY = distance < 0
+    ? lerp(titleAnchorY, exitTitleY, exiting)
+    : distance <= 1
+      ? lerp(upNextAnchorY, titleAnchorY, entering)
+      : lerp(belowAnchorY, upNextAnchorY, preEnter)
+  const headlineOpacity = distance < 0
+    ? 1 - exiting
+    : distance <= 1
+      ? lerp(0.58, 1, entering)
+      : lerp(0, 0.58, preEnter)
+  const descriptionOpacity = distance < 0
+    ? 1 - exiting
+    : smoothStep((entering - 0.58) / 0.42)
+  const upNextOpacity = distance > 0
+    ? distance <= 1
+      ? 1 - entering
+      : preEnter
+    : 0
+  const supportAmount = smoothStep(1 - Math.abs(distance) / 0.54)
 
   return (
     <>
       <div
         style={{
           opacity: headlineOpacity,
-          transform: `translateY(${headlineY}px) scale(${headlineScale})`,
-          transformOrigin: "left top",
-          filter: `blur(${blur}px)`,
+          transform: `translateY(${headlineY}px)`,
           zIndex: Math.round(20 - Math.abs(distance) * 10),
-          willChange: "opacity, transform, filter",
         }}
         className="absolute inset-x-0 top-0"
       >
         <p
           style={{ opacity: upNextOpacity }}
-          className="font-ui mb-3 w-[86px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] leading-[22px] text-transparent"
+          className="font-ui mb-3 w-[86px] text-[16.8px] leading-[22px] text-[#78909a]"
         >
           Up Next
         </p>
@@ -759,11 +282,10 @@ function WorkflowTextLayer({
       <div
         style={{
           opacity: supportAmount,
-          transform: `translateY(${28 * (1 - supportAmount)}px)`,
+          transform: `translateY(${12 * (1 - supportAmount)}px)`,
           pointerEvents: supportAmount > 0.85 ? "auto" : "none",
-          willChange: "opacity, transform",
         }}
-        className="absolute inset-x-0 bottom-6"
+        className="absolute inset-x-0 bottom-0"
       >
         <BetaAccessTrigger
           source={demo.id === "research" ? "workflow-research" : "workflow-channels"}
@@ -774,7 +296,7 @@ function WorkflowTextLayer({
           </span>
         </BetaAccessTrigger>
 
-        <p className="mt-6 max-w-[200px] bg-linear-to-r from-[#becace] to-[#d9d9d9] bg-clip-text text-[16.8px] capitalize leading-[22px] text-transparent">
+        <p className="mt-4 max-w-[200px] text-[16px] capitalize leading-[20px] text-[#78909a]">
           {demo.mutedAction}
         </p>
       </div>
@@ -784,16 +306,11 @@ function WorkflowTextLayer({
 
 function WorkflowProgressRail({
   workflowPosition,
-  reducedMotion,
 }: {
   workflowPosition: number
-  reducedMotion: boolean
 }) {
-  const railStartY = 35
-  const railEndY = 640
   const totalStops = WORKFLOW_DEMOS.length - 1
   const progress = totalStops === 0 ? 0 : clamp(workflowPosition / totalStops)
-  const dotY = lerp(railStartY, railEndY, progress)
 
   return (
     <div
@@ -803,76 +320,70 @@ function WorkflowProgressRail({
       <div className="absolute inset-y-0 left-0 w-px bg-[#9dddea]/70" />
       <span
         style={{
-          transform: `translate(-50%, ${dotY}px)`,
-          willChange: reducedMotion ? undefined : "transform",
+          top: `${progress * 100}%`,
         }}
-        className="absolute left-0 top-0 h-3 w-3 rounded-full bg-[#4cd8ff] shadow-[0_0_16px_rgba(76,216,255,0.65)]"
+        className="absolute left-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4cd8ff] shadow-[0_0_16px_rgba(76,216,255,0.65)]"
       />
     </div>
   )
 }
 
+function StaticWorkflowDemos() {
+  return (
+    <section
+      aria-labelledby="workflow-demo-heading"
+      className="px-6 py-20 lg:px-16"
+    >
+      <h2 id="workflow-demo-heading" className="sr-only">
+        Workflow demos
+      </h2>
+      <div className="mx-auto grid w-full max-w-[1400px] gap-8 lg:grid-cols-2">
+        {WORKFLOW_DEMOS.map(demo => (
+          <article
+            key={demo.id}
+            className="overflow-hidden rounded-[32px] bg-white/70 shadow-sm"
+          >
+            <img
+              src={demo.poster}
+              alt={demo.ariaLabel}
+              className="aspect-964/694 w-full object-cover"
+            />
+            <div className="p-8">
+              <h3 className="text-[28px] leading-tight text-[#4e4646]">
+                {demo.title}{" "}
+                <span className="font-display italic text-[#01b4c8]">
+                  {demo.accent}
+                </span>
+              </h3>
+              <p className="mt-4 max-w-xl text-[16px] leading-6 text-[#627c86]">
+                {demo.description}
+              </p>
+              <BetaAccessTrigger
+                source={
+                  demo.id === "research"
+                    ? "workflow-research"
+                    : "workflow-channels"
+                }
+                className="font-cta mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#4cd8ff] px-7 text-[18px] text-white"
+              >
+                {demo.cta}
+              </BetaAccessTrigger>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function WorkflowDemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
-  const workflowPinScrollTriggerRef = useRef<{
-    readonly start: number
-    readonly end: number
-  } | null>(null)
   const reducedMotion = usePrefersReducedMotion()
-  const [scrollProgress, commitScrollProgress] =
-    useSmoothedWorkflowScrollProgress(reducedMotion)
-  const [sectionVisibilityFraction, setSectionVisibilityFraction] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const [isWorkflowVisible, setIsWorkflowVisible] = useState(false)
 
-  useLayoutEffect(() => {
-    const section = sectionRef.current
-    if (section) {
-      setSectionVisibilityFraction(getSectionVisibilityFraction(section))
-    }
-  }, [])
-
   useEffect(() => {
-    let raf = 0
-    const schedule = () => {
-      if (raf) return
-      raf = requestAnimationFrame(() => {
-        raf = 0
-        const section = sectionRef.current
-        if (section) {
-          setSectionVisibilityFraction(getSectionVisibilityFraction(section))
-        }
-      })
-    }
-    window.addEventListener("scroll", schedule, { passive: true })
-    window.addEventListener("resize", schedule)
-    return () => {
-      if (raf) cancelAnimationFrame(raf)
-      window.removeEventListener("scroll", schedule)
-      window.removeEventListener("resize", schedule)
-    }
-  }, [])
-
-  const scrollToWorkflowDemoIndex = useCallback((targetIndex: number) => {
-    const st = workflowPinScrollTriggerRef.current
-    if (!st || WORKFLOW_DEMOS.length <= 1) return
-    const idx = Math.min(
-      Math.max(targetIndex, 0),
-      WORKFLOW_DEMOS.length - 1,
-    )
-    const p = workflowDemoIndexToScrollProgress(idx, WORKFLOW_DEMOS.length)
-    const y = st.start + (st.end - st.start) * p
-    window.scrollTo({ top: y, behavior: "smooth" })
-  }, [])
-
-  const requestAdvanceAfterVideoEnd = useCallback(
-    (endedDemoIndex: number) => {
-      if (reducedMotion) return
-      scrollToWorkflowDemoIndex(endedDemoIndex + 1)
-    },
-    [reducedMotion, scrollToWorkflowDemoIndex],
-  )
-
-  useEffect(() => {
+    if (reducedMotion) return
     let cleanup: (() => void) | undefined
     let cancelled = false
 
@@ -892,9 +403,9 @@ function WorkflowDemoSection() {
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => `+=${window.innerHeight * (WORKFLOW_DEMOS.length + 0.5)}`,
+        end: () => `+=${window.innerHeight * 1.2}`,
         pin: true,
-        scrub: true,
+        scrub: 0.15,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onEnter: () => setIsWorkflowVisible(true),
@@ -902,16 +413,10 @@ function WorkflowDemoSection() {
         onLeave: () => setIsWorkflowVisible(false),
         onLeaveBack: () => setIsWorkflowVisible(false),
         onToggle: (self) => setIsWorkflowVisible(self.isActive),
-        onUpdate: (self) => {
-          commitScrollProgress(self.progress)
-          setSectionVisibilityFraction(getSectionVisibilityFraction(section))
-        },
+        onUpdate: (self) => setScrollProgress(self.progress),
       })
 
-      workflowPinScrollTriggerRef.current = trigger
-
       cleanup = () => {
-        workflowPinScrollTriggerRef.current = null
         trigger.kill()
       }
     }
@@ -922,52 +427,35 @@ function WorkflowDemoSection() {
       cancelled = true
       cleanup?.()
     }
-  }, [commitScrollProgress])
+  }, [reducedMotion])
 
-  const workflowPosition = getHeldWorkflowPosition(scrollProgress)
-  const softPinContentRef = useSoftPinTransform(sectionRef, reducedMotion)
+  if (reducedMotion) return <StaticWorkflowDemos />
+
+  const workflowPosition = getHeldWorkflowPosition(scrollProgress, WORKFLOW_DEMOS.length)
   return (
     <section
       ref={sectionRef}
       aria-labelledby="workflow-demo-heading"
-      className="relative flex min-h-screen w-full items-center py-14 lg:py-16"
+      className="relative flex min-h-svh w-full items-center py-[clamp(20px,6svh,56px)]"
     >
       <h2 id="workflow-demo-heading" className="sr-only">
         Research workflow demo
       </h2>
-      <div
-        ref={softPinContentRef}
-        className="mx-auto w-full max-w-[1500px] px-6 lg:px-10 xl:px-16 will-change-transform"
-      >
-        {/*
-         * `items-center` (not stretch) lets the video keep its natural
-         * aspect ratio (964:694) — at narrow widths the column is narrower
-         * so the video gets shorter, while the aside keeps a fixed `min-h`
-         * to reserve enough vertical space for the workflow text states
-         * (active title + 2-line wrapped upcoming preview + CTA support).
-         * Centering vertically aligns the shorter video alongside the
-         * taller aside instead of stretching/cropping the video.
-         */}
+      <div className="mx-auto w-full max-w-[1500px] px-6 lg:px-10 xl:px-16">
         <div className="grid grid-cols-[minmax(300px,0.95fr)_minmax(0,2.6fr)] items-center gap-6 lg:gap-7 xl:grid-cols-[minmax(320px,1fr)_minmax(0,3fr)] xl:gap-10">
-          <aside className="font-ui relative pl-7 pt-7 lg:pl-8 xl:pl-10">
-            <WorkflowProgressRail
-              workflowPosition={workflowPosition}
-              reducedMotion={reducedMotion}
-            />
-            <div className="relative h-full min-h-[680px] overflow-visible pr-2">
-              <WorkflowScrollCopy
-                workflowPosition={workflowPosition}
-                reducedMotion={reducedMotion}
-              />
+          <aside className="font-ui relative pl-7 lg:pl-8 xl:pl-10">
+            <WorkflowProgressRail workflowPosition={workflowPosition} />
+            <div
+              className="relative h-full overflow-visible pr-2"
+              style={{ minHeight: "min(600px, calc(100svh - 96px))" }}
+            >
+              <WorkflowScrollCopy workflowPosition={workflowPosition} />
             </div>
           </aside>
 
           <WorkflowVideoPanel
             workflowPosition={workflowPosition}
-            sectionVisibilityFraction={sectionVisibilityFraction}
             isVisible={isWorkflowVisible}
-            reducedMotion={reducedMotion}
-            onRequestAdvanceAfterVideoEnd={requestAdvanceAfterVideoEnd}
           />
         </div>
       </div>
@@ -1012,14 +500,8 @@ function WorkVideoSection() {
             </h2>
 
             <div className="mt-[76px] aspect-1166/653 w-full max-w-[1166px] overflow-hidden rounded-[79px] bg-white">
-              <video
-                src={workVideo}
-                muted
-                autoPlay
-                loop
-                playsInline
-                preload="metadata"
-                aria-label="Construct organizing work across emails, files, and CRM"
+              <WorkDemoVideo
+                media="(min-width: 1024px)"
                 className="h-full w-full object-cover"
               />
             </div>

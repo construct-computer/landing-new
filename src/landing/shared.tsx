@@ -1,11 +1,20 @@
 import { Fragment, useEffect, useRef, useState } from "react"
-import type { CSSProperties, DragEvent, ReactNode, SVGProps } from "react"
+import type {
+  CSSProperties,
+  DragEvent,
+  ReactNode,
+  RefObject,
+  SVGProps,
+} from "react"
 import buttonBg from "@/assets/button-bg.svg"
 import bgVideoWebm from "@/assets/hero-bg.webm"
 import bgVideoMp4 from "@/assets/hero-bg.mp4"
+import heroPoster from "@/assets/hero-poster.jpg"
 import imgDocs from "@/assets/docs.png"
 import imgGmail from "@/assets/gmail.png"
 import imgGmeet from "@/assets/gmeet.png"
+import workVideo from "@/assets/work.mp4"
+import workPoster from "@/assets/work-poster.jpg"
 import type { PricingFeatureIconId } from "@/content/pricing"
 import { LANDING_FAQ } from "@/content/faq"
 import { VS_PAGES } from "@/content/vs"
@@ -167,77 +176,42 @@ export function PricingFeatureIcon({
 /* Shared hooks                                                       */
 /* ------------------------------------------------------------------ */
 
-/**
- * Acts as a "shock absorber" for elements pinned by ScrollTrigger.
- * When an element is pinned, its physical screen position stops instantly.
- * This hook creates a damped spring that tracks the container's top position
- * and applies the lag as a transform to the inner content, smoothing out
- * the abrupt lock-in and release.
- */
-export function useSoftPinTransform(
-  containerRef: React.RefObject<HTMLElement | null>,
-  reducedMotion: boolean
-) {
-  const contentRef = useRef<HTMLDivElement>(null)
+export function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   useEffect(() => {
-    if (reducedMotion || !containerRef.current || !contentRef.current) return
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const onChange = () => setPrefersReducedMotion(media.matches)
+    onChange()
+    media.addEventListener("change", onChange)
+    return () => media.removeEventListener("change", onChange)
+  }, [])
 
-    let rafId: number
-    let lastTime: number | null = null
-    let smoothTop = containerRef.current.getBoundingClientRect().top
-    let velocity = 0
+  return prefersReducedMotion
+}
 
-    const STIFFNESS = 150
-    const DAMPING = 24
-    const MAX_DT = 1 / 24
+function useViewportVideoPlayback(
+  ref: RefObject<HTMLVideoElement | null>,
+  reducedMotion: boolean,
+) {
+  useEffect(() => {
+    const video = ref.current
+    if (!video) return
 
-    function tick(time: number) {
-      if (!containerRef.current || !contentRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && !reducedMotion) {
+          void video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      },
+      { rootMargin: "160px" },
+    )
 
-      const currentTop = containerRef.current.getBoundingClientRect().top
-
-      if (lastTime === null) {
-        lastTime = time
-        smoothTop = currentTop
-        rafId = requestAnimationFrame(tick)
-        return
-      }
-
-      // Snap immediately on instantaneous massive jumps (e.g., clicking anchor links)
-      if (Math.abs(currentTop - smoothTop) > window.innerHeight) {
-        smoothTop = currentTop
-        velocity = 0
-      }
-
-      const dt = Math.min((time - lastTime) / 1000, MAX_DT)
-      lastTime = time
-
-      const displacement = currentTop - smoothTop
-      const acceleration = STIFFNESS * displacement - DAMPING * velocity
-
-      velocity += acceleration * dt
-      smoothTop += velocity * dt
-
-      const lag = smoothTop - currentTop
-
-      // Apply the lagging transform
-      if (Math.abs(lag) < 0.1 && Math.abs(velocity) < 0.1) {
-        contentRef.current.style.transform = `translateY(0px)`
-        smoothTop = currentTop
-        velocity = 0
-      } else {
-        contentRef.current.style.transform = `translateY(${lag}px)`
-      }
-
-      rafId = requestAnimationFrame(tick)
-    }
-
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [reducedMotion, containerRef])
-
-  return contentRef
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [reducedMotion, ref])
 }
 
 /* ------------------------------------------------------------------ */
@@ -285,48 +259,57 @@ export const WORKFLOW_CHIPS: readonly { icon: string; label: string; offset: str
 /* ------------------------------------------------------------------ */
 /* Portal background video                                            */
 /* ------------------------------------------------------------------ */
-export function PortalVideo({ className }: { className?: string }) {
+export function PortalVideo({
+  className,
+  media,
+}: {
+  className?: string
+  media?: string
+}) {
   const ref = useRef<HTMLVideoElement | null>(null)
+  const reducedMotion = usePrefersReducedMotion()
+  useViewportVideoPlayback(ref, reducedMotion)
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
-    if (mq.matches) el.pause()
-
-    const onChange = () => {
-      if (mq.matches) {
-        el.pause()
-      } else {
-        // Swallow AbortError when the browser interrupts background video.
-        void el.play().catch(() => {})
-      }
-    }
-    mq.addEventListener("change", onChange)
-    return () => mq.removeEventListener("change", onChange)
-  }, [])
-
-  // No `poster` on purpose: the only stable still image we had to hand
-  // was the square Construct logo, and a 512×512 PNG stretched by
-  // `object-cover` into the ~900px portal frame reads as a comically
-  // oversized logo until the video decodes. A brief blank portal on hard
-  // refresh is far less jarring than that. `preload="auto"` pulls the
-  // ~170 KB webm / ~300 KB mp4 as soon as the element mounts so the gap
-  // closes fast; if we later extract a real first-frame still in the
-  // build pipeline, wire it back in here.
   return (
     <video
       ref={ref}
       muted
-      autoPlay
       loop
       playsInline
-      preload="auto"
+      preload="metadata"
+      poster={heroPoster}
       aria-hidden
       className={className ?? "h-full w-full object-cover"}
     >
-      <source src={bgVideoWebm} type="video/webm" />
-      <source src={bgVideoMp4} type="video/mp4" />
+      <source src={bgVideoWebm} type="video/webm" media={media} />
+      <source src={bgVideoMp4} type="video/mp4" media={media} />
+    </video>
+  )
+}
+
+export function WorkDemoVideo({
+  className,
+  media,
+}: {
+  className?: string
+  media?: string
+}) {
+  const ref = useRef<HTMLVideoElement | null>(null)
+  const reducedMotion = usePrefersReducedMotion()
+  useViewportVideoPlayback(ref, reducedMotion)
+
+  return (
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      poster={workPoster}
+      aria-label="Construct organizing work across emails, files, and CRM"
+      className={className ?? "h-full w-full object-cover"}
+    >
+      <source src={workVideo} type="video/mp4" media={media} />
     </video>
   )
 }

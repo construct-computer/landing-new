@@ -70,7 +70,10 @@ export function navigate(to: string) {
   const next = to.startsWith("/") ? normalizePathname(to) : to
   const current = normalizePathname(window.location.pathname)
   if (current === next) {
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" })
     return
   }
   window.history.pushState({}, "", next)
